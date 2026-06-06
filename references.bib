@@ -1,0 +1,711 @@
+% =========================================================================
+% EPIDEMIC DYNAMICS LAB — Referências bibliográficas
+%
+% Este é o arquivo-FONTE da bibliografia do projeto. Edite APENAS este
+% arquivo; o arquivo derivado `references.json` é gerado automaticamente
+% pelo script `scripts/bib2json.py` e não deve ser editado manualmente.
+%
+% Fluxo para adicionar/alterar uma referência:
+%   1. Edite `references.bib` (este arquivo).
+%   2. Rode: python3 scripts/bib2json.py
+%   3. Commite os dois arquivos juntos.
+%
+% Campos custom utilizados pelo app:
+%   module = {N}           Módulo em que a referência é citada (1 a 8).
+%                          Pode ser múltiplo: module = {4, 8}.
+%   note   = {texto}       Explicação curta do papel da referência no app.
+%
+% Organizado por módulo. A chave BibTeX segue o padrão autor+ano+tag curta.
+% =========================================================================
+
+% -------------------------------------------------------------------------
+% Módulo 1 — Introdução à Epidemiologia
+% -------------------------------------------------------------------------
+
+@book{graunt1662,
+  author    = {Graunt, John},
+  title     = {Natural and Political Observations Made upon the Bills of Mortality},
+  year      = {1662},
+  address   = {London},
+  publisher = {Thomas Roycroft},
+  module    = {1},
+  note      = {Marco fundador da análise estatística de dados populacionais de mortalidade; considerado um dos textos seminais da demografia e, em última instância, da epidemiologia.}
+}
+
+@article{langmuir1976farr,
+  author  = {Langmuir, Alexander D.},
+  title   = {William Farr: founder of modern concepts of surveillance},
+  journal = {International Journal of Epidemiology},
+  volume  = {5},
+  number  = {1},
+  pages   = {13--18},
+  year    = {1976},
+  doi     = {10.1093/ije/5.1.13},
+  module  = {1},
+  note    = {Retrato do papel de William Farr na sistematização das estatísticas de mortalidade britânicas e na construção da vigilância epidemiológica moderna.}
+}
+
+@book{moriyama1993classification,
+  author    = {Moriyama, Iwao Milton},
+  title     = {Historical development of cause of death statistics},
+  publisher = {Indiana University, Population Institute for Research and Training},
+  year      = {1993},
+  module    = {1},
+  note      = {Compilação histórica das conferências internacionais de estatística (Bruxelas 1853, Paris 1855, Viena 1891, Chicago 1893) que culminaram na Classificação Internacional de Doenças.}
+}
+
+@article{doll1954smoking,
+  author  = {Doll, Richard and Hill, Austin Bradford},
+  title   = {The mortality of doctors in relation to their smoking habits: a preliminary report},
+  journal = {British Medical Journal},
+  volume  = {1},
+  number  = {4877},
+  pages   = {1451--1455},
+  year    = {1954},
+  doi     = {10.1136/bmj.1.4877.1451},
+  module  = {1},
+  note    = {Primeiro relato do clássico estudo de coorte dos médicos britânicos, demonstrando associação entre tabagismo e câncer de pulmão — marco inaugural da epidemiologia moderna de doenças crônicas.}
+}
+
+@article{hill1965criteria,
+  author  = {Hill, Austin Bradford},
+  title   = {The Environment and Disease: Association or Causation?},
+  journal = {Proceedings of the Royal Society of Medicine},
+  volume  = {58},
+  number  = {5},
+  pages   = {295--300},
+  year    = {1965},
+  doi     = {10.1177/003591576505800503},
+  pmid    = {14283879},
+  pmcid   = {PMC1898525},
+  module  = {1},
+  note    = {Formulação dos nove critérios de causalidade que ainda hoje orientam a inferência causal a partir de associações estatísticas em epidemiologia.}
+}
+
+% --- Marcos da timeline histórica (§3 do Módulo 1) ---
+%
+% Em ordem cronológica de publicação/evento. Inclui fontes primárias
+% (Jenner 1798, Snow 1855, Chagas 1909, Doll & Hill 1950, etc.) e fontes
+% secundárias acadêmicas (Tognotti 2013 sobre quarentenas, Stepan 1976
+% sobre Oswaldo Cruz, Geison 1995 sobre Pasteur).
+
+@incollection{hippocrates_airs_waters,
+  author    = {Hippocrates},
+  editor    = {Jones, W. H. S.},
+  title     = {Airs, Waters, Places},
+  booktitle = {Hippocrates, Volume I},
+  series    = {Loeb Classical Library 147},
+  publisher = {Harvard University Press},
+  address   = {Cambridge, MA},
+  year      = {1923},
+  isbn      = {978-0674991620},
+  module    = {1},
+  note      = {Tratado hipocrático do séc. V a.C. (escrito em grego antigo) na edição bilíngue grego-inglês de W.H.S. Jones — referência canônica internacional. Considerado precursor da epidemiologia ambiental ao relacionar doença, clima, águas, ventos, estações do ano e modo de vida das populações.}
+}
+
+@book{jenner1798inquiry,
+  author    = {Jenner, Edward},
+  title     = {An Inquiry into the Causes and Effects of the Variolae Vaccinae, a Disease Discovered in Some of the Western Counties of England, Particularly Gloucestershire, and Known by the Name of the Cow Pox},
+  publisher = {Sampson Low},
+  address   = {London},
+  year      = {1798},
+  module    = {1},
+  note      = {Tratado fundador da vacinação contra a varíola; primeira documentação sistemática do uso da varíola bovina (cowpox) para proteger humanos da varíola humana — marco da prevenção primária baseada em evidência empírica.}
+}
+
+@book{louis1835saignee,
+  author    = {Louis, Pierre Charles Alexandre},
+  title     = {Recherches sur les effets de la saignée dans quelques maladies inflammatoires et sur l'action de l'émétique et des vésicatoires dans la pneumonie},
+  publisher = {J.-B. Baillière},
+  address   = {Paris},
+  year      = {1835},
+  module    = {1},
+  note      = {Aplicação pioneira do "método numérico" — Louis defende que a avaliação de tratamentos médicos deve se apoiar na contagem sistemática e comparação de grupos, não na impressão clínica individual. Antecipa a lógica do ensaio clínico controlado.}
+}
+
+@book{semmelweis1861aetiologie,
+  author    = {Semmelweis, Ignaz},
+  title     = {Die Aetiologie, der Begriff und die Prophylaxis des Kindbettfiebers},
+  publisher = {C. A. Hartleben's Verlags-Expedition},
+  address   = {Pest, Wien und Leipzig},
+  year      = {1861},
+  module    = {1},
+  note      = {Monografia em que Semmelweis sistematiza suas observações de 1847 no Hospital Geral de Viena, demonstrando que a antissepsia com solução clorada reduz drasticamente a mortalidade por febre puerperal. Marco da prevenção baseada em comparação entre grupos, antes mesmo da teoria germinal.}
+}
+
+@article{koch1884aetiologie,
+  author  = {Koch, Robert},
+  title   = {Die Aetiologie der Tuberkulose},
+  journal = {Mittheilungen aus dem Kaiserlichen Gesundheitsamte},
+  volume  = {2},
+  pages   = {1--88},
+  year    = {1884},
+  module  = {1},
+  note    = {Monografia expandida em que Koch consolida a descoberta do bacilo da tuberculose (anunciada em 1882) e formula os critérios — depois conhecidos como "postulados de Koch" — para atribuir uma doença a um agente microbiano específico.}
+}
+
+@article{chagas1909nova,
+  author  = {Chagas, Carlos},
+  title   = {Nova tripanozomiaze humana: Estudos sobre a morfolojia e o ciclo evolutivo do {S}chizotrypanum cruzi n. gen., n. sp., ajente etiolojico de nova entidade morbida do homem},
+  journal = {Memórias do Instituto Oswaldo Cruz},
+  volume  = {1},
+  number  = {2},
+  pages   = {159--218},
+  year    = {1909},
+  doi     = {10.1590/S0074-02761909000200008},
+  module  = {1},
+  note    = {Paper canônico em que Carlos Chagas descreve simultaneamente o agente etiológico (Trypanosoma cruzi), o vetor (barbeiro), o ciclo biológico e o quadro clínico da doença que hoje leva seu nome — feito sem precedentes na história da medicina.}
+}
+
+@article{mrc1948streptomycin,
+  author  = {{Medical Research Council}},
+  title   = {Streptomycin Treatment of Pulmonary Tuberculosis: A {M}edical {R}esearch {C}ouncil Investigation},
+  journal = {British Medical Journal},
+  volume  = {2},
+  number  = {4582},
+  pages   = {769--782},
+  year    = {1948},
+  doi     = {10.1136/bmj.2.4582.769},
+  pmid    = {18890300},
+  pmcid   = {PMC2091872},
+  module  = {1},
+  note    = {Frequentemente considerado o primeiro ensaio clínico randomizado moderno. Incorporou randomização (por envelopes selados), comparação controlada (estreptomicina vs. repouso) e cegamento parcial — um modelo metodológico que se tornaria o padrão-ouro da avaliação de intervenções.}
+}
+
+@article{dawber1951framingham,
+  author  = {Dawber, Thomas R. and Meadors, Gilcin F. and Moore, Felix E.},
+  title   = {Epidemiological Approaches to Heart Disease: The {F}ramingham Study},
+  journal = {American Journal of Public Health and the Nation's Health},
+  volume  = {41},
+  number  = {3},
+  pages   = {279--286},
+  year    = {1951},
+  doi     = {10.2105/AJPH.41.3.279},
+  pmid    = {14819398},
+  pmcid   = {PMC1525365},
+  module  = {1},
+  note    = {Primeiro paper a descrever o desenho metodológico do Framingham Heart Study, coorte longitudinal iniciada em 1948 em Massachusetts que viria a estabelecer o conceito moderno de "fator de risco" cardiovascular (hipertensão, colesterol, tabagismo, diabetes).}
+}
+
+@article{doll1950smoking,
+  author  = {Doll, Richard and Hill, A. Bradford},
+  title   = {Smoking and Carcinoma of the Lung: Preliminary Report},
+  journal = {British Medical Journal},
+  volume  = {2},
+  number  = {4682},
+  pages   = {739--748},
+  year    = {1950},
+  doi     = {10.1136/bmj.2.4682.739},
+  pmid    = {14772469},
+  pmcid   = {PMC2038856},
+  module  = {1},
+  note    = {Estudo caso-controle pioneiro que demonstrou forte associação entre tabagismo e câncer de pulmão. Antecede o estudo de coorte dos médicos britânicos (Doll \& Hill 1954) e é um dos primeiros usos clássicos do desenho caso-controle para doenças crônicas.}
+}
+
+@book{stepan1976beginnings,
+  author    = {Stepan, Nancy Leys},
+  title     = {Beginnings of {B}razilian Science: {O}swaldo {C}ruz, Medical Research, and Policy, 1890--1920},
+  publisher = {Science History Publications},
+  address   = {New York},
+  year      = {1976},
+  isbn      = {978-0882020389},
+  module    = {1},
+  note      = {Estudo acadêmico de referência sobre Oswaldo Cruz, o sanitarismo brasileiro do início do século XX e a institucionalização da pesquisa biomédica no Brasil.}
+}
+
+@article{ebmworkinggroup1992evidence,
+  author  = {{Evidence-Based Medicine Working Group}},
+  title   = {Evidence-Based Medicine: A New Approach to Teaching the Practice of Medicine},
+  journal = {JAMA},
+  volume  = {268},
+  number  = {17},
+  pages   = {2420--2425},
+  year    = {1992},
+  doi     = {10.1001/jama.1992.03490170092032},
+  pmid    = {1404801},
+  module  = {1},
+  note    = {Paper coletivo do grupo de McMaster (Guyatt, Sackett e outros) que introduz formalmente o termo "Evidence-Based Medicine" e propõe sua sistematização como abordagem para ensino e prática médica.}
+}
+
+@article{chalmers1993cochrane,
+  author  = {Chalmers, Iain},
+  title   = {The {C}ochrane {C}ollaboration: Preparing, Maintaining, and Disseminating Systematic Reviews of the Effects of Health Care},
+  journal = {Annals of the New York Academy of Sciences},
+  volume  = {703},
+  number  = {1},
+  pages   = {156--165},
+  year    = {1993},
+  doi     = {10.1111/j.1749-6632.1993.tb26345.x},
+  pmid    = {8192293},
+  module  = {1},
+  note    = {Paper inaugural da Cochrane Collaboration — define a missão e estrutura da organização internacional dedicada a preparar, manter e disseminar revisões sistemáticas dos efeitos de intervenções em saúde.}
+}
+
+@book{geison1995pasteur,
+  author    = {Geison, Gerald L.},
+  title     = {The Private Science of {L}ouis {P}asteur},
+  publisher = {Princeton University Press},
+  address   = {Princeton, NJ},
+  year      = {1995},
+  isbn      = {978-0691015521},
+  module    = {1},
+  note      = {Biografia acadêmica de referência sobre Pasteur, baseada em seus cadernos de laboratório. Documenta a consolidação da teoria germinal das doenças e o papel de Pasteur na transformação da medicina e da saúde pública na segunda metade do séc. XIX.}
+}
+
+@book{murray1996gbd,
+  editor    = {Murray, Christopher J. L. and Lopez, Alan D.},
+  title     = {The Global Burden of Disease: A Comprehensive Assessment of Mortality and Disability from Diseases, Injuries, and Risk Factors in 1990 and Projected to 2020},
+  series    = {Global Burden of Disease and Injury Series, Vol. 1},
+  publisher = {Harvard University Press},
+  address   = {Cambridge, MA},
+  year      = {1996},
+  isbn      = {978-0674354487},
+  module    = {1},
+  note      = {Marco inaugural do projeto Global Burden of Disease (GBD), em colaboração com a OMS e o Banco Mundial. Introduz medidas como DALY (anos de vida ajustados por incapacidade) e estabelece a linguagem da carga de doença global para planejamento em saúde pública.}
+}
+
+@article{tognotti2013quarantine,
+  author  = {Tognotti, Eugenia},
+  title   = {Lessons from the History of Quarantine, from Plague to Influenza A},
+  journal = {Emerging Infectious Diseases},
+  volume  = {19},
+  number  = {2},
+  pages   = {254--259},
+  year    = {2013},
+  doi     = {10.3201/eid1902.120312},
+  pmid    = {23343512},
+  pmcid   = {PMC3559034},
+  module  = {1},
+  note    = {Revisão histórica das práticas de quarentena e cordão sanitário desde a Idade Média (peste bubônica em Ragusa, 1377) até epidemias modernas — documenta a emergência da resposta coletiva e estatal a surtos epidêmicos.}
+}
+
+@book{hernan2020causal,
+  author    = {Hernán, Miguel A. and Robins, James M.},
+  title     = {Causal Inference: What If},
+  publisher = {Chapman \& Hall/CRC},
+  address   = {Boca Raton, FL},
+  year      = {2020},
+  isbn      = {978-1420076165},
+  url       = {https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/},
+  module    = {1},
+  note      = {Texto-referência da inferência causal contemporânea em epidemiologia. Sistematiza diagramas acíclicos direcionados (DAGs), modelos contrafactuais, emulação de ensaios-alvo (target trial emulation) e análise crítica de vieses em estudos observacionais. Versão atualizada disponível gratuitamente online.}
+}
+
+% --- Prevenção quaternária (citações usadas no parágrafo do §2 do Módulo 1) ---
+
+@incollection{jamoulle1986information,
+  author    = {Jamoulle, Marc},
+  title     = {Information et informatisation en m{\'e}decine g{\'e}n{\'e}rale},
+  booktitle = {Les informa-g-iciens},
+  editor    = {Berleur, Jacques and Labet-Maris, Claire and Poswick, Robert F. and Valenduc, G{\'e}rard and Van Bastelaer, Philippe},
+  publisher = {Presses Universitaires de Namur},
+  address   = {Namur},
+  year      = {1986},
+  pages     = {193--209},
+  module    = {1},
+  note      = {Texto seminal em que Marc Jamoulle propõe pela primeira vez o conceito de prevenção quaternária, no contexto da informatização da medicina geral.}
+}
+
+@article{jamoulle2015answer,
+  author  = {Jamoulle, Marc},
+  title   = {Quaternary Prevention, an Answer of Family Doctors to Overmedicalization},
+  journal = {International Journal of Health Policy and Management},
+  volume  = {4},
+  number  = {2},
+  pages   = {61--64},
+  year    = {2015},
+  doi     = {10.15171/ijhpm.2015.24},
+  module  = {1},
+  note    = {Formulação madura do conceito como resposta dos médicos de família à supermedicalização: define prevenção quaternária como a proteção do paciente contra invasões médicas desnecessárias.}
+}
+
+@article{martins2018quaternary,
+  author  = {Martins, Carlos and Godycki-Cwirko, Maciej and Heleno, Bruno and Brodersen, John},
+  title   = {Quaternary Prevention: Reviewing the Concept},
+  journal = {European Journal of General Practice},
+  volume  = {24},
+  number  = {1},
+  pages   = {106--111},
+  year    = {2018},
+  doi     = {10.1080/13814788.2017.1422177},
+  module  = {1},
+  note    = {Revisão crítica do conceito de prevenção quaternária e de suas aplicações na prática clínica contemporânea, especialmente no contexto de rastreamentos e tratamentos com balanço incerto entre benefício e dano.}
+}
+
+% -------------------------------------------------------------------------
+% Módulos 2 e 3 — Conceitos Básicos e Cadeia Epidemiológica
+% -------------------------------------------------------------------------
+
+@techreport{cdc2012principles,
+  author      = {{Centers for Disease Control and Prevention}},
+  title       = {Principles of Epidemiology in Public Health Practice},
+  edition     = {3rd},
+  institution = {U.S. Department of Health and Human Services},
+  year        = {2012},
+  address     = {Atlanta, GA},
+  note        = {Referência introdutória de domínio público amplamente adotada em cursos de Medicina e Saúde Pública. Conceitos de endemia/surto/epidemia/pandemia, reservatório, cadeia epidemiológica e caso notificado/confirmado.},
+  module      = {2, 3}
+}
+
+% -------------------------------------------------------------------------
+% Módulo 4 — Dinâmica da Doença no Indivíduo
+% -------------------------------------------------------------------------
+
+@article{nishiura2007incubation,
+  author  = {Nishiura, Hiroshi},
+  title   = {Early efforts in modeling the incubation period of infectious diseases with an acute course of illness},
+  journal = {Emerging Themes in Epidemiology},
+  volume  = {4},
+  number  = {2},
+  year    = {2007},
+  doi     = {10.1186/1742-7622-4-2},
+  module  = {4},
+  note    = {Revisão histórica dos primeiros esforços de modelagem do período de incubação, começando com os estudos de 1919 sobre a gripe espanhola em navios.}
+}
+
+@article{azman2013cholera,
+  author  = {Azman, Andrew S. and Rudolph, Kara E. and Cummings, Derek A. T. and Lessler, Justin},
+  title   = {The incubation period of cholera: A systematic review},
+  journal = {Journal of Infection},
+  volume  = {66},
+  number  = {5},
+  pages   = {432--438},
+  year    = {2013},
+  doi     = {10.1016/j.jinf.2012.11.013},
+  module  = {4, 8},
+  note    = {Revisão sistemática do período de incubação da cólera, estabelecendo a faixa de 12 horas a 5 dias usada no comparador visual do Módulo 4.}
+}
+
+@article{li2020covid,
+  author  = {Li, Qun and Guan, Xuhua and Wu, Peng and Wang, Xiaoye and Zhou, Lei and Tong, Yeqing and others},
+  title   = {Early Transmission Dynamics in Wuhan, China, of Novel Coronavirus-Infected Pneumonia},
+  journal = {New England Journal of Medicine},
+  volume  = {382},
+  number  = {13},
+  pages   = {1199--1207},
+  year    = {2020},
+  doi     = {10.1056/NEJMoa2001316},
+  module  = {1, 4},
+  note    = {Primeira caracterização epidemiológica rigorosa do SARS-CoV-2 em Wuhan. Incubação mediana de 5,2 dias (percentil 95 de 12,5 dias) — base do período de quarentena de 14 dias inicialmente adotado globalmente. Citado no Módulo 1 como marco da pandemia de 2020-2023.}
+}
+
+@article{traylen2011reactivation,
+  author  = {Traylen, Christopher M. and Patel, Hersh R. and Fondaw, Wylder and Mahatme, Sheran and Williams, John F. and Walker, Lia R. and Dyson, Ossie F. and Arce, Sergio and Akula, Shaw M.},
+  title   = {Virus reactivation: a panoramic view in human infections},
+  journal = {Future Virology},
+  volume  = {6},
+  number  = {4},
+  pages   = {451--463},
+  year    = {2011},
+  doi     = {10.2217/fvl.11.21},
+  module  = {4},
+  note    = {Panorama geral sobre latência e reativação viral, com foco especial nos herpesvírus — base conceitual para a distinção entre incubação e latência no Módulo 4.}
+}
+
+% -------------------------------------------------------------------------
+% Módulo 7 — Modelos Compartimentais (SIR/SEIR)
+% -------------------------------------------------------------------------
+
+@article{kermack1927sir,
+  author  = {Kermack, William Ogilvy and McKendrick, Anderson Gray},
+  title   = {A Contribution to the Mathematical Theory of Epidemics},
+  journal = {Proceedings of the Royal Society A},
+  volume  = {115},
+  number  = {772},
+  pages   = {700--721},
+  year    = {1927},
+  doi     = {10.1098/rspa.1927.0118},
+  module  = {7},
+  note    = {Artigo fundador do modelo SIR. Introduziu a formalização matemática da dinâmica epidêmica em compartimentos suscetível/infectado/recuperado.}
+}
+
+@book{anderson1991infectious,
+  author    = {Anderson, Roy M. and May, Robert M.},
+  title     = {Infectious Diseases of Humans: Dynamics and Control},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  year      = {1991},
+  isbn      = {978-0198540403},
+  module    = {5, 6, 7},
+  note      = {Texto-referência da epidemiologia matemática moderna. Fonte canônica para R₀, limiar de imunidade de rebanho e modelos compartimentais.}
+}
+
+% -------------------------------------------------------------------------
+% Módulo 8 — Caso Histórico: Cólera (Soho 1854 + Haiti 2010)
+% -------------------------------------------------------------------------
+
+@book{snow1855cholera,
+  author    = {Snow, John},
+  title     = {On the Mode of Communication of Cholera},
+  edition   = {2nd},
+  publisher = {John Churchill},
+  address   = {London},
+  year      = {1855},
+  module    = {8},
+  note      = {Fonte primária. Segunda edição da monografia de Snow, incluindo o "Grand Experiment" (comparação Southwark \& Vauxhall × Lambeth) — uma das primeiras análises quase-experimentais da história da medicina.}
+}
+
+@book{johnson2006ghostmap,
+  author    = {Johnson, Steven},
+  title     = {The Ghost Map: The Story of London's Most Terrifying Epidemic---and How It Changed Science, Cities, and the Modern World},
+  publisher = {Riverhead Books},
+  address   = {New York},
+  year      = {2006},
+  isbn      = {978-1594489259},
+  module    = {8},
+  note      = {Reconstrução narrativa popular do surto de Soho 1854, combinando pesquisa histórica com contexto social e urbano.}
+}
+
+@article{ali2015cholera,
+  author  = {Ali, Mohammad and Nelson, Allyson R. and Lopez, Anna Lena and Sack, David A.},
+  title   = {Updated Global Burden of Cholera in Endemic Countries},
+  journal = {PLOS Neglected Tropical Diseases},
+  volume  = {9},
+  number  = {6},
+  pages   = {e0003832},
+  year    = {2015},
+  doi     = {10.1371/journal.pntd.0003832},
+  module  = {8},
+  note    = {Atualização global da carga de cólera em países endêmicos, com estimativas de casos e mortes anuais.}
+}
+
+@article{orata2014haiti,
+  author  = {Orata, Fabini D. and Keim, Paul S. and Boucher, Yan},
+  title   = {The 2010 Cholera Outbreak in Haiti: How Science Solved a Controversy},
+  journal = {PLOS Pathogens},
+  volume  = {10},
+  number  = {4},
+  pages   = {e1003967},
+  year    = {2014},
+  doi     = {10.1371/journal.ppat.1003967},
+  module  = {8},
+  note    = {Revisão da análise genômica que confirmou a origem nepalesa do surto de cólera no Haiti, encerrando a controvérsia sobre a responsabilidade da MINUSTAH.}
+}
+
+@article{li2018cholera,
+  author  = {Li, Peter},
+  title   = {cholera: Amend, Augment and Aid Analysis of {J}ohn {S}now's Cholera Map},
+  journal = {Journal of Open Source Software},
+  volume  = {3},
+  number  = {23},
+  pages   = {596},
+  year    = {2018},
+  doi     = {10.21105/joss.00596},
+  module  = {8},
+  note    = {Pacote R que moderniza a análise de Snow com dados digitalizados, algoritmos de caminhada em grafo, e ferramentas de Voronoi. Fonte dos dados usados no mapa interativo do Módulo 8.}
+}
+
+@article{dodson1992snow,
+  author  = {Dodson, Rusty and Tobler, Waldo},
+  title   = {The {S}now map digitized},
+  journal = {National Center for Geographic Information and Analysis, UCSB},
+  year    = {1992},
+  module  = {8},
+  note    = {Digitalização original das coordenadas de mortes, bombas e ruas do mapa de John Snow (1855). Base dos datasets hoje preservados no pacote R cholera.}
+}
+
+@misc{mspp2016haiti,
+  author       = {{Ministère de la Santé Publique et de la Population du Haïti}},
+  title        = {Rapports mensuels sur l'épidémie de choléra},
+  year         = {2010--2019},
+  howpublished = {Série temporal oficial mensal do surto de cólera no Haiti, out/2010 a mar/2016 (66 observações).},
+  note         = {Dados mensais de casos e mortes reportados pelo MSPP Haiti, usados no gráfico temporal do Módulo 8.},
+  module       = {8}
+}
+
+@article{piarroux2011haiti,
+  author  = {Piarroux, Renaud and Barrais, Robert and Faucher, Benoît and Haus, Rachel and Piarroux, Martine and Gaudart, Jean and Magloire, Roc and Raoult, Didier},
+  title   = {Understanding the Cholera Epidemic, {H}aiti},
+  journal = {Emerging Infectious Diseases},
+  volume  = {17},
+  number  = {7},
+  pages   = {1161--1168},
+  year    = {2011},
+  doi     = {10.3201/eid1707.110059},
+  module  = {8},
+  note    = {Primeiro estudo epidemiológico a atribuir formalmente a origem do surto ao acampamento da MINUSTAH em Meille, antes mesmo da confirmação genômica.}
+}
+
+@article{rebaudet2019cholera,
+  author  = {Rebaudet, Stanislas and Sudre, Béatrice and Faucher, Benoît and Piarroux, Renaud},
+  title   = {Environmental determinants of cholera outbreaks in inland {A}frica: a systematic review of main drivers},
+  journal = {Epidemiology and Infection},
+  volume  = {147},
+  pages   = {e117},
+  year    = {2019},
+  doi     = {10.1017/S0950268819000074},
+  module  = {8},
+  note    = {Análise geoespacial de fatores ambientais que determinam surtos de cólera em locais sem acesso a água potável; contexto para entender persistência do surto no Haiti.}
+}
+
+@article{cook2001prevention,
+  author  = {Cook, Gordon C.},
+  title   = {The prevention of cholera: a review of the work of {J}ohn {S}now and the contribution of sanitary engineers in the nineteenth century},
+  journal = {History of Medicine Today},
+  volume  = {12},
+  number  = {3},
+  pages   = {102--115},
+  year    = {2001},
+  module  = {8},
+  note    = {Análise comparativa de como Snow (epidemiologia) e Bazalgette (engenharia sanitária) atacaram o mesmo problema de ângulos complementares; uma com teoria correta, outra com ação estrutural.}
+}
+
+@book{halliday2013great,
+  author    = {Halliday, Stephen},
+  title     = {The {G}reat {F}ilth: the {W}ar {A}gainst {B}acteria and the {T}ransformation of {E}veryday {L}ife},
+  publisher = {Sutton Publishing},
+  address   = {Stroud, Gloucestershire},
+  year      = {2013},
+  isbn      = {978-1845886509},
+  module    = {8},
+  note      = {História social e técnica do saneamento Vitoriano e sua luta contra doenças infecciosas, com foco especial em Londres e a motivação (política/social) por trás do investimento em infraestrutura.}
+}
+
+@techreport{who2012sanitation,
+  author       = {{WHO and UNICEF}},
+  title        = {Progress on Drinking-Water and Sanitation: 2012 Update},
+  institution  = {World Health Organization and United Nations Children's Fund},
+  year         = {2012},
+  address      = {Geneva},
+  module       = {8},
+  note         = {Relatório global sobre custos e progresso na meta de acesso universal a saneamento; base para estimativas de investimento necessário.}
+}
+
+@misc{world_bank2015haiti,
+  author       = {{World Bank}},
+  title        = {Haiti: {R}esponds to {C}holera},
+  year         = {2015},
+  howpublished = {\url{https://www.worldbank.org/en/results/2015/09/22/haiti-responds-to-cholera}},
+  module       = {8},
+  note         = {Case study do World Bank sobre resposta ao surto de 2010; inclui dados de financiamento, gap entre necessidade e alocação de recursos.}
+}
+
+@misc{un2016secretarygeneral,
+  author       = {{United Nations}},
+  title        = {Secretary-General Apologizes for {U}nited {N}ations' {R}ole in {H}aiti {C}holera {E}pidemic},
+  year         = {2016},
+  howpublished = {Press Release SG/SM/18323},
+  module       = {8},
+  note         = {Reconhecimento formal da responsabilidade da ONU na introdução da cólera no Haiti; inclui promessas de investimento ($400 milhões) posteriormente não cumpridas na magnitude prometida.}
+}
+
+% -------------------------------------------------------------------------
+% Reservadas para módulo futuro — Prevenção Quaternária (texto longo)
+%
+% Estas entradas existem no .bib mas ainda não estão associadas a nenhum
+% módulo (campo `module` ausente, ficam em "Sem módulo associado" na
+% bibliografia global). Serão associadas quando o módulo dedicado a P4
+% for criado.
+% -------------------------------------------------------------------------
+
+@book{leavell1965preventive,
+  author    = {Leavell, Hugh Rodman and Clark, Edwin Gurney},
+  title     = {Preventive Medicine for the Doctor in His Community: An Epidemiologic Approach},
+  edition   = {3},
+  publisher = {McGraw-Hill},
+  address   = {New York},
+  year      = {1965},
+  note      = {Texto-fonte do modelo clássico em três níveis de prevenção (primária, secundária, terciária), referência canônica que o conceito de prevenção quaternária viria a problematizar décadas depois.}
+}
+
+@book{bentzen2003wonca,
+  editor    = {Bentzen, Niels},
+  title     = {Wonca Dictionary of General/Family Practice},
+  publisher = {Wonca International Classification Committee},
+  address   = {Copenhagen},
+  year      = {2003},
+  note      = {Dicionário oficial da Wonca (Organização Mundial dos Médicos de Família); registra a definição internacional de prevenção quaternária.}
+}
+
+@article{jamoulle2015first,
+  author  = {Jamoulle, Marc},
+  title   = {Quaternary Prevention: First, Do No Harm},
+  journal = {Revista Brasileira de Medicina de Fam{\'i}lia e Comunidade},
+  volume  = {10},
+  number  = {35},
+  pages   = {1--3},
+  year    = {2015},
+  doi     = {10.5712/rbmfc10(35)1064},
+  note    = {Editorial em revista brasileira que retoma o princípio hipocrático "primum non nocere" como fundamento da prevenção quaternária.}
+}
+
+@book{illich1975medical,
+  author    = {Illich, Ivan},
+  title     = {Medical Nemesis: The Expropriation of Health},
+  publisher = {Calder and Boyars},
+  address   = {London},
+  year      = {1975},
+  note      = {Crítica radical da iatrogenia clínica, social e cultural; precursor conceitual da preocupação com o excesso de medicina que a prevenção quaternária viria a operacionalizar.}
+}
+
+@article{moynihan2002selling,
+  author  = {Moynihan, Ray and Heath, Iona and Henry, David},
+  title   = {Selling Sickness: The Pharmaceutical Industry and Disease Mongering},
+  journal = {BMJ},
+  volume  = {324},
+  number  = {7342},
+  pages   = {886--891},
+  year    = {2002},
+  doi     = {10.1136/bmj.324.7342.886},
+  note    = {Marco do debate sobre disease mongering — a ampliação de fronteiras diagnósticas pela indústria farmacêutica e outros atores como vetor de medicalização.}
+}
+
+@article{moynihan2002too,
+  author  = {Moynihan, Ray and Smith, Richard},
+  title   = {Too Much Medicine? Almost Certainly},
+  journal = {BMJ},
+  volume  = {324},
+  number  = {7342},
+  pages   = {859--860},
+  year    = {2002},
+  doi     = {10.1136/bmj.324.7342.859},
+  note    = {Editorial seminal sobre o "excesso de medicina" no BMJ; dialoga diretamente com a base conceitual da prevenção quaternária.}
+}
+
+@book{welch2011overdiagnosed,
+  author    = {Welch, H. Gilbert and Schwartz, Lisa M. and Woloshin, Steven},
+  title     = {Overdiagnosed: Making People Sick in the Pursuit of Health},
+  publisher = {Beacon Press},
+  address   = {Boston},
+  year      = {2011},
+  isbn      = {9780807021996},
+  note      = {Livro de divulgação que popularizou o debate sobre overdiagnosis: mostra como a busca por doenças em assintomáticos pode produzir rótulos, ansiedade e tratamentos sem necessariamente melhorar desfechos clínicos relevantes.}
+}
+
+@article{sackett1996evidence,
+  author  = {Sackett, David L. and Rosenberg, William M. C. and Gray, J. A. Muir and Haynes, R. Brian and Richardson, W. Scott},
+  title   = {Evidence Based Medicine: What It Is and What It Isn't},
+  journal = {BMJ},
+  volume  = {312},
+  number  = {7023},
+  pages   = {71--72},
+  year    = {1996},
+  doi     = {10.1136/bmj.312.7023.71},
+  pmid    = {8555924},
+  pmcid   = {PMC2349778},
+  note    = {Definição clássica de medicina baseada em evidências como integração entre evidência científica, experiência clínica e valores do paciente.}
+}
+
+@article{gervas2008clinical,
+  author  = {G{\'e}rvas, Juan and Starfield, Barbara and Heath, Iona},
+  title   = {Is Clinical Prevention Better than Cure?},
+  journal = {The Lancet},
+  volume  = {372},
+  number  = {9654},
+  pages   = {1997--1999},
+  year    = {2008},
+  doi     = {10.1016/S0140-6736(08)61869-7},
+  note    = {Análise dos limites da prevenção clínica; argumenta que rastreamentos e intervenções preventivas indiscriminadas podem causar mais dano do que benefício.}
+}
+
+@article{starfield2000us,
+  author  = {Starfield, Barbara},
+  title   = {Is US Health Really the Best in the World?},
+  journal = {JAMA},
+  volume  = {284},
+  number  = {4},
+  pages   = {483--485},
+  year    = {2000},
+  doi     = {10.1001/jama.284.4.483},
+  note    = {Análise comparativa do sistema de saúde americano expondo a magnitude dos danos iatrogênicos; argumento estrutural sobre segurança do paciente como dimensão central da qualidade assistencial.}
+}

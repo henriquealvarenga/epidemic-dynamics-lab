@@ -1,0 +1,20 @@
+Título: Ghost Map (Snow's Cholera Map, 1855)
+Autor (ou autoria desconhecida): John Snow (1813–1858)
+Ano de criação (aproximado se necessário): 1855 (2ª edição de "On the Mode of Communication of Cholera")
+Fonte (URL direta à página da fonte, não Google Images): https://commons.wikimedia.org/wiki/File:Snow-cholera-map-1.jpg
+Fonte arquivada (web.archive.org/...): https://web.archive.org/web/ARCHIVED_DATE/https://commons.wikimedia.org/wiki/File:Snow-cholera-map-1.jpg
+Licença declarada: Public Domain
+Tipo específico (ex: PD-US-expired, CC0, CC BY 4.0): PD-old-100 (autor falecido em 1858, >100 anos)
+Verificado por: [nome]
+Data da verificação (YYYY-MM-DD): 2026-MM-DD
+Uso no app: Módulo 8 — seção "O mapa de Snow"
+Notas: Exemplo de sidecar ideal. Este arquivo é SOMENTE um template; para uma imagem real, renomeie e preencha cada campo conforme a fonte de fato consultada. Não use este exemplo como prova de licença sem verificar você mesmo.
+
+
+Foto de John Snow:
+By [1] Originally from en.wikipedia; description page is/was here., Public Domain, https://commons.wikimedia.org/w/index.php?curid=403227
+
+Foto de Joseph Bazalgette:
+https://en.wikipedia.org/wiki/File:Joseph_Bazalgette_by_Lock_%26_Whitfield.jpg#metadata
+
+Ambas imagens foram ajustadas pelo chatGPT.

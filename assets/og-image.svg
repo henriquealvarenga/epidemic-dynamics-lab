@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Epidemic Dynamics Lab — Open Graph / Twitter Card image
+  Dimensão canônica: 1200x630 (padrão OG recomendado).
+  Mostrado em previews de links em redes sociais e mensageiros.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Epidemic Dynamics Lab — laboratório interativo de epidemiologia">
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#0a0e1a"/>
+    </linearGradient>
+    <linearGradient id="curve-s" x1="0" x2="1">
+      <stop offset="0%"   stop-color="#74c0fc" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#74c0fc" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#74c0fc" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="curve-i" x1="0" x2="1">
+      <stop offset="0%"   stop-color="#ff6b6b" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#ff6b6b" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#ff6b6b" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="curve-r" x1="0" x2="1">
+      <stop offset="0%"   stop-color="#51cf66" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#51cf66" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#51cf66" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="1200" height="630" fill="url(#bg-grad)"/>
+
+  <!-- Efeitos radiais de cor -->
+  <circle cx="200" cy="100" r="300" fill="#00d9c0" fill-opacity="0.08"/>
+  <circle cx="1000" cy="550" r="300" fill="#b388ff" fill-opacity="0.06"/>
+
+  <!-- Curvas decorativas (S/I/R empilhadas) -->
+  <path d="M 0,350 C 300,350 450,370 700,500 C 900,580 1050,590 1200,592"
+        fill="none" stroke="url(#curve-s)" stroke-width="3"/>
+  <path d="M 0,560 C 200,560 350,540 500,400 C 620,310 750,310 870,400 C 1000,510 1100,555 1200,565"
+        fill="none" stroke="url(#curve-i)" stroke-width="4"/>
+  <path d="M 0,590 C 300,590 500,560 700,430 C 900,320 1050,300 1200,290"
+        fill="none" stroke="url(#curve-r)" stroke-width="3"/>
+
+  <!-- Ícone (curva epidêmica no canto superior esquerdo) -->
+  <g transform="translate(85, 95)">
+    <rect width="72" height="72" rx="16" fill="#0a0e1a" stroke="#2a3449" stroke-width="1.5"/>
+    <line x1="12" y1="58" x2="60" y2="58" stroke="#2a3449" stroke-width="1.5"/>
+    <path d="M 12,58 C 22,58 25,52 36,18 C 47,52 50,58 60,58"
+          fill="none" stroke="#00d9c0" stroke-width="3.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="36" cy="18" r="4" fill="#00d9c0"/>
+  </g>
+
+  <!-- Eyebrow -->
+  <text x="180" y="140"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="22" font-weight="500"
+        letter-spacing="3" fill="#a8b3c4">
+    LABORATÓRIO DIDÁTICO DE EPIDEMIOLOGIA
+  </text>
+
+  <!-- Título -->
+  <text x="85" y="260"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="96" font-weight="800"
+        letter-spacing="-2" fill="#f0f4f8">
+    Epidemic <tspan fill="#00d9c0">Dynamics</tspan> Lab
+  </text>
+
+  <!-- Subtítulo -->
+  <text x="85" y="330"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="30" font-weight="400"
+        fill="#a8b3c4">
+    Oito módulos interativos — de conceitos básicos
+  </text>
+  <text x="85" y="372"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="30" font-weight="400"
+        fill="#a8b3c4">
+    ao surto de cólera de John Snow em Soho e à epidemia no Haiti.
+  </text>
+
+  <!-- Atribuição -->
+  <text x="85" y="560"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="22" font-weight="500"
+        fill="#6b7a90">
+    Prof. Henrique Alvarenga · Médico Psiquiatra · Licença MIT
+  </text>
+</svg>

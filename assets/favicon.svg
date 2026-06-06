@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Epidemic Dynamics Lab — favicon
+  Curva epidêmica estilizada (bell-shape) sobre fundo escuro.
+  Paleta alinhada ao tema do app.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Epidemic Dynamics Lab">
+  <rect width="32" height="32" rx="6" fill="#0a0e1a"/>
+
+  <!-- Eixo baseline discreto -->
+  <line x1="4" y1="26" x2="28" y2="26" stroke="#2a3449" stroke-width="1"/>
+
+  <!-- Curva epidêmica (I ao longo do tempo) -->
+  <path d="M 4,26 C 9,26 11,23 16,8 C 21,23 23,26 28,26"
+        fill="none"
+        stroke="#00d9c0"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Ponto de pico -->
+  <circle cx="16" cy="8" r="2" fill="#00d9c0"/>
+</svg>

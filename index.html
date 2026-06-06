@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Epidemic Dynamics Lab</title>
+  <meta name="description"
+        content="Laboratório interativo de epidemiologia: conceitos fundamentais, cadeia epidemiológica, dinâmica da doença, R₀, imunidade de rebanho, modelos SIR/SEIR e casos históricos. Material didático para cursos de Medicina." />
+  <meta name="author" content="Henrique Alvarenga da Silva" />
+  <meta name="keywords"
+        content="epidemiologia, saúde pública, R0, R-naught, SIR, SEIR, imunidade de rebanho, John Snow, cólera, Soho 1854, Haiti 2010, medicina, ensino em saúde" />
+  <meta name="theme-color" content="#00d9c0" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Favicon (SVG — escala nativamente, sem versão raster necessária) -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp, iMessage previews) -->
+  <meta property="og:site_name" content="Epidemic Dynamics Lab" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Epidemic Dynamics Lab" />
+  <meta property="og:description"
+        content="Laboratório interativo de epidemiologia em oito módulos — de conceitos básicos a modelos SIR/SEIR, com estudo de caso do surto de cólera de Soho 1854 e do Haiti 2010." />
+  <meta property="og:image" content="assets/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt"
+        content="Título 'Epidemic Dynamics Lab' sobre fundo escuro com curvas S-I-R decorativas" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Epidemic Dynamics Lab" />
+  <meta name="twitter:description"
+        content="Laboratório interativo de epidemiologia em oito módulos." />
+  <meta name="twitter:image" content="assets/og-image.png" />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+  <!-- D3.js v7 (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer></script>
+
+  <!-- Config global (tempo do quiz, pontuação) — leia js/core/config.js -->
+  <script src="js/core/config.js" defer></script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- =========================================================
+       HOME / LANDING
+       ========================================================= -->
+  <main id="screen-home" class="screen screen-active" aria-label="Página inicial">
+
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <svg class="hero-pattern" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice">
+          <!-- Curvas epidêmicas decorativas, desenhadas à mão -->
+          <defs>
+            <linearGradient id="grad-s" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#74c0fc" stop-opacity="0" />
+              <stop offset="50%" stop-color="#74c0fc" stop-opacity=".35" />
+              <stop offset="100%" stop-color="#74c0fc" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="grad-i" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#ff6b6b" stop-opacity="0" />
+              <stop offset="50%" stop-color="#ff6b6b" stop-opacity=".45" />
+              <stop offset="100%" stop-color="#ff6b6b" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="grad-r" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#51cf66" stop-opacity="0" />
+              <stop offset="50%" stop-color="#51cf66" stop-opacity=".35" />
+              <stop offset="100%" stop-color="#51cf66" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <!-- Suscetíveis (decresce) -->
+          <path d="M0,80 C300,80 500,110 700,260 C900,360 1050,380 1200,385"
+                fill="none" stroke="url(#grad-s)" stroke-width="2.5" />
+          <!-- Infectados (sino) -->
+          <path d="M0,350 C200,350 350,320 500,170 C620,80 750,80 870,170 C1000,270 1100,330 1200,345"
+                fill="none" stroke="url(#grad-i)" stroke-width="3" />
+          <!-- Recuperados (cresce) -->
+          <path d="M0,370 C300,370 500,340 700,200 C900,90 1050,70 1200,60"
+                fill="none" stroke="url(#grad-r)" stroke-width="2.5" />
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">Laboratório Didático de Epidemiologia</div>
+        <h1 class="hero-title">
+          Epidemic <span class="accent">Dynamics</span> Lab
+        </h1>
+        <p class="hero-subtitle">
+          Oito módulos interativos — de conceitos básicos ao surto de cólera de John Snow em Soho
+          e à epidemia no Haiti — para alunos de Medicina entenderem epidemiologia na prática.
+        </p>
+      </div>
+    </section>
+
+    <section id="modulos" class="modules-section">
+      <header class="section-header">
+        <h2 class="section-title">Módulos</h2>
+        <p class="section-lede">
+          Cada módulo combina teoria, laboratório interativo e atividade prática.
+          Indicados para alunos do 2º ao 4º período de Medicina, ou para autoestudo.
+        </p>
+      </header>
+
+      <!-- O grid é preenchido dinamicamente pelo app.js a partir de window.EDL.modules -->
+      <div id="modules-grid" class="modules-grid" role="list"></div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-credits">
+          Desenvolvido por
+          <a href="https://www.henriquealvarenga.com" target="_blank" rel="noopener">Henrique Alvarenga</a>
+          · Médico psiquiatra · Professor de Medicina
+        </div>
+        <div class="footer-links">
+          <button type="button" data-go="about" class="footer-link">Sobre</button>
+          <button type="button" data-go="how-to-use" class="footer-link">Como usar</button>
+          <button type="button" data-go="references" class="footer-link">Bibliografia</button>
+          <a href="https://github.com/" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+        </div>
+        <div class="footer-legal">
+          Licença MIT · v0.1.0 (em desenvolvimento)
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- =========================================================
+       MÓDULO (container preenchido dinamicamente)
+       ========================================================= -->
+  <main id="screen-module" class="screen" aria-label="Módulo ativo" hidden>
+    <nav class="module-topbar" aria-label="Navegação do módulo">
+      <button type="button"
+              class="module-nav-btn module-nav-home"
+              data-go="home"
+              aria-label="Voltar ao início (lista de módulos)"
+              title="Início">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </button>
+      <div class="module-topbar-title" id="module-topbar-title"></div>
+      <div class="module-nav-group">
+        <button type="button"
+                class="module-nav-btn"
+                id="module-nav-prev"
+                aria-label="Módulo anterior"
+                title="Módulo anterior"
+                disabled>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+        </button>
+        <button type="button"
+                class="module-nav-btn"
+                id="module-nav-next"
+                aria-label="Próximo módulo"
+                title="Próximo módulo"
+                disabled>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+    <div id="module-container" class="module-container"></div>
+  </main>
+
+  <!-- =========================================================
+       SOBRE / CRÉDITOS / COMO USAR (telas simples)
+       ========================================================= -->
+  <main id="screen-about" class="screen screen-static" aria-label="Sobre o app" hidden>
+    <nav class="module-topbar">
+      <button type="button" class="btn btn-ghost btn-small" data-go="home">← Voltar</button>
+      <div class="module-topbar-title">Sobre</div>
+      <div class="module-topbar-spacer"></div>
+    </nav>
+    <!-- Conteúdo injetado por screens.js a partir de content/about.js -->
+    <div id="about-content"></div>
+  </main>
+
+  <main id="screen-how-to-use" class="screen screen-static" aria-label="Como usar" hidden>
+    <nav class="module-topbar">
+      <button type="button" class="btn btn-ghost btn-small" data-go="home">← Voltar</button>
+      <div class="module-topbar-title">Como usar</div>
+      <div class="module-topbar-spacer"></div>
+    </nav>
+    <article class="static-page">
+      <h1>Como usar o Epidemic Dynamics Lab</h1>
+      <p class="lede">
+        Você pode seguir os módulos na ordem proposta (recomendado para quem está começando)
+        ou ir direto a um tópico específico a partir da página inicial.
+      </p>
+      <h2>Três componentes por módulo</h2>
+      <ol class="ordered-list">
+        <li>
+          <strong>Teoria</strong> — explicações curtas com exemplos clínicos, imagens e
+          definições. Leia sem pressa.
+        </li>
+        <li>
+          <strong>Laboratório interativo</strong> — um componente manipulável (timeline,
+          gráfico, simulador) que permite ver os conceitos em ação.
+        </li>
+        <li>
+          <strong>Atividade</strong> — perguntas, tarefas de classificação ou desafios
+          cronometrados para consolidar o aprendizado.
+        </li>
+      </ol>
+      <h2>Recomendações para uso em sala</h2>
+      <p>
+        O app funciona tanto para autoestudo quanto em aula presencial, projetado na tela
+        principal. Para uso didático em turma, sugiro dedicar 40–50 minutos por módulo
+        nos primeiros quatro e 60–90 minutos nos módulos quantitativos (R₀, SIR/SEIR) e no
+        caso histórico da cólera.
+      </p>
+    </article>
+  </main>
+
+  <main id="screen-references" class="screen screen-static" aria-label="Bibliografia" hidden>
+    <nav class="module-topbar">
+      <button type="button" class="btn btn-ghost btn-small" data-go="home">← Voltar</button>
+      <div class="module-topbar-title">Bibliografia</div>
+      <div class="module-topbar-spacer"></div>
+    </nav>
+    <div id="references-container"></div>
+  </main>
+
+
+  <!-- =========================================================
+       SCRIPTS — ordem de carregamento importa
+       ========================================================= -->
+  <script src="js/core/math.js" defer></script>
+  <script src="js/core/models.js" defer></script>
+  <script src="js/core/state.js" defer></script>
+  <script src="js/core/plot.js" defer></script>
+  <script src="js/core/quiz-engine.js" defer></script>
+  <!-- Bibliografia: carregada como <script> (não fetch) para funcionar em file:// -->
+  <script src="references.js" defer></script>
+  <script src="js/core/references-view.js" defer></script>
+  <!-- Sistema de citações Vancouver inline (CitationManager + tooltip).
+       DEVE vir depois de references-view.js (delega formatação a EDL.refs.format)
+       e antes dos módulos (que invocam EDL.citations.create). -->
+  <script src="js/core/citations.js" defer></script>
+
+  <!-- Conteúdo de telas estáticas longas, extraído do index para facilitar manutenção -->
+  <script src="content/about.js" defer></script>
+  <script src="js/core/screens.js" defer></script>
+
+  <!-- Datasets (carregados antes dos módulos que dependem deles) -->
+  <script src="assets/data/soho-1854-cholera.js" defer></script>
+  <script src="assets/data/haiti/haiti-cholera-2010.js" defer></script>
+
+  <!-- Módulos — cada um se auto-registra -->
+  <script src="js/modules/01-introducao.js" defer></script>
+  <script src="js/modules/02-conceitos.js" defer></script>
+  <script src="js/modules/03-cadeia.js" defer></script>
+  <script src="js/modules/04-dinamica-individuo.js" defer></script>
+  <script src="js/modules/05-r0.js" defer></script>
+  <script src="js/modules/06-imunidade-rebanho.js" defer></script>
+  <script src="js/modules/07-sir-seir.js" defer></script>
+  <script src="js/modules/08-colera-soho-haiti.js" defer></script>
+
+  <!-- Boot -->
+  <script src="js/core/app.js" defer></script>
+</body>
+</html>

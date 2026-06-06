@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+._*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# R
+.Rhistory
+.Rproj.user/
+
+# Python (for scripts/bib2json.py)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (if anyone ever adds tooling later)
+node_modules/
+npm-debug.log
+
+# OS junk
+Thumbs.db
+Desktop.ini
+
+# Local-only working files (images under consideration, not yet licensed)
+_scratch/
+*.tmp
+
+# Binários não versionáveis
+*.pdf
