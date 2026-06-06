@@ -568,7 +568,7 @@
         O <strong>Módulo 8</strong> sai da abstração e entra na história: o surto de cólera
         de Soho em 1854, a investigação de John Snow, e sua inesperada repetição no Haiti em
         2010 — 156 anos depois, a mesma doença, em circunstâncias análogas, com resposta
-        moderna de saúde pública e genômica. Em construção.
+        moderna de saúde pública e genômica.
       </p>
     `;
     container.appendChild(sec);
