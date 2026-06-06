@@ -289,9 +289,9 @@ def to_csl(entry):
 
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
-    bib_path = root / "references.bib"
-    json_path = root / "references.json"
-    js_path = root / "references.js"
+    bib_path = root / "references" / "references.bib"
+    json_path = root / "references" / "references.json"
+    js_path = root / "references" / "references.js"
 
     if not bib_path.exists():
         print(f"[erro] arquivo não encontrado: {bib_path}", file=sys.stderr)

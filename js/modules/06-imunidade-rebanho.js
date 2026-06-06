@@ -132,7 +132,7 @@
     container.appendChild(header);
   }
 
-  function renderDerivation(container) {
+  function renderDerivation(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -152,7 +152,7 @@
         <code class="formula-big">R₀ × (1 − p) &lt; 1  ⇒  p &gt; 1 − 1/R₀</code>
       </div>
       <p>
-        Esse é o <strong>limiar de imunidade de rebanho</strong>. Note o que a fórmula diz:
+        Esse é o <strong>limiar de imunidade de rebanho</strong>.${cite('fine2011herd', 'anderson1991infectious')} Note o que a fórmula diz:
         quanto maior o R₀, maior a fração que precisa estar imune. A relação não é linear —
         entre R₀=2 e R₀=4 o limiar sobe de 50% para 75% (ganho de 25pp); entre R₀=4 e R₀=20
         sobe de 75% para 95% (só 20pp, mas exige coberturas absurdamente altas).
@@ -268,7 +268,7 @@
     });
   }
 
-  function renderHerdTable(container) {
+  function renderHerdTable(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -277,7 +277,7 @@
         A coluna direita é o cálculo direto de <code>1 − 1/R₀</code>. Note o salto entre
         doenças de R₀ alto (sarampo) e baixo (gripe sazonal). Esses números ajudam a
         entender por que o Programa Nacional de Imunizações persegue coberturas
-        universais altas para sarampo e rubéola.
+        universais altas para sarampo e rubéola.${cite('fine2011herd')}
       </p>
       <div class="r0-table-wrap">
         <table class="r0-table">
@@ -719,13 +719,15 @@
     status: 'available',
     quizCount: QUIZ.length,
     render(container) {
+      const cm   = EDL.citations.create({ idPrefix: 'm06-ref-' });
+      const cite = (...keys) => cm.cite(...keys);
       renderHeader(container);
-      renderDerivation(container);
+      renderDerivation(container, cite);
       renderCalculator(container);
-      renderHerdTable(container);
+      renderHerdTable(container, cite);
       renderNetworkLab(container);
       renderActivity(container);
-      EDL.refs.renderModuleSection(container, 6);
+      EDL.refs.renderCitedReferences(container, cm);
       renderFooter(container);
     }
   });

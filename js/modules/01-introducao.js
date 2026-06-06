@@ -1065,8 +1065,7 @@
       <p>
         O próximo módulo — <strong>Conceitos Básicos</strong> — formaliza o vocabulário da
         epidemiologia: endemia, surto, epidemia, pandemia; reservatórios; risco e
-        fatores de risco; caso notificado vs. confirmado. Ele ainda está em construção;
-        volte em breve.
+        fatores de risco; caso notificado vs. confirmado.
       </p>
       <p class="muted">
         Quer sugerir ajustes no conteúdo ou corrigir algo? Abra uma issue no repositório

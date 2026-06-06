@@ -18,10 +18,11 @@
   <!-- Open Graph (Facebook, LinkedIn, WhatsApp, iMessage previews) -->
   <meta property="og:site_name" content="Epidemic Dynamics Lab" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://henriquealvarenga.com/epidemic-dynamics-lab/" />
   <meta property="og:title" content="Epidemic Dynamics Lab" />
   <meta property="og:description"
         content="Laboratório interativo de epidemiologia em oito módulos — de conceitos básicos a modelos SIR/SEIR, com estudo de caso do surto de cólera de Soho 1854 e do Haiti 2010." />
-  <meta property="og:image" content="assets/og-image.png" />
+  <meta property="og:image" content="https://henriquealvarenga.com/epidemic-dynamics-lab/assets/og-image.png" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -34,7 +35,10 @@
   <meta name="twitter:title" content="Epidemic Dynamics Lab" />
   <meta name="twitter:description"
         content="Laboratório interativo de epidemiologia em oito módulos." />
-  <meta name="twitter:image" content="assets/og-image.png" />
+  <meta name="twitter:image" content="https://henriquealvarenga.com/epidemic-dynamics-lab/assets/og-image.png" />
+
+  <!-- URL canônica -->
+  <link rel="canonical" href="https://henriquealvarenga.com/epidemic-dynamics-lab/" />
 
   <!-- Fontes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -126,7 +130,7 @@
           <button type="button" data-go="about" class="footer-link">Sobre</button>
           <button type="button" data-go="how-to-use" class="footer-link">Como usar</button>
           <button type="button" data-go="references" class="footer-link">Bibliografia</button>
-          <a href="https://github.com/" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+          <a href="https://github.com/henriquealvarenga/epidemic-dynamics-lab" target="_blank" rel="noopener" class="footer-link">GitHub</a>
         </div>
         <div class="footer-legal">
           Licença MIT · v0.1.0 (em desenvolvimento)
@@ -249,7 +253,7 @@
   <script src="js/core/plot.js" defer></script>
   <script src="js/core/quiz-engine.js" defer></script>
   <!-- Bibliografia: carregada como <script> (não fetch) para funcionar em file:// -->
-  <script src="references.js" defer></script>
+  <script src="references/references.js" defer></script>
   <script src="js/core/references-view.js" defer></script>
   <!-- Sistema de citações Vancouver inline (CitationManager + tooltip).
        DEVE vir depois de references-view.js (delega formatação a EDL.refs.format)

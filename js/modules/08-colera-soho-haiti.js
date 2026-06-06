@@ -1259,7 +1259,7 @@
         Você concluiu os oito módulos do Epidemic Dynamics Lab. Do conceito mais básico (definição
         de epidemiologia) ao caso histórico mais emblemático (o mapa de Snow com dados reais),
         passando pelos modelos quantitativos fundamentais. Para continuar estudando, consulte a
-        <a href="references.bib" download>bibliografia BibTeX do app</a> — inclui fontes para
+        <a href="references/references.bib" download>bibliografia BibTeX do app</a> — inclui fontes para
         aprofundamento em cada módulo.
       </p>
       <p class="muted" style="margin-top:.6rem;font-size:.88rem">

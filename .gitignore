@@ -28,6 +28,7 @@ Desktop.ini
 
 # Local-only working files (images under consideration, not yet licensed)
 _scratch/
+_sources/
 *.tmp
 
 # Binários não versionáveis

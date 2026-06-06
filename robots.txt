@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://henriquealvarenga.com/epidemic-dynamics-lab/sitemap.xml

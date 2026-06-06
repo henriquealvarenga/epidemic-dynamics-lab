@@ -151,7 +151,7 @@
     container.appendChild(header);
   }
 
-  function renderConceptSection(container) {
+  function renderConceptSection(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -160,7 +160,7 @@
         <strong>R₀</strong> — pronuncia-se <em>“erre-naught”</em> ou <em>“erre-zero”</em> —
         é o número médio de casos secundários gerados por um único infectado em uma
         população <strong>totalmente suscetível</strong>. É calculado para o início
-        do surto, antes que a imunidade adquirida reduza a transmissão.
+        do surto, antes que a imunidade adquirida reduza a transmissão.${cite('anderson1991infectious')}
       </p>
 
       <div class="r0-interp">
@@ -199,7 +199,7 @@
     container.appendChild(sec);
   }
 
-  function renderR0Table(container) {
+  function renderR0Table(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -207,7 +207,7 @@
       <p>
         Os valores abaixo são faixas estimadas na literatura (não valores únicos) —
         R₀ varia conforme a variante do patógeno, as condições socioambientais e os
-        métodos de estimativa. Use como ordens de grandeza, não como medidas precisas.
+        métodos de estimativa. Use como ordens de grandeza, não como medidas precisas.${cite('li2020covid')}
       </p>
       <div class="r0-table-wrap">
         <table class="r0-table">
@@ -671,12 +671,14 @@
     status: 'available',
     quizCount: QUIZ.length,
     render(container) {
+      const cm   = EDL.citations.create({ idPrefix: 'm05-ref-' });
+      const cite = (...keys) => cm.cite(...keys);
       renderHeader(container);
-      renderConceptSection(container);
-      renderR0Table(container);
+      renderConceptSection(container, cite);
+      renderR0Table(container, cite);
       renderSimulator(container);
       renderActivity(container);
-      EDL.refs.renderModuleSection(container, 5);
+      EDL.refs.renderCitedReferences(container, cm);
       renderFooter(container);
     }
   });

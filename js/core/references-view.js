@@ -60,10 +60,10 @@
 
     // Fallback: fetch (só funciona em http(s):// — bloqueado em file:// no Safari)
     if (_loadPromise) return _loadPromise;
-    console.warn('[EDL] window.EDL.data.references não definido; caindo no fetch de references.json. Verifique se <script src="references.js"> está incluído em index.html.');
-    _loadPromise = fetch('references.json')
+    console.warn('[EDL] window.EDL.data.references não definido; caindo no fetch de references/references.json. Verifique se <script src="references/references.js"> está incluído em index.html.');
+    _loadPromise = fetch('references/references.json')
       .then(r => {
-        if (!r.ok) throw new Error('Falha ao carregar references.json: HTTP ' + r.status);
+        if (!r.ok) throw new Error('Falha ao carregar references/references.json: HTTP ' + r.status);
         return r.json();
       })
       .then(data => {
@@ -475,8 +475,8 @@
           <h2>Baixar</h2>
           <p>A bibliografia também está disponível para importação em gerenciadores de referência:</p>
           <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-            <a class="btn btn-ghost btn-small" href="references.bib" download>📄 references.bib (BibTeX)</a>
-            <a class="btn btn-ghost btn-small" href="references.json" download>📄 references.json (CSL-JSON)</a>
+            <a class="btn btn-ghost btn-small" href="references/references.bib" download>📄 references.bib (BibTeX)</a>
+            <a class="btn btn-ghost btn-small" href="references/references.json" download>📄 references.json (CSL-JSON)</a>
           </div>
           <p class="muted" style="margin-top:.6rem;font-size:.88rem">
             O BibTeX importa direto em EndNote, Zotero, Mendeley, Papers ou qualquer outro

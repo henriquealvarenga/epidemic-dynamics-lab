@@ -249,7 +249,7 @@
     container.appendChild(header);
   }
 
-  function renderEndemiaSection(container) {
+  function renderEndemiaSection(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -257,7 +257,7 @@
       <p>
         Esses quatro termos diferem em duas dimensões: <strong>quantidade de casos</strong>
         (habitual vs. acima do esperado) e <strong>extensão geográfica</strong>
-        (local, regional, ou intercontinental). A tabela mental abaixo ajuda a não confundi-los.
+        (local, regional, ou intercontinental). A tabela mental abaixo ajuda a não confundi-los.${cite('cdc2012principles')}
       </p>
 
       <div class="concept-grid">
@@ -313,14 +313,14 @@
     container.appendChild(sec);
   }
 
-  function renderReservatoriosSection(container) {
+  function renderReservatoriosSection(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
       <h2>2. Reservatórios de microorganismos</h2>
       <p>
         <strong>Reservatório</strong> é o ambiente — humano, animal ou inanimado — onde o agente
-        infeccioso sobrevive, se multiplica e permanece disponível para transmissão. Identificar
+        infeccioso sobrevive, se multiplica e permanece disponível para transmissão.${cite('cdc_niosh_chain2024')} Identificar
         o reservatório é ponto de partida para qualquer estratégia de controle: não é possível
         interromper a cadeia epidemiológica sem saber de onde o agente vem.
       </p>
@@ -348,7 +348,7 @@
     container.appendChild(sec);
   }
 
-  function renderRiskSection(container) {
+  function renderRiskSection(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -361,9 +361,9 @@
       <p>
         A distinção entre causa e fator de risco é sutil e central: tabagismo é fator de risco
         para câncer de pulmão, mas nem todo fumante adoece, nem todo doente é fumante. Fatores
-        de risco operam em conjunto — o que chamamos de <em>causas componentes</em> — e raramente
+        de risco operam em conjunto — o que chamamos de <em>causas componentes</em>${cite('rothman1976causes', 'rothman2005causation')} — e raramente
         um único fator é suficiente por si só. Bradford Hill, em 1965, formalizou nove critérios
-        para inferir causalidade a partir de associações estatísticas; esse framework continua sendo
+        para inferir causalidade a partir de associações estatísticas${cite('hill1965criteria')}; esse framework continua sendo
         a base da epidemiologia aplicada até hoje.
       </p>
       <div class="definition-row">
@@ -384,13 +384,13 @@
     container.appendChild(sec);
   }
 
-  function renderCasesSection(container) {
+  function renderCasesSection(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
       <h2>4. Caso notificado × caso confirmado</h2>
       <p>
-        Na vigilância epidemiológica, um caso passa por estágios. A terminologia importa porque
+        Na vigilância epidemiológica, um caso passa por estágios.${cite('cdc1990casedefs', 'ms2022guia')} A terminologia importa porque
         a contagem entra em painéis oficiais e direciona decisões.
       </p>
       <div class="case-flow">
@@ -563,7 +563,7 @@
         Com o vocabulário firme, o <strong>Módulo 3 — Cadeia Epidemiológica</strong>
         vai abrir a caixa preta da transmissão: de onde o agente vem, como sai do
         reservatório, como chega ao próximo hospedeiro, e onde podemos intervir para
-        quebrar a cadeia. Ainda em construção — volte em breve.
+        quebrar a cadeia.
       </p>
     `;
     container.appendChild(sec);
@@ -581,14 +581,16 @@
     status: 'available',
     quizCount: QUIZ.length,
     render(container) {
+      const cm   = EDL.citations.create({ idPrefix: 'm02-ref-' });
+      const cite = (...keys) => cm.cite(...keys);
       renderHeader(container);
-      renderEndemiaSection(container);
-      renderReservatoriosSection(container);
-      renderRiskSection(container);
-      renderCasesSection(container);
+      renderEndemiaSection(container, cite);
+      renderReservatoriosSection(container, cite);
+      renderRiskSection(container, cite);
+      renderCasesSection(container, cite);
       renderClassifier(container);
       renderActivity(container);
-      EDL.refs.renderModuleSection(container, 2);
+      EDL.refs.renderCitedReferences(container, cm);
       renderFooter(container);
     }
   });

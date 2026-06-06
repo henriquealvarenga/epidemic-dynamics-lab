@@ -189,7 +189,7 @@
     container.appendChild(header);
   }
 
-  function renderPeriods(container) {
+  function renderPeriods(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -219,7 +219,7 @@
           <p>
             Tempo entre a <strong>exposição ao agente e o aparecimento dos primeiros
             sinais clínicos</strong>. Não é silêncio biológico — na maioria dos casos,
-            o patógeno se replica ativamente. Dá base para o tempo de quarentena.
+            o patógeno se replica ativamente. Dá base para o tempo de quarentena.${cite('nishiura2007incubation')}
           </p>
         </div>
         <div class="period-card">
@@ -255,7 +255,7 @@
           <p>
             Saída da latência para uma <strong>nova fase lítica</strong> (replicação
             ativa), em que o paciente pode voltar a eliminar o agente e/ou apresentar
-            sintomas. Gatilhos: imunossupressão, estresse, UV.
+            sintomas. Gatilhos: imunossupressão, estresse, UV.${cite('traylen2011reactivation')}
           </p>
         </div>
       </div>
@@ -271,7 +271,7 @@
     container.appendChild(sec);
   }
 
-  function renderLatentVsIncubation(container) {
+  function renderLatentVsIncubation(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -286,8 +286,8 @@
         Escolheram 40 dias porque esse era o limite superior razoável para os períodos
         de incubação conhecidos. O princípio continua valendo: a duração da quarentena
         para qualquer doença parte do <em>percentil 95</em> do período de incubação
-        observado. Para o SARS-CoV-2, os 14 dias de isolamento inicial vinham daí
-        (percentil 95 estimado em 12,5 dias).
+        observado.${cite('nishiura2007incubation')} Para o SARS-CoV-2, os 14 dias de isolamento inicial vinham daí
+        (percentil 95 da distribuição de incubação estimado em 12,5 dias).${cite('li2020covid')}
       </p>
     `;
     container.appendChild(sec);
@@ -529,12 +529,14 @@
     status: 'available',
     quizCount: QUIZ.length,
     render(container) {
+      const cm   = EDL.citations.create({ idPrefix: 'm04-ref-' });
+      const cite = (...keys) => cm.cite(...keys);
       renderHeader(container);
-      renderPeriods(container);
-      renderLatentVsIncubation(container);
+      renderPeriods(container, cite);
+      renderLatentVsIncubation(container, cite);
       renderComparator(container);
       renderActivity(container);
-      EDL.refs.renderModuleSection(container, 4);
+      EDL.refs.renderCitedReferences(container, cm);
       renderFooter(container);
     }
   });

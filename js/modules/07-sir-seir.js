@@ -142,7 +142,7 @@
     container.appendChild(header);
   }
 
-  function renderTheory(container) {
+  function renderTheory(container, cite) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
     sec.innerHTML = `
@@ -159,7 +159,7 @@
       </ol>
       <p>
         Para capturar tudo isso, usamos <strong>modelos compartimentais</strong>: a população é
-        dividida em "caixas" e equações diferenciais descrevem o fluxo entre elas.
+        dividida em "caixas" e equações diferenciais descrevem o fluxo entre elas.${cite('kermack1927sir', 'anderson1991infectious')}
       </p>
 
       <h3 style="margin-top:1.5rem">SIR clássico</h3>
@@ -586,11 +586,13 @@
     status: 'available',
     quizCount: QUIZ.length,
     render(container) {
+      const cm   = EDL.citations.create({ idPrefix: 'm07-ref-' });
+      const cite = (...keys) => cm.cite(...keys);
       renderHeader(container);
-      renderTheory(container);
+      renderTheory(container, cite);
       renderLab(container);
       renderActivity(container);
-      EDL.refs.renderModuleSection(container, 7);
+      EDL.refs.renderCitedReferences(container, cm);
       renderFooter(container);
     }
   });
