@@ -672,6 +672,12 @@ button { font-family: inherit; }
 }
 
 /* ---------- 9. Atividade / Quiz -------------------------------------- */
+@keyframes quizFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.quiz-body-enter { animation: quizFadeIn 180ms ease both; }
+
 .activity-box {
   background: var(--bg-1);
   border: 1px solid var(--border-1);

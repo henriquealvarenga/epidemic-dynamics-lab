@@ -462,7 +462,7 @@
     updateThresholdHint();
 
     /* --- Cleanup ao sair do módulo --- */
-    if (EDL.onModuleDestroy) EDL.onModuleDestroy(stopAnimation);
+    if (typeof EDL.onModuleDestroy === 'function') EDL.onModuleDestroy(stopAnimation);
 
     /* --- Render inicial: grid vazio, sem rodar automaticamente --- */
     drawInitial();

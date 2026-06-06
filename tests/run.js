@@ -182,7 +182,7 @@ test('SIR: conservação da população em todos os ciclos', () => {
   const out = EDL.models.sir({
     R0: 3, infectious_period: 7, cycles: 100, N: 10000, I0: 10
   });
-  for (let k = 0; k < out.cycles; k++) {
+  for (let k = 0; k < out.cycleCount; k++) {
     const total = out.S[k] + out.I[k] + out.R[k];
     assert.ok(Math.abs(total - 10000) < 1,
       `população não conservada em k=${k}: total=${total.toFixed(4)}`);
@@ -211,7 +211,7 @@ test('SIR: S monotonicamente não-crescente, R monotonicamente não-decrescente'
   const out = EDL.models.sir({
     R0: 2.5, infectious_period: 7, cycles: 80, N: 10000, I0: 5
   });
-  for (let k = 1; k < out.cycles; k++) {
+  for (let k = 1; k < out.cycleCount; k++) {
     assert.ok(out.S[k] <= out.S[k - 1] + 1e-6, `S subiu em k=${k}`);
     assert.ok(out.R[k] >= out.R[k - 1] - 1e-6, `R desceu em k=${k}`);
   }
@@ -226,7 +226,7 @@ test('SEIR: conservação S + E + I + R = N', () => {
     R0: 3, infectious_period: 7, incubation_period: 5,
     cycles: 100, N: 10000, I0: 10
   });
-  for (let k = 0; k < out.cycles; k++) {
+  for (let k = 0; k < out.cycleCount; k++) {
     const total = out.S[k] + out.E[k] + out.I[k] + out.R[k];
     assert.ok(Math.abs(total - 10000) < 1,
       `população não conservada em k=${k}: total=${total.toFixed(4)}`);
@@ -242,7 +242,7 @@ test('SEIR: pico ocorre mais tarde que SIR para mesmo R₀', () => {
     cycles: 100, N: 10000, I0: 10
   });
   let sirPeakK = 0, seirPeakK = 0;
-  for (let k = 1; k < sir.cycles; k++) {
+  for (let k = 1; k < sir.cycleCount; k++) {
     if (sir.I[k]  > sir.I[sirPeakK])  sirPeakK  = k;
     if (seir.I[k] > seir.I[seirPeakK]) seirPeakK = k;
   }

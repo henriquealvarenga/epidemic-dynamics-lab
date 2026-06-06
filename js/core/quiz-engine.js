@@ -130,6 +130,10 @@
           </button>
         </div>
       `;
+      body.classList.remove('quiz-body-enter');
+      void body.offsetWidth;
+      body.classList.add('quiz-body-enter');
+
       const startBtn = body.querySelector('#quiz-start-btn');
       startBtn.addEventListener('click', () => {
         renderQuestion();
@@ -172,6 +176,10 @@
           <button type="button" class="btn btn-primary" id="q-next" hidden>Próxima →</button>
         </div>
       `;
+
+      body.classList.remove('quiz-body-enter');
+      void body.offsetWidth;
+      body.classList.add('quiz-body-enter');
 
       const feedback = body.querySelector('#q-feedback');
       const nextBtn  = body.querySelector('#q-next');
@@ -228,7 +236,7 @@
       if (correct && !wasExpired)      prefix = '<strong>Correto.</strong>';
       else if (correct && wasExpired)  prefix = '<strong>Correto, mas fora do tempo.</strong>';
       else if (!correct && wasExpired) prefix = '<strong>Tempo esgotado e resposta incorreta.</strong>';
-      else                              prefix = '<strong>Não exatamente.</strong>';
+      else                              prefix = '<strong>Resposta incorreta.</strong>';
 
       let pointsLine = '';
       if (correct && !wasExpired) {
@@ -343,6 +351,10 @@
           </div>
         </div>
       `;
+      body.classList.remove('quiz-body-enter');
+      void body.offsetWidth;
+      body.classList.add('quiz-body-enter');
+
       body.querySelector('#q-redo').addEventListener('click', () => {
         // Reset de estado e volta para a intro — dá um respiro entre rodadas
         state.idx = 0; state.correct = 0; state.score = 0;
@@ -394,7 +406,11 @@
     }
 
     // Cleanup ao sair do módulo — o timer não pode continuar rodando em background
-    if (EDL.onModuleDestroy) EDL.onModuleDestroy(stopTimer);
+    if (typeof EDL.onModuleDestroy === 'function') {
+      EDL.onModuleDestroy(stopTimer);
+    } else {
+      console.warn('[EDL/quiz] EDL.onModuleDestroy não disponível — timer pode vazar ao sair do módulo');
+    }
 
     // Kick off — começa na tela de intro, não diretamente nas perguntas.
     // Usuário clica "Iniciar quiz" para começar o cronômetro.

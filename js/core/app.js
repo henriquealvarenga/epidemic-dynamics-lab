@@ -169,14 +169,14 @@
     if (!el) return;
     el.innerHTML = `
       <div style="max-width:640px;margin:5rem auto;padding:2rem;
-                  background:#1a1018;border:1px solid #ff6b6b;border-radius:12px;
-                  color:#f0f4f8;font-family:Inter,sans-serif">
-        <h2 style="color:#ff6b6b;margin-top:0">Falha ao carregar o app</h2>
+                  background:var(--bg-2);border:1px solid var(--danger);border-radius:var(--r-lg);
+                  color:var(--text-primary);font-family:Inter,sans-serif">
+        <h2 style="color:var(--danger);margin-top:0">Falha ao carregar o app</h2>
         <p>Uma ou mais dependências não estão disponíveis:</p>
         <ul style="font-family:'JetBrains Mono',monospace;font-size:.88rem;line-height:1.8">
           ${missing.map(m => `<li>${m}</li>`).join('')}
         </ul>
-        <p style="color:#a8b3c4;font-size:.92rem;line-height:1.6">
+        <p style="color:var(--text-secondary);font-size:.92rem;line-height:1.6">
           Verifique sua conexão com a internet (o D3.js é carregado de um CDN
           externo) e se todos os arquivos JavaScript do projeto estão acessíveis.
           Recarregue a página após checar.

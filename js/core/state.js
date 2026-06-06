@@ -115,6 +115,7 @@
    *     title: string
    *     subtitle: string     // frase curta no card
    *     status: 'available' | 'coming-soon'
+   *     quizCount: int       // OBRIGATÓRIO — número de perguntas do quiz (0 se não houver)
    *     render: function(container) { ... }   // popula o container com o módulo
    *     destroy?: function()                   // opcional — limpeza ao sair
    *   }

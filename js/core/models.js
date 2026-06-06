@@ -34,7 +34,7 @@
       inc[k]  = inc[k - 1] * R0;
       acum[k] = acum[k - 1] + inc[k];
     }
-    return { cycles: n, inc, acum };
+    return { cycleCount: n, inc, acum };
   }
 
   /* ---------------------------------------------------------------------
@@ -61,6 +61,7 @@
    *    Retorno: séries em passo de 1 ciclo (não de dt), prontas para plotar.
    * ------------------------------------------------------------------- */
   function sir({ R0, infectious_period, cycles, N, I0, R_init = 0, dt = 0.1 }) {
+    if (!N || N <= 0) throw new Error('[EDL/models] sir: N deve ser > 0');
     const gamma = 1 / infectious_period;
     const beta  = R0 * gamma;
 
@@ -109,7 +110,7 @@
       newCases[k] = incInCycle;
     }
 
-    return { cycles: n, S, I, R, newCases };
+    return { cycleCount: n, S, I, R, newCases };
   }
 
   /* ---------------------------------------------------------------------
@@ -126,6 +127,7 @@
    *    Parâmetros: iguais ao SIR + incubation_period, E0.
    * ------------------------------------------------------------------- */
   function seir({ R0, infectious_period, incubation_period, cycles, N, I0, E0 = 0, R_init = 0, dt = 0.1 }) {
+    if (!N || N <= 0) throw new Error('[EDL/models] seir: N deve ser > 0');
     const gamma = 1 / infectious_period;
     const sigma = 1 / incubation_period;
     const beta  = R0 * gamma;
@@ -183,7 +185,7 @@
       newCases[k] = incInCycle;
     }
 
-    return { cycles: n, S, E, I, R, newCases };
+    return { cycleCount: n, S, E, I, R, newCases };
   }
 
   /* ---------------------------------------------------------------------
@@ -194,6 +196,7 @@
    *    intervenção de saúde pública, etc.).
    * ------------------------------------------------------------------- */
   function sirWithIntervention({ R0, R0_after, intervention_cycle, infectious_period, cycles, N, I0, R_init = 0, dt = 0.1 }) {
+    if (!N || N <= 0) throw new Error('[EDL/models] sirWithIntervention: N deve ser > 0');
     const gamma = 1 / infectious_period;
     const steps_per_cycle = Math.max(1, Math.round(1 / dt));
     const dt_eff = 1 / steps_per_cycle;
@@ -240,7 +243,7 @@
       newCases[k] = incInCycle;
     }
 
-    return { cycles: n, S, I, R, newCases };
+    return { cycleCount: n, S, I, R, newCases };
   }
 
   /* ---------------------------------------------------------------------

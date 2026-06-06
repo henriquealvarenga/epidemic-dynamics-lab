@@ -239,6 +239,7 @@
   let tooltipEl = null;
   let tooltipCurrent = null;   // anchor atualmente sob hover/focus
   let tooltipInited = false;
+  let scrollTimer = null;
 
   function _ensureTooltipEl() {
     if (tooltipEl) return tooltipEl;
@@ -314,6 +315,7 @@
 
   function _hideTooltip() {
     tooltipCurrent = null;
+    if (scrollTimer) { cancelAnimationFrame(scrollTimer); scrollTimer = null; }
     if (tooltipEl) {
       tooltipEl.style.display = 'none';
       tooltipEl.setAttribute('aria-hidden', 'true');
@@ -355,7 +357,6 @@
     });
 
     // Hide ao rolar (evita ficar flutuando dessincronizado)
-    let scrollTimer;
     window.addEventListener('scroll', () => {
       if (!tooltipCurrent) return;
       if (scrollTimer) cancelAnimationFrame(scrollTimer);
