@@ -40,3 +40,6 @@ _sources/
 
 # Staging da publicação, montado pelo CI
 _site/
+
+# Supabase CLI — estado local do vínculo com o projeto
+supabase/.temp/
