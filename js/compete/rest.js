@@ -5,11 +5,20 @@
  * GoTrue. Sem SDK, sem CDN, sem build — como o resto deste site.
  *
  * POR QUE NÃO USAR O supabase-js
- *   O build UMD do SDK tem ~211 KB. Trocá-lo por ~200 linhas de fetch
- *   elimina um domínio externo que a rede da faculdade pode bloquear
- *   justamente no dia da aula, e mantém a identidade do projeto (zero
- *   dependência). O projeto irmão do Exame do Estado Mental fez a mesma
- *   escolha e rodou aulas reais assim.
+ *   Não é para evitar um domínio novo — o site já carrega o D3 do
+ *   jsdelivr, e o SDK viria de lá também. São dois outros motivos:
+ *
+ *   1. 211 KB. É o tamanho do build UMD, baixado no celular do aluno, na
+ *      rede da faculdade, antes de ele conseguir entrar na sala.
+ *   2. Um ponto de falha a menos. Para jogar, o navegador já precisa
+ *      alcançar o Supabase — isso é inevitável. Com o SDK, precisaria
+ *      alcançar TAMBÉM o CDN: o backend poderia estar perfeitamente no ar
+ *      e a aula travaria porque o jsdelivr não respondeu.
+ *
+ *   O custo dessa escolha é real e vale registrar: renovação de token,
+ *   tratamento de erro e (na fase 2) o cliente de Realtime passam a ser
+ *   nossos para manter. O projeto irmão do Exame do Estado Mental fez a
+ *   mesma escolha e rodou aulas reais assim.
  *
  * NENHUMA FUNÇÃO AQUI LANÇA EXCEÇÃO
  *   Leitura falha → devolve []. Escrita falha → devolve { ok:false, erro }.
