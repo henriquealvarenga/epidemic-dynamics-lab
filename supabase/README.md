@@ -25,13 +25,16 @@ Em 11/08/2026, no projeto Afya:
 | 20260811153720 | `aulas_fix_search_path` | correção apontada pelo linter |
 | 20260811154033 | `aulas_teams_grant_por_coluna` | fecha escrita do placar pelo dono da sala |
 | 20260811154724 | `aulas_faxina_automatica` | três jobs `pg_cron` |
+| 20260811160312 | `fecha_enviar_resposta_publica` | revoga a RPC aberta herdada |
 
 **Os arquivos `.sql` ainda não estão neste diretório.** A cópia canônica está no projeto, em
 `supabase_migrations.schema_migrations`. Para trazê-los para cá de forma fiel — sem
 transcrição manual, que introduziria divergência silenciosa entre arquivo e banco:
 
 ```bash
-npx supabase link --project-ref yfnilksnqehysxunujli && npx supabase db pull
+npx --yes supabase@latest login          # autenticação pelo navegador, uma vez
+npx --yes supabase@latest link --project-ref yfnilksnqehysxunujli
+npx --yes supabase@latest db pull
 ```
 
 Até isso ser feito, **o banco é a única cópia do schema.** Vale resolver antes da primeira aula.
@@ -69,16 +72,32 @@ deixava também reescrever `score`. Descoberto testando, não revisando.
 **`join_room` é `SECURITY DEFINER`** para não precisar dar `SELECT` em `rooms` a desconhecidos,
 o que permitiria enumerar salas abertas e entrar nelas.
 
+## Resolvido em 11/08/2026
+
+- **`public.enviar_resposta`** ✅ — função `SECURITY DEFINER` herdada do uso anterior deste
+  projeto, executável por `anon`, que não validava nada: qualquer portador da chave publishable
+  gravava ou sobrescrevia qualquer linha de `public.respostas`, em qualquer sessão, para
+  qualquer grupo. Confirmada pelo linter (lints 0028 e 0029).
+
+  `EXECUTE` revogado de `anon`, `authenticated` e `public`. Verificado: chamada com a chave
+  pública devolve `401 permission denied for function enviar_resposta`. Função e tabela seguem
+  intactas, com as mesmas 0 linhas. Para reverter:
+
+  ```sql
+  grant execute on function public.enviar_resposta(text,text,text,int,jsonb)
+    to anon, authenticated;
+  ```
+
+- **Rate limit de sign-in anônimo** ✅ — subido de 30 para 200/hora por IP. O limite é por IP, e
+  a turma inteira compartilha o NAT da faculdade: na prática é um teto por *sala*, não por
+  aluno. Cada aparelho gasta uma entrada só na primeira vez (o token persiste em
+  `localStorage`), então F5 e troca de aba não consomem cota.
+
 ## Pendências
 
-- **`public.enviar_resposta`** — função `SECURITY DEFINER` herdada do uso anterior deste
-  projeto, executável por `anon`, que não valida nada: qualquer portador da chave publishable
-  grava ou sobrescreve qualquer linha de `public.respostas`. Confirmada pelo linter de segurança
-  (lints 0028 e 0029). A tabela está vazia. Sugestão: `revoke execute`, que é reversível.
-- **Rate limit de sign-in anônimo**: 30/hora por IP é o padrão. A turma inteira compartilha o IP
-  do NAT da faculdade, então o limite é por *sala*, não por aluno. Com grupos há folga, mas vale
-  subir antes da primeira aula.
-- **Leaked password protection** está desligada (Authentication → Passwords).
+- **Migrations não versionadas** — ver acima. Precisa de `supabase login`, que é interativo.
+- **Leaked password protection** está desligada (Authentication → Passwords). Vale ligar,
+  sobretudo se for definir uma senha nova para o painel do professor.
 
 ## Verificação
 
