@@ -166,9 +166,62 @@
     }
   }
 
+  /* ---------------------------------------------------------------------
+   * Registro de telas externas — EDL.screens.register()
+   *
+   * SCREEN_IDS e route() eram fechados: acrescentar uma tela exigia editar
+   * este arquivo em dois lugares. Com o registro, um recurso opcional (o modo
+   * competição, por exemplo) declara a própria rota sem que o core precise
+   * saber que ele existe — e o index.html não ganha markup para telas que a
+   * maioria dos visitantes nunca abre.
+   *
+   *   EDL.screens.register('jogar', {
+   *     onEnter(container, param) { ... },   // ao entrar na rota
+   *     onLeave(container) { ... }           // ao sair (opcional)
+   *   });
+   *
+   * O <main> é criado sob demanda, com as mesmas classes e o mesmo
+   * tratamento de foco das telas nativas.
+   * ------------------------------------------------------------------- */
+  const HANDLERS = Object.create(null);
+
+  function register(name, handlers) {
+    if (!name || typeof name !== 'string') {
+      console.error('[EDL/screens] register: nome inválido', name);
+      return;
+    }
+    if (name in SCREEN_IDS) {
+      console.warn('[EDL/screens] rota já registrada, sobrescrevendo:', name);
+    }
+    const id = 'screen-' + name;
+    SCREEN_IDS[name] = id;
+    HANDLERS[name] = handlers || {};
+
+    if (!document.getElementById(id)) {
+      const el = document.createElement('main');
+      el.id = id;
+      el.className = 'screen screen-static';
+      el.hidden = true;
+      el.setAttribute('aria-label', (handlers && handlers.label) || name);
+      document.body.appendChild(el);
+    }
+  }
+
   /** Roteador: lê hash e ativa a tela correspondente. */
   function route() {
     const { name, param } = parseHash(location.hash);
+
+    // Sai de uma tela registrada: dá a ela a chance de desmontar timers,
+    // conexões e listeners antes de a próxima assumir.
+    const anterior = EDL.state.currentScreen;
+    if (anterior && anterior !== name && HANDLERS[anterior] &&
+        typeof HANDLERS[anterior].onLeave === 'function') {
+      try {
+        HANDLERS[anterior].onLeave(document.getElementById(SCREEN_IDS[anterior]));
+      } catch (err) {
+        console.error('[EDL/screens] onLeave de', anterior, 'falhou:', err);
+      }
+    }
 
     // Se estava num módulo e vai sair dele (para qualquer outra tela),
     // roda os cleanups registrados. renderModule() também chama cleanup
@@ -206,6 +259,26 @@
       // durante uma tentativa de quiz, e os badges/progresso refletem isso.
       if (typeof EDL.renderModulesGrid === 'function') EDL.renderModulesGrid();
       showScreen('home');
+      return;
+    }
+    // Telas registradas por EDL.screens.register()
+    if (HANDLERS[name]) {
+      showScreen(name);
+      if (typeof HANDLERS[name].onEnter === 'function') {
+        try {
+          HANDLERS[name].onEnter(document.getElementById(SCREEN_IDS[name]), param);
+        } catch (err) {
+          console.error('[EDL/screens] onEnter de', name, 'falhou:', err);
+          const el = document.getElementById(SCREEN_IDS[name]);
+          if (el) {
+            el.textContent = '';
+            const p = document.createElement('p');
+            p.style.color = 'var(--danger)';
+            p.textContent = 'Erro ao carregar esta tela. Veja o console para detalhes.';
+            el.appendChild(p);
+          }
+        }
+      }
       return;
     }
     showScreen(name);
@@ -403,6 +476,7 @@
       route(); // rota inicial
     },
     goTo(name, param) { setHash(name, param); },
-    openModule(id)    { setHash('module', id); }
+    openModule(id)    { setHash('module', id); },
+    register
   };
 })();
