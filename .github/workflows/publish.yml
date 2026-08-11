@@ -97,6 +97,7 @@ jobs:
             --exclude '_scratch' \
             --exclude '_sources' \
             --exclude 'docs-internos' \
+            --exclude 'supabase' \
             --exclude 'tests' \
             --exclude 'scripts'
           echo "Conteúdo publicado:"
