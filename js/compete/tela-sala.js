@@ -178,7 +178,10 @@
     });
 
     wrap.querySelector('#btn-local').addEventListener('click', () => {
-      compete.config.enabled = false;   // força o backend local nesta sessão
+      /* Persistido, não só em memória: as abas dos grupos precisam
+       * enxergar a mesma escolha, senão o professor abre sala local e os
+       * alunos vão procurá-la no Supabase. */
+      compete.rest.forcarLocal(true);
       render(document.getElementById('screen-sala'));
     });
     wrap.querySelectorAll('[data-voltar]').forEach(b => {

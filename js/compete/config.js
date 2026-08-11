@@ -50,7 +50,8 @@
       sala:     'edl.compete.sala.v1', // sala aberta pelo professor
       queue:    'edl.compete.queue.v1', // respostas aguardando envio
       authStudent: 'edl.compete.auth.aluno.v1',
-      authTeacher: 'edl.compete.auth.prof.v1'
+      authTeacher: 'edl.compete.auth.prof.v1',
+      forcarLocal: 'edl.compete.local.forcado.v1'
     },
 
     /* Ritmo da rede. Números herdados do projeto irmão do Exame do Estado

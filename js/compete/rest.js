@@ -47,7 +47,26 @@
    * já expirado, para não sair uma requisição fadada ao 401. */
   const MARGEM_EXPIRACAO_S = 30;
 
+  /* O "Ensaiar sem internet" do console precisa valer para TODAS as abas
+   * desta origem, não só para a do professor: o ensaio é justamente uma
+   * aba de console e várias de grupos. Guardar a escolha em localStorage
+   * é o que faz as abas concordarem — sem isso, o professor abre uma sala
+   * local e os alunos tentam o Supabase, onde ela não existe. */
+  function localForcado() {
+    try { return localStorage.getItem(cfg.storageKeys.forcarLocal) === '1'; }
+    catch (err) { return false; }
+  }
+
+  function forcarLocal(ligar) {
+    try {
+      if (ligar) localStorage.setItem(cfg.storageKeys.forcarLocal, '1');
+      else localStorage.removeItem(cfg.storageKeys.forcarLocal);
+    } catch (err) { /* fica só nesta aba */ }
+    cfg.enabled = !ligar;
+  }
+
   function configValida() {
+    if (localForcado()) return false;
     return !!(cfg && cfg.enabled && cfg.url && cfg.publishableKey &&
               cfg.url.indexOf('http') === 0);
   }
@@ -321,7 +340,7 @@
   }
 
   compete.rest = {
-    configValida,
+    configValida, localForcado, forcarLocal,
     aluno, professor,
     entrarAnonimo, enviarCodigo, verificarCodigo, renovar,
     rpc, selecionar, inserir, atualizar, saude,
