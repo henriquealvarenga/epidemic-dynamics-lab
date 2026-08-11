@@ -3628,3 +3628,14 @@ sup.cite a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .sala-podio-barra i, .sala-barra i { transition: none; }
 }
+
+/* Alternância entre os métodos de login do professor */
+.sala-abas { display: flex; gap: .4rem; margin: 0 0 .5rem; }
+.sala-aba {
+  flex: 1; padding: .5rem .6rem; cursor: pointer; font: inherit; font-size: .84rem;
+  background: var(--bg-0); border: 1px solid var(--border-1);
+  border-radius: var(--r-sm); color: var(--text-muted);
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.sala-aba.ativa { color: var(--accent); border-color: var(--accent); }
+.sala-aba:focus-visible { outline: none; box-shadow: var(--shadow-accent); }

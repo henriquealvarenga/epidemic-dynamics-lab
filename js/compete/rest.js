@@ -161,7 +161,8 @@
       if (texto) { try { corpo = JSON.parse(texto); } catch (err) { corpo = texto; } }
 
       if (!resp.ok) {
-        return { ok: false, status: resp.status, erro: mensagemDeErro(corpo, resp.status) };
+        return { ok: false, status: resp.status,
+                 erro: mensagemDeErro(corpo, resp.status, o.contexto) };
       }
       return { ok: true, status: resp.status, dados: corpo };
     } catch (err) {
@@ -171,8 +172,13 @@
   }
 
   /** Traduz os erros que a turma pode encontrar para português de sala.
-   *  Os códigos vêm dos `raise exception ... using errcode` do schema. */
-  function mensagemDeErro(corpo, status) {
+   *  Os códigos vêm dos `raise exception ... using errcode` do schema.
+   *
+   *  `contexto` desambigua códigos reaproveitados pelo GoTrue: o mesmo
+   *  `invalid_credentials` vale para código OTP errado e para senha
+   *  errada, e dizer "peça um novo código" a quem digitou a senha manda a
+   *  pessoa para o lado errado. */
+  function mensagemDeErro(corpo, status, contexto) {
     if (corpo && typeof corpo === 'object') {
       const cod = corpo.code || '';
       if (cod === 'P0002') return 'Sala não encontrada. Confira o código com o professor.';
@@ -188,10 +194,25 @@
       const cerr = corpo.error_code || '';
       if (cerr === 'otp_disabled')
         return 'E-mail não cadastrado como professor neste projeto.';
-      if (cerr === 'otp_expired' || cerr === 'invalid_credentials')
-        return 'Código inválido ou expirado. Peça um novo.';
+      if (cerr === 'otp_expired' || cerr === 'invalid_credentials') {
+        return contexto === 'senha'
+          ? 'E-mail ou senha incorretos.'
+          : 'Código inválido ou expirado. Peça um novo.';
+      }
       if (cerr === 'over_email_send_rate_limit' || cerr === 'over_request_rate_limit')
         return 'Muitas tentativas seguidas. Aguarde alguns minutos.';
+
+      /* O servidor devolve "Error sending magic link email" para qualquer
+       * falha de SMTP — inclusive credencial recusada pelo provedor, que é
+       * problema de CONFIGURAÇÃO, não do que o professor digitou. Sem esta
+       * tradução, ele fica tentando de novo achando que errou o e-mail.
+       * (Vimos exatamente isso: SMTP do Gmail devolvendo 535 BadCredentials
+       * porque exige App Password, não a senha da conta.) */
+      if (cerr === 'unexpected_failure' || status === 500) {
+        return 'O servidor não conseguiu enviar o e-mail. É configuração de ' +
+               'SMTP no Supabase, não erro seu — use o login por senha ou ' +
+               'siga em modo local.';
+      }
 
       if (corpo.msg)          return corpo.msg;
       if (corpo.message)      return corpo.message;
@@ -237,6 +258,29 @@
       body: { email: String(email || '').trim(), create_user: false }
     });
     return r.ok ? { ok: true } : { ok: false, erro: r.erro };
+  }
+
+  /**
+   * Login por e-mail e senha — alternativa ao OTP.
+   *
+   * Existe porque o OTP depende do e-mail CHEGAR, e isso depende de uma
+   * configuração de SMTP que pode falhar exatamente no dia da aula (já
+   * falhou aqui: SMTP do Gmail devolvendo 535 por exigir App Password).
+   * O projeto irmão do Exame do Estado Mental usa senha pelo mesmo motivo,
+   * registrado lá como "confiável numa sala de aula".
+   *
+   * A senha é digitada pelo professor no formulário e vai direto para o
+   * GoTrue; não é guardada em lugar nenhum — só o token que volta.
+   */
+  async function entrarComSenha(email, senha) {
+    if (!configValida()) return { ok: false, erro: 'modo competição desligado' };
+    const r = await pedir(AUTH() + '/token?grant_type=password', {
+      method: 'POST', contexto: 'senha',
+      body: { email: String(email || '').trim(), password: String(senha || '') }
+    });
+    if (!r.ok) return { ok: false, erro: r.erro };
+    const s = professor.definirDaResposta(r.dados);
+    return s ? { ok: true, sessao: s } : { ok: false, erro: 'resposta de login inesperada' };
   }
 
   async function verificarCodigo(email, codigo) {
@@ -342,7 +386,7 @@
   compete.rest = {
     configValida, localForcado, forcarLocal,
     aluno, professor,
-    entrarAnonimo, enviarCodigo, verificarCodigo, renovar,
+    entrarAnonimo, enviarCodigo, verificarCodigo, entrarComSenha, renovar,
     rpc, selecionar, inserir, atualizar, saude,
     _lerClaims: lerClaims   // exposto para os testes
   };

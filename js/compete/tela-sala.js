@@ -9,14 +9,22 @@
  *   é zero, porque criar sala exige estar na allowlist aulas.instructors.
  *   A autorização mora no RLS; esta tela é cortesia.
  *
- * LOGIN POR CÓDIGO DE 6 DÍGITOS, NÃO POR MAGIC LINK
- *   Três razões, na ordem em que pesam:
- *   1. O magic link volta com #access_token=… no fragmento — exatamente
- *      onde vive o roteador deste site.
- *   2. Na aula, o e-mail chega no celular e a projeção está no notebook.
- *      Um código de 6 dígitos atravessa aparelhos; um link, não.
- *   3. Com create_user:false, visitante nenhum cria conta digitando o
- *      próprio e-mail.
+ * DOIS MÉTODOS DE LOGIN, E NENHUM É MAGIC LINK
+ *   O magic link volta com #access_token=… no fragmento — exatamente onde
+ *   vive o roteador deste site. Fora isso, na aula o e-mail chega no
+ *   celular enquanto a projeção está no notebook: um código atravessa
+ *   aparelhos, um link não.
+ *
+ *   CÓDIGO POR E-MAIL (OTP): sem senha para lembrar, e com
+ *   create_user:false nenhum visitante cria conta digitando o próprio
+ *   e-mail.
+ *
+ *   SENHA: alternativa que NÃO depende de e-mail chegar. Existe porque o
+ *   envio depende de configuração de SMTP, que pode falhar exatamente no
+ *   dia da aula — e falhou aqui: SMTP do Gmail devolvendo 535 por exigir
+ *   App Password em vez da senha da conta. O projeto irmão do Exame do
+ *   Estado Mental usa senha pelo mesmo motivo, registrado lá como
+ *   "confiável numa sala de aula".
  *
  * POLLING, NÃO WEBSOCKET
  *   Duas consultas a cada 3 s. Realtime fica para a fase seguinte — e
@@ -105,10 +113,23 @@
           cadastrados como professor recebem.
         </p>
 
+        <div class="sala-abas" role="tablist">
+          <button type="button" class="sala-aba ativa" data-metodo="otp" role="tab"
+                  aria-selected="true">Código por e-mail</button>
+          <button type="button" class="sala-aba" data-metodo="senha" role="tab"
+                  aria-selected="false">Senha</button>
+        </div>
+
         <form id="form-otp" novalidate>
           <label class="compete-label" for="campo-email">E-mail</label>
           <input id="campo-email" class="compete-input" type="email"
                  autocomplete="email" placeholder="voce@exemplo.com" />
+
+          <div id="bloco-senha" hidden>
+            <label class="compete-label" for="campo-senha">Senha</label>
+            <input id="campo-senha" class="compete-input" type="password"
+                   autocomplete="current-password" placeholder="••••••••" />
+          </div>
 
           <div id="bloco-codigo" hidden>
             <label class="compete-label" for="campo-otp">Código recebido</label>
@@ -140,7 +161,25 @@
     const erro  = wrap.querySelector('#erro-otp');
     const aviso = wrap.querySelector('#aviso-otp');
     const botao = wrap.querySelector('#btn-otp');
+    const blocoSenha = wrap.querySelector('#bloco-senha');
+    const senha = wrap.querySelector('#campo-senha');
     let enviado = false;
+    let metodo = 'otp';
+
+    wrap.querySelectorAll('.sala-aba').forEach(aba => {
+      aba.addEventListener('click', () => {
+        metodo = aba.dataset.metodo;
+        wrap.querySelectorAll('.sala-aba').forEach(a => {
+          a.classList.toggle('ativa', a === aba);
+          a.setAttribute('aria-selected', String(a === aba));
+        });
+        blocoSenha.hidden = metodo !== 'senha';
+        bloco.hidden = metodo !== 'otp' || !enviado;
+        erro.hidden = true; aviso.hidden = true;
+        botao.textContent = metodo === 'senha' ? 'Entrar →'
+                          : (enviado ? 'Entrar →' : 'Enviar código →');
+      });
+    });
 
     otp.addEventListener('input', () => {
       otp.value = otp.value.replace(/\D/g, '');
@@ -150,6 +189,15 @@
       ev.preventDefault();
       erro.hidden = true;
       botao.disabled = true;
+
+      if (metodo === 'senha') {
+        botao.textContent = 'Entrando…';
+        const r = await compete.rest.entrarComSenha(email.value, senha.value);
+        botao.disabled = false; botao.textContent = 'Entrar →';
+        if (!r.ok) { erro.textContent = r.erro; erro.hidden = false; return; }
+        render(document.getElementById('screen-sala'));
+        return;
+      }
 
       if (!enviado) {
         botao.textContent = 'Enviando…';
