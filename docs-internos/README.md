@@ -57,26 +57,42 @@ the Transformation of Everyday Life". O ISBN registrado (978-1845886509) **não 
 O rascunho é sintoma da confusão: lista duas entradas Halliday para a mesma obra, uma como
 artigo de 2003 na *History Today* e outra como livro de 2013.
 
-### Pendência editorial: onde `cook2001bazalgette` não sustenta o texto
+### Onde `cook2001bazalgette` não sustentava o texto ✅
 
-O artigo real do Cook tem **uma página** (802–802) e é sobre os esgotos de Bazalgette. Ele
-sustenta bem as 8 citações sobre Bazalgette (L104, L747, L756, L760, L780, L815, L817, L1229 de
-`js/modules/08-colera-soho-haiti.js`), mas foi herdado em 5 pontos que falam da **recepção do
-trabalho de Snow**, que ele não cobre:
+O artigo real do Cook tem **uma página** (802–802) e é sobre os esgotos de Bazalgette. Sustenta
+bem as 8 citações sobre Bazalgette (L104, L747, L756, L760, L780, L815, L817, L1229 de
+`js/modules/08-colera-soho-haiti.js`), mas tinha sido herdado em 5 pontos que falam da
+**recepção do trabalho de Snow**, que ele não cobre. Resolvido assim:
 
-| Linha | Afirmação | Situação |
-|---|---|---|
-| 102 | "minimizado pelo *Lancet* e pelos sanitaristas miasmatistas" | **Cook é a única fonte** |
-| 731 | "evidência esmagadora, recebida com ceticismo na época" | **Cook é a única fonte** |
-| 96  | "primeiro ato moderno de saúde pública baseado em evidência" | já tem Johnson + Snow |
-| 331 | "Koch isola o *V. cholerae*, validando o que Snow provou" | já tem Johnson |
-| 1222 | "~30 anos para aceitação científica (Koch, 1884)" | já tem Johnson |
+| Linha | Afirmação | Antes | Agora |
+|---|---|---|---|
+| 102 | "minimizado pelo *Lancet* e pelos sanitaristas miasmatistas" | só Cook | `eyler2001assessments` |
+| 731 | "evidência esmagadora, recebida com ceticismo na época" | só Cook | `eyler2001assessments` |
+| 96  | "primeiro ato moderno de saúde pública baseado em evidência" | Johnson + Snow + Cook | Cook removido |
+| 331 | "Koch isola o *V. cholerae*, validando o que Snow provou" | Johnson + Cook | Cook removido |
+| 1222 | "~30 anos para aceitação científica (Koch, 1884)" | Cook + Johnson | Cook removido |
 
-Os dois primeiros são os que importam: uma afirmação sobre a recepção de Snow apoiada apenas
-numa nota de uma página sobre engenharia sanitária. Precisam de fonte própria ou de reformulação.
-Nos outros três, basta remover Cook — as fontes que ficam já sustentam o texto.
+Fonte nova para os dois casos órfãos:
+Eyler JM. *The changing assessments of John Snow's and William Farr's cholera studies.*
+Sozial- und Präventivmedizin. 2001;46(4):225–232. doi:10.1007/BF01593177 — verificada na
+Crossref. Eyler é autor da biografia de referência de William Farr, e o artigo trata exatamente
+de como os estudos de Snow foram avaliados pelos contemporâneos.
 
-Não corrigido aqui por ser decisão editorial sobre o argumento, não defeito de metadado.
+**Ressalva honesta:** o metadado do Eyler está verificado, mas o texto completo não foi lido. A
+adequação vem do título e da especialidade do autor, não de conferência página a página.
+
+### Pendência aberta: escapes LaTeX vazando para a bibliografia pública
+
+Independente do acima, `scripts/bib2json.py` não converte escapes LaTeX, e **8 trechos aparecem
+literais para o aluno** na tela de bibliografia:
+
+- `m\'edecine g\'en\'erale`, `Fam\'ilia`, `G\'ervas`, `G\'erard` — acentos em `\'e`, `\'i`
+- `Doll \& Hill`, `Chapman \& Hall/CRC`, `Southwark \& Vauxhall` — `\&`
+- `\urlhttps://www.worldbank.org/...` — um `\url{}` mal desmontado
+
+Correção provável: uma tabela de substituição no `bib2json.py` (ou usar acentos UTF-8 direto no
+`.bib`, que é o que a maioria das entradas já faz) e tratar `\url{...}` antes de concatenar em
+`note`.
 
 ### Convenção: campo `verificacao`
 

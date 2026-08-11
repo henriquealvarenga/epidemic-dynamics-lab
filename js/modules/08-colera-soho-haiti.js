@@ -93,13 +93,13 @@
       { date: '07 set 1854', title: 'Snow apresenta os dados',
         body: `Snow leva a análise ao Conselho de Governadores e Diretores de St. James, mostrando a concentração das mortes em torno da bomba de Broad Street. Argumenta por sua remoção — os governadores, embora céticos, concordam${cite('johnson2006ghostmap', 'snow1855cholera')}.` },
       { date: '08 set 1854', title: 'Alça da bomba é removida',
-        body: `A alça da bomba de Broad Street é desparafusada, impedindo que mais água seja retirada. O surto já dava sinais de declínio natural (a população fugira do bairro; os casos graves estavam mortos ou em recuperação) — mas o gesto entra para a história como o primeiro ato moderno de saúde pública baseado em evidência epidemiológica${cite('johnson2006ghostmap', 'snow1855cholera', 'cook2001bazalgette')}.` },
+        body: `A alça da bomba de Broad Street é desparafusada, impedindo que mais água seja retirada. O surto já dava sinais de declínio natural (a população fugira do bairro; os casos graves estavam mortos ou em recuperação) — mas o gesto entra para a história como o primeiro ato moderno de saúde pública baseado em evidência epidemiológica${cite('johnson2006ghostmap', 'snow1855cholera')}.` },
       { date: 'out 1854', title: 'Snow e Whitehead começam a colaborar',
         body: `O reverendo Henry Whitehead, que inicialmente duvidava da tese de Snow, percorre o bairro entrevistando sobreviventes. Whitehead identifica o caso-índice (a bebê do n.º 40) e, convertido pelos dados, passa a defender a hipótese hídrica${cite('johnson2006ghostmap')}.` },
       { date: 'dez 1854', title: 'O mapa é apresentado',
         body: `Snow apresenta na Sociedade Epidemiológica de Londres o famoso mapa que hoje aparece em todo livro-texto. Diferente da lenda, o mapa não foi criado no calor da investigação — foi construído metodicamente, quatro meses depois, a partir de todos os óbitos registrados${cite('johnson2006ghostmap', 'snow1855cholera')}.` },
       { date: '1855', title: '"The Grand Experiment"',
-        body: `Snow publica a 2ª edição de On the Mode of Communication of Cholera, incluindo o estudo comparativo das empresas de água Southwark & Vauxhall (captação em Londres, abaixo dos despejos) e Lambeth (captação em Thames Ditton, acima). A taxa de mortalidade em S&V é ~8–9 vezes maior${cite('snow1855cholera')}. Apesar da força da evidência, o trabalho é minimizado pelo Lancet e pela maioria dos sanitaristas miasmatistas${cite('cook2001bazalgette')}.` },
+        body: `Snow publica a 2ª edição de On the Mode of Communication of Cholera, incluindo o estudo comparativo das empresas de água Southwark & Vauxhall (captação em Londres, abaixo dos despejos) e Lambeth (captação em Thames Ditton, acima). A taxa de mortalidade em S&V é ~8–9 vezes maior${cite('snow1855cholera')}. Apesar da força da evidência, o trabalho é minimizado pelo Lancet e pela maioria dos sanitaristas miasmatistas${cite('eyler2001assessments')}.` },
       { date: 'jun 1858', title: 'Snow morre aos 45 anos',
         body: `John Snow morre em 16 de junho de 1858, provavelmente de AVC, sem ver sua tese universalmente aceita${cite('johnson2006ghostmap')}. Dois meses depois, Londres entra no "Great Stink" — e a reforma sanitária que começa ali, embora motivada pela teoria miasmática errada, acabará validando a tese hídrica de Snow na prática${cite('halliday2007filth', 'cook2001bazalgette')}.` }
     ];
@@ -328,7 +328,7 @@
           </p>
           <p style="margin-top: 1rem; padding: 0.8rem; background: rgba(0, 217, 192, 0.1); border-left: 3px solid var(--accent); border-radius: 4px;">
             <strong>Legado:</strong> Snow morreria em 1858, sem ver sua tese universalmente aceita. Mas 30 anos depois, Koch isolaria
-            o <em>Vibrio cholerae</em>, validando tudo que Snow havia provado com observação e estatística${cite('johnson2006ghostmap', 'cook2001bazalgette')}.
+            o <em>Vibrio cholerae</em>, validando tudo que Snow havia provado com observação e estatística${cite('johnson2006ghostmap')}.
           </p>
         </div>
       </div>
@@ -728,7 +728,7 @@
         qualquer outra coisa entre estes dois grupos — exceto a água que consumiam</em>"${cite('snow1855cholera')}. Em
         linguagem epidemiológica moderna, era um estudo de coorte natural com quase-randomização.
         Nas primeiras quatro semanas do surto, o risco chegou a ser 14× maior para os clientes de
-        S&V${cite('snow1855cholera')}. A evidência era esmagadora — mas recebida com ceticismo na época${cite('cook2001bazalgette')}.
+        S&V${cite('snow1855cholera')}. A evidência era esmagadora — mas recebida com ceticismo na época${cite('eyler2001assessments')}.
       </p>
     `;
     container.appendChild(s);
@@ -1219,7 +1219,7 @@
         <div class="compare-cell"><strong>Tecnologia disponível:</strong> PCR, sequenciamento, GIS, modelagem SIR</div>
         <div class="compare-cell"><strong>Resposta pública:</strong> remoção da alça da bomba, 11 dias após início${cite('snow1855cholera', 'johnson2006ghostmap')}</div>
         <div class="compare-cell"><strong>Resposta pública:</strong> soluções orais, vacinação pontual (Shanchol), saneamento — tudo insuficiente nos primeiros anos${cite('world_bank2015haiti')}</div>
-        <div class="compare-cell compare-cell--last"><strong>Tempo para aceitação científica:</strong> ~30 anos (Koch isola o V. cholerae em 1884)${cite('cook2001bazalgette', 'johnson2006ghostmap')}</div>
+        <div class="compare-cell compare-cell--last"><strong>Tempo para aceitação científica:</strong> ~30 anos (Koch isola o V. cholerae em 1884)${cite('johnson2006ghostmap')}</div>
         <div class="compare-cell compare-cell--last"><strong>Tempo para reconhecimento de responsabilidade:</strong> ONU só admite em 2016 (6 anos)${cite('un2016secretarygeneral')}</div>
       </div>
       <div class="callout callout-info" style="margin-top:1.2rem">
