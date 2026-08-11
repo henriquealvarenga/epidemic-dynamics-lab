@@ -22,6 +22,7 @@ import datetime
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -81,19 +82,127 @@ def strip_outer_braces(s: str) -> str:
     return s
 
 
+# Acentos LaTeX → marca combinante Unicode. Aplicar a marca depois da letra
+# e normalizar em NFC resolve maiúsculas e minúsculas de uma vez, sem precisar
+# de uma tabela com todas as combinações.
+_MARCA_COMBINANTE = {
+    "'": "\u0301",  # agudo      \'e → é
+    "`": "\u0300",  # grave      \`a → à
+    "^": "\u0302",  # circunflexo \^o → ô
+    '"': "\u0308",  # trema      \"a → ä
+    "~": "\u0303",  # til        \~a → ã
+    "=": "\u0304",  # mácron
+    ".": "\u0307",  # ponto acima
+    "c": "\u0327",  # cedilha    \c{c} → ç
+    "v": "\u030C",  # caron
+    "u": "\u0306",  # breve
+    "H": "\u030B",  # duplo agudo
+    "d": "\u0323",  # ponto abaixo
+}
+
+# Acentos aparecem em três formas no BibTeX, e todas ocorrem neste projeto:
+#     {\'e}     chave envolvendo o comando INTEIRO — forma mais comum em
+#               arquivos exportados por gerenciadores de referência
+#     \'{e}     chave só na letra
+#     \'e       sem chave
+#
+# As formas "envoltas" precisam ser tratadas ANTES das demais: se `\'e}` for
+# consumido primeiro, a chave de ABERTURA fica órfã e vaza para o site
+# (`m{\'e}decine` → `m{édecine`). Foi exatamente esse o bug.
+#
+# Separação por tipo de comando:
+#   - por SÍMBOLO (\'e) — sem ambiguidade, chaves opcionais;
+#   - por LETRA (\c{c}) — chaves OBRIGATÓRIAS, senão `\url` seria lido como
+#     "\u seguido de r" (breve no r) e a URL viraria lixo.
+_ACENTO_LETRA_ENVOLTO_RE = re.compile(r"\{\\([cvuHd])\s*\{\s*([A-Za-z])\s*\}\s*\}")
+_ACENTO_ENVOLTO_RE = re.compile(r"\{\\([`'^\"~=.])\s*\{?\s*([A-Za-z])\s*\}?\s*\}")
+_ACENTO_LETRA_RE = re.compile(r"\\([cvuHd])\{\s*([A-Za-z])\s*\}")
+_ACENTO_SIMBOLO_RE = re.compile(r"\\([`'^\"~=.])\s*\{?\s*([A-Za-z])\s*\}?")
+
+# Letras que não são acento + base, mas um caractere próprio.
+_LETRAS_LATEX = {
+    r"\ss": "ß", r"\aa": "å", r"\AA": "Å", r"\o": "ø", r"\O": "Ø",
+    r"\l": "ł", r"\L": "Ł", r"\ae": "æ", r"\AE": "Æ",
+    r"\oe": "œ", r"\OE": "Œ", r"\i": "ı", r"\j": "ȷ",
+}
+
+# Caracteres que o LaTeX exige escapar e que no site devem aparecer literais.
+_ESPECIAIS_LATEX = {
+    r"\&": "&", r"\%": "%", r"\$": "$", r"\#": "#",
+    r"\_": "_", r"\{": "{", r"\}": "}",
+}
+
+# Comandos de formatação cujo conteúdo interessa e o comando não.
+_COMANDOS_TEXTO_RE = re.compile(
+    r"\\(?:emph|textit|textbf|textsc|texttt|textrm|mbox|text)\s*\{([^{}]*)\}"
+)
+
+_URL_RE = re.compile(r"\\url\s*\{([^{}]*)\}")
+# URL solta em `howpublished`/`note`, sem \url{} ao redor.
+_URL_NUA_RE = re.compile(r"(?<![\x00\w])(https?://[^\s{}]+)")
+
+
+def _aplica_acento(m: "re.Match") -> str:
+    marca = _MARCA_COMBINANTE.get(m.group(1))
+    if not marca:
+        return m.group(0)
+    return unicodedata.normalize("NFC", m.group(2) + marca)
+
+
 def clean_latex(s: str) -> str:
-    """Remove os wrappers de proteção de maiúsculas ({X}) e resolve alguns
-    comandos LaTeX comuns em citações."""
-    # {Something} internos — preserva o texto
+    """Resolve comandos LaTeX e remove os wrappers de proteção de maiúsculas.
+
+    A ORDEM importa, e um erro aqui vaza direto para a bibliografia que o
+    aluno lê. O bug que motivou esta versão: a remoção genérica de chaves
+    rodava primeiro, então `\\url{https://x}` virava `\\urlhttps://x` e
+    `{\\'e}` virava `\\'e` — ambos apareciam literais no site.
+
+    Comandos são resolvidos ANTES de as chaves serem removidas.
+    """
+    # 1) URLs saem de cena primeiro: nenhuma das substituições seguintes
+    #    (traços, chaves, espaços) pode tocá-las. '--' numa URL é legítimo e
+    #    viraria en-dash.
+    urls: list[str] = []
+
+    def _guarda_url(m: "re.Match") -> str:
+        urls.append(m.group(1))
+        return f"\x00URL{len(urls) - 1}\x00"
+
+    s = _URL_RE.sub(_guarda_url, s)
+    s = _URL_NUA_RE.sub(_guarda_url, s)
+
+    # 2) Comandos de formatação: preserva o conteúdo, descarta o comando.
+    s = _COMANDOS_TEXTO_RE.sub(r"\1", s)
+
+    # 3) Acentos e letras especiais. As formas com chave externa primeiro.
+    s = _ACENTO_LETRA_ENVOLTO_RE.sub(_aplica_acento, s)
+    s = _ACENTO_ENVOLTO_RE.sub(_aplica_acento, s)
+    s = _ACENTO_LETRA_RE.sub(_aplica_acento, s)
+    s = _ACENTO_SIMBOLO_RE.sub(_aplica_acento, s)
+    for cmd, letra in _LETRAS_LATEX.items():
+        s = re.sub(re.escape(cmd) + r"(?![A-Za-z])", letra, s)
+
+    # 4) Caracteres escapados (\& → &). Antes da remoção de chaves para que
+    #    \{ e \} não sejam confundidos com agrupamento.
+    for cmd, char in _ESPECIAIS_LATEX.items():
+        s = s.replace(cmd, char)
+
+    # 5) {Something} internos — preserva o texto (proteção de maiúsculas).
     s = re.sub(r"\{([^{}]*)\}", r"\1", s)
-    # Traços LaTeX: ordem importa — '---' (em-dash) antes de '--' (en-dash)
+
+    # 6) Traços LaTeX: ordem importa — '---' (em-dash) antes de '--' (en-dash)
     s = s.replace("---", "—")
     s = s.replace("--", "–")
     # Aspas LaTeX simples
     s = s.replace("``", "“").replace("''", "”")
     # Espaços extras
     s = re.sub(r"\s+", " ", s).strip()
-    return s
+
+    # 7) Devolve as URLs intactas.
+    for i, url in enumerate(urls):
+        s = s.replace(f"\x00URL{i}\x00", url)
+
+    return unicodedata.normalize("NFC", s)
 
 
 def parse_entries(bib_text: str):
@@ -287,7 +396,59 @@ def to_csl(entry):
 # Main
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Autoteste de clean_latex
+#
+# Existe porque um erro nessa função não quebra nada — apenas vaza LaTeX cru
+# para a bibliografia que o aluno lê, silenciosamente. Rodado no CI junto com
+# a suíte JS: `python3 scripts/bib2json.py --selftest`.
+# ---------------------------------------------------------------------------
+
+_CASOS_TESTE = [
+    # As três formas de acento que aparecem em .bib de verdade
+    (r"m{\'e}decine g{\'e}n{\'e}rale", "médecine générale"),   # chave envolvendo o comando
+    (r"Pr\"{a}ventivmedizin", "Präventivmedizin"),              # chave só na letra
+    (r"Pr\"aventivmedizin", "Präventivmedizin"),                # sem chave
+    (r"Fam{\'i}lia", "Família"),
+    (r"G{\'e}rvas", "Gérvas"),
+    (r"\c{c}ao e \~{a}o e {\c{c}}", "çao e ão e ç"),
+    (r"Ma{\~n}ana e {\o}re e \ss", "Mañana e øre e ß"),
+    # Caracteres escapados
+    (r"Doll \& Hill", "Doll & Hill"),
+    (r"Chapman \& Hall/CRC", "Chapman & Hall/CRC"),
+    # URLs: não podem sofrer nenhuma substituição (o '--' é legítimo)
+    (r"\url{https://ex.com/a--b}", "https://ex.com/a--b"),
+    (r"veja https://ex.com/x--y agora", "veja https://ex.com/x--y agora"),
+    # Formatação
+    (r"\emph{destaque} e \textbf{forte}", "destaque e forte"),
+    # Comportamentos que NÃO podem regredir
+    (r"{J}ohn {S}now", "John Snow"),
+    (r"225--232", "225–232"),
+    (r"traço --- longo", "traço — longo"),
+    (r"``citado''", "“citado”"),
+]
+
+
+def selftest() -> int:
+    falhas = 0
+    for entrada, esperado in _CASOS_TESTE:
+        obtido = clean_latex(entrada)
+        if obtido != esperado:
+            falhas += 1
+            print(f"[falha] {entrada!r}\n        esperado: {esperado!r}\n"
+                  f"        obtido  : {obtido!r}", file=sys.stderr)
+    total = len(_CASOS_TESTE)
+    if falhas:
+        print(f"[erro] clean_latex: {falhas}/{total} caso(s) falharam", file=sys.stderr)
+        return 1
+    print(f"[ok] clean_latex: {total}/{total} casos")
+    return 0
+
+
 def main() -> int:
+    if "--selftest" in sys.argv[1:]:
+        return selftest()
+
     root = Path(__file__).resolve().parent.parent
     bib_path = root / "references" / "references.bib"
     json_path = root / "references" / "references.json"
