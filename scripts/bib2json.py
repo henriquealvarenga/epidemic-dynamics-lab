@@ -445,6 +445,43 @@ def selftest() -> int:
     return 0
 
 
+def check(bib_path: Path, json_path: Path) -> int:
+    """Confere se references.json está em dia com references.bib.
+
+    Compara APENAS `items`. O cabeçalho carrega `_generated_at_utc`, que muda
+    a cada execução: compará-lo faria este gate reprovar todo build, e um gate
+    que sempre falha é pior do que gate nenhum — vira ruído que se aprende a
+    ignorar, e um dia esconde um problema real.
+    """
+    if not json_path.exists():
+        print(f"[erro] arquivo não encontrado: {json_path}", file=sys.stderr)
+        return 1
+
+    esperado = [to_csl(e) for e in parse_entries(bib_path.read_text(encoding="utf-8"))]
+    try:
+        atual = json.loads(json_path.read_text(encoding="utf-8")).get("items")
+    except json.JSONDecodeError as err:
+        print(f"[erro] {json_path.name} não é JSON válido: {err}", file=sys.stderr)
+        return 1
+
+    if atual == esperado:
+        print(f"[ok] referências em dia ({len(esperado)} entradas)")
+        return 0
+
+    print("[erro] references.json está desatualizado em relação a references.bib.",
+          file=sys.stderr)
+    ids_atuais = {i.get("id") for i in (atual or [])}
+    ids_novos = {i.get("id") for i in esperado}
+    if ids_novos - ids_atuais:
+        print(f"       faltando: {sorted(ids_novos - ids_atuais)}", file=sys.stderr)
+    if ids_atuais - ids_novos:
+        print(f"       sobrando: {sorted(ids_atuais - ids_novos)}", file=sys.stderr)
+    if ids_atuais == ids_novos:
+        print("       mesmas chaves, conteúdo divergente.", file=sys.stderr)
+    print("       Rode: python3 scripts/bib2json.py", file=sys.stderr)
+    return 1
+
+
 def main() -> int:
     if "--selftest" in sys.argv[1:]:
         return selftest()
@@ -457,6 +494,9 @@ def main() -> int:
     if not bib_path.exists():
         print(f"[erro] arquivo não encontrado: {bib_path}", file=sys.stderr)
         return 1
+
+    if "--check" in sys.argv[1:]:
+        return check(bib_path, json_path)
 
     bib_text = bib_path.read_text(encoding="utf-8")
     entries = parse_entries(bib_text)

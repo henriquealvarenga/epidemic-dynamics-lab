@@ -59,16 +59,11 @@ jobs:
       # O .json e o .js são derivados do .bib e versionados. Se alguém editar
       # o .bib e esquecer de rodar o conversor, o site publica a bibliografia
       # antiga sem nenhum sinal de erro.
+      #
+      # --check compara só os `items`: o cabeçalho gerado tem um timestamp, e
+      # um `git diff` cru reprovaria todo build.
       - name: Conferir se as referências geradas estão em dia
-        run: |
-          python3 scripts/bib2json.py
-          if ! git diff --quiet -- references/; then
-            echo "::error::references.json/js estão desatualizados em relação ao references.bib."
-            echo "Rode 'python3 scripts/bib2json.py' e commite os arquivos gerados."
-            git diff --stat -- references/
-            exit 1
-          fi
-          echo "Referências geradas em dia."
+        run: python3 scripts/bib2json.py --check
 
   publicar:
     name: Publicar
