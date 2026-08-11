@@ -339,8 +339,12 @@
   function ligarPlacar(el, id) {
     if (!el) return;
 
-    async function atualizar() {
-      if (document.hidden) return;      // aba dormindo não consulta
+    /* `forcar` pula a guarda de aba oculta. A guarda existe para o poll
+     * periódico não consultar enquanto ninguém olha; a primeira pintura e
+     * o retorno à aba precisam acontecer de qualquer forma, senão o grupo
+     * encontra a posição em branco ao voltar. */
+    async function atualizar(forcar) {
+      if (document.hidden && !forcar) return;
       const linhas = await compete.api.placar(id.roomId, compete.rest && compete.rest.aluno);
       const eu = (linhas || []).find(l => l.team_id === id.teamId);
       if (!eu) { el.innerHTML = ''; return; }
@@ -353,8 +357,14 @@
         </span>`;
     }
 
-    atualizar();
-    pararPlacar = compete.api.observar(id.roomId, atualizar);
+    atualizar(true);
+    const parar = compete.api.observar(id.roomId, () => atualizar());
+    const aoVoltar = () => { if (!document.hidden) atualizar(true); };
+    document.addEventListener('visibilitychange', aoVoltar);
+    pararPlacar = function () {
+      parar();
+      document.removeEventListener('visibilitychange', aoVoltar);
+    };
   }
 
   function limpar() {

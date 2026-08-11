@@ -3513,3 +3513,118 @@ sup.cite a:focus-visible {
   .compete-home-txt strong { font-size: .92rem; }
   .compete-home-txt span   { font-size: .78rem; }
 }
+
+/* =========================================================================
+   CONSOLE DO PROFESSOR — projetado no telão.
+   Tipografia maior que o resto do site: o alvo é leitura a três metros.
+   ========================================================================= */
+
+.sala-wrap { max-width: 1100px; margin: 0 auto; padding: 0 1rem 4rem; }
+
+.sala-projecao {
+  text-align: center; margin: 1.5rem 0;
+  padding: 1.5rem 1rem;
+  background: var(--bg-1);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-lg);
+}
+.sala-instrucao { color: var(--text-secondary); margin: 0 0 .5rem; font-size: .95rem; }
+.sala-codigo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(2.6rem, 11vw, 5.5rem);
+  font-weight: 700; letter-spacing: .14em;
+  color: var(--accent); line-height: 1.05;
+}
+.sala-meta { color: var(--text-muted); font-size: .84rem; margin: .6rem 0 0; }
+
+.sala-colunas {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+}
+@media (max-width: 860px) { .sala-colunas { grid-template-columns: 1fr; } }
+
+.sala-bloco {
+  background: var(--bg-1); border: 1px solid var(--border-1);
+  border-radius: var(--r-md); padding: 1rem 1.1rem;
+}
+.sala-h2   { font-size: 1rem; margin: 0 0 .25rem; }
+.sala-hint { font-size: .78rem; color: var(--text-muted); margin: 0 0 .75rem; }
+.sala-vazio { color: var(--text-muted); font-size: .88rem; text-align: center; padding: 1.5rem 0; }
+
+/* Placar */
+.sala-placar { display: flex; flex-direction: column; gap: .35rem; }
+.sala-linha {
+  display: grid; grid-template-columns: 2.2rem minmax(0,1fr) 5rem 4rem 3rem;
+  align-items: center; gap: .5rem; font-size: .92rem;
+  padding: .3rem .35rem; border-radius: var(--r-sm);
+}
+.sala-linha:nth-child(odd) { background: rgba(255,255,255,.02); }
+.sala-pos  { font-size: 1.05rem; text-align: center; }
+.sala-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala-barra { height: .45rem; background: var(--bg-3); border-radius: 999px; overflow: hidden; }
+.sala-barra i { display: block; height: 100%; background: var(--accent); transition: width .5s ease; }
+.sala-pts  { font-family: 'JetBrains Mono', monospace; font-size: .85rem; text-align: right; }
+.sala-prog { font-family: 'JetBrains Mono', monospace; font-size: .74rem;
+             color: var(--text-muted); text-align: right; }
+
+/* Mapa de calor */
+.sala-calor { display: flex; flex-direction: column; gap: .5rem; }
+.sala-calor-item {
+  padding: .55rem .7rem; border-radius: var(--r-sm);
+  border-left: 3px solid var(--border-1); background: var(--bg-2);
+}
+.sala-calor-item[data-nivel="ruim"]  { border-left-color: var(--c-infected); }
+.sala-calor-item[data-nivel="medio"] { border-left-color: var(--c-exposed); }
+.sala-calor-item[data-nivel="bom"]   { border-left-color: var(--c-recovered); }
+.sala-calor-topo { display: flex; justify-content: space-between; align-items: baseline; }
+.sala-calor-pct  { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: .95rem; }
+.sala-calor-item[data-nivel="ruim"]  .sala-calor-pct { color: var(--c-infected); }
+.sala-calor-item[data-nivel="medio"] .sala-calor-pct { color: var(--c-exposed); }
+.sala-calor-item[data-nivel="bom"]   .sala-calor-pct { color: var(--c-recovered); }
+.sala-calor-n    { font-size: .74rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.sala-calor-q    { font-size: .84rem; line-height: 1.4; margin-top: .2rem; }
+.sala-calor-dist { font-size: .74rem; color: var(--text-muted); margin-top: .25rem; font-style: italic; }
+
+/* Escolha do número de questões */
+.sala-tamanhos { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.sala-tamanho {
+  flex: 1 1 4.5rem; display: flex; flex-direction: column; align-items: center;
+  gap: .1rem; padding: .6rem .4rem; cursor: pointer; font: inherit;
+  background: var(--bg-0); border: 1px solid var(--border-1);
+  border-radius: var(--r-sm); color: var(--text-secondary);
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+.sala-tamanho strong { font-size: 1.15rem; color: var(--text-primary); }
+.sala-tamanho span   { font-size: .7rem; }
+.sala-tamanho.ativo  { border-color: var(--accent); color: var(--accent); }
+.sala-tamanho.ativo strong { color: var(--accent); }
+.sala-tamanho:focus-visible { outline: none; box-shadow: var(--shadow-accent); }
+
+.sala-acoes { display: flex; gap: .75rem; justify-content: center; margin-top: 1.25rem; flex-wrap: wrap; }
+
+/* Pódio em sobreposição, para projetar */
+.sala-podio-overlay {
+  position: fixed; inset: 0; z-index: 80;
+  background: rgba(10,14,26,.94);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.sala-podio-caixa {
+  background: var(--bg-1); border: 1px solid var(--accent);
+  border-radius: var(--r-lg); padding: 2rem;
+  width: min(760px, 100%); text-align: center;
+}
+.sala-podio-caixa h2 { margin: 0 0 1.5rem; font-size: 1.6rem; }
+.sala-podio-linha {
+  display: grid; grid-template-columns: 3rem minmax(0,1fr) 1fr 6rem;
+  align-items: center; gap: .75rem; margin-bottom: .6rem;
+}
+.sala-podio-pos  { font-size: 1.8rem; }
+.sala-podio-nome { text-align: left; font-size: 1.1rem;
+                   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala-podio-barra { height: .75rem; background: var(--bg-3); border-radius: 999px; overflow: hidden; }
+.sala-podio-barra i { display: block; height: 100%; background: var(--accent);
+                      transition: width .7s cubic-bezier(.2,.8,.2,1); }
+.sala-podio-pts { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem;
+                  font-weight: 700; text-align: right; }
+@media (prefers-reduced-motion: reduce) {
+  .sala-podio-barra i, .sala-barra i { transition: none; }
+}
