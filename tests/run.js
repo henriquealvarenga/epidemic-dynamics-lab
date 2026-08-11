@@ -447,6 +447,124 @@ test('progress: EDL.resetScores também limpa o histórico detalhado', () => {
   assert.deepEqual(EDL.state.scores, {});
 });
 
+/* ==================================================================
+ * Modo competição — paridade da pontuação entre local e servidor
+ *
+ * O modo local (BroadcastChannel) reimplementa a fórmula de pontos que
+ * o trigger `aulas.answers_before_insert()` aplica no Postgres. Se as
+ * duas divergirem, ensaiar a aula dá um número e a aula real dá outro
+ * — e a diferença só apareceria na frente da turma.
+ *
+ * Estes casos são os MESMOS que rodei contra o banco ao validar o
+ * schema, com os mesmos resultados esperados.
+ * ================================================================ */
+
+global.BroadcastChannel = function () {
+  return { postMessage() {}, close() {}, set onmessage(_) {} };
+};
+global.document = { addEventListener() {} };
+global.window.crypto = { randomUUID: () => 'uuid-de-teste' };
+
+load('js/compete/config.js');
+load('js/compete/local.js');
+
+const salaDeTeste = { scoring: { seconds: 30, base: 100, bonus_per_sec: 5, late: 50 } };
+const pontos = (correto, secsLeft) =>
+  EDL.compete.local.calcularPontos(salaDeTeste, correto, secsLeft);
+
+test('pontos: acerto com 25s restantes = 225 (igual ao trigger)', () => {
+  assert.equal(pontos(true, 25), 225);
+});
+
+test('pontos: acerto instantâneo = 250 (teto, igual ao trigger)', () => {
+  assert.equal(pontos(true, 30), 250);
+});
+
+test('pontos: erro = 0, independente do tempo', () => {
+  assert.equal(pontos(false, 30), 0);
+  assert.equal(pontos(false, 0), 0);
+});
+
+test('pontos: acerto fora do tempo = 50 (meio-crédito)', () => {
+  assert.equal(pontos(true, 0), 50);
+});
+
+test('pontos: secs_left absurdo é limitado ao teto da sala', () => {
+  // O trigger faz least(secs_left, scoring.seconds). O local precisa
+  // fazer o mesmo, senão o cliente infla o bônus de velocidade.
+  assert.equal(pontos(true, 9999), 250);
+  assert.equal(pontos(true, -5), 50);   // negativo cai no meio-crédito
+});
+
+test('pontos: paridade com a fórmula do quiz-engine', () => {
+  // O que o aluno vê no feedback tem de bater com o que entra no placar.
+  const cfg = EDL.quiz.scoringConfig();
+  for (let s = 0; s <= cfg.seconds; s++) {
+    const doMotor = s <= 0 ? cfg.late : cfg.base + s * cfg.bonusPerSec;
+    assert.equal(pontos(true, s), doMotor, `divergiu com ${s}s restantes`);
+  }
+});
+
+test('local: placar ordena por pontos e compartilha colocação no empate', () => {
+  const L = EDL.compete.local;
+  const sala = L.criarSala({ activityRef: 'x', itemCount: 2, scoring: salaDeTeste.scoring }).dados;
+  const a = L.entrar(sala.code, 'Alfa').dados;
+  const b = L.entrar(sala.code, 'Beta').dados;
+
+  // Alfa e Beta acertam a questão 0 com o mesmo tempo → empatam
+  L.registrarResposta({ roomId: sala.roomId, teamId: a.team_id, questionIdx: 0,
+    chosenIdx: 1, isCorrect: true, secsLeft: 10, elapsedMs: 100 });
+  L.registrarResposta({ roomId: sala.roomId, teamId: b.team_id, questionIdx: 0,
+    chosenIdx: 1, isCorrect: true, secsLeft: 10, elapsedMs: 100 });
+
+  const p = L.placar(sala.roomId);
+  assert.equal(p.length, 2);
+  assert.equal(p[0].score, p[1].score);
+  assert.equal(p[0].position, 1);
+  assert.equal(p[1].position, 1, 'empate deve compartilhar a colocação');
+});
+
+test('local: questão repetida é recusada como permanente (não trava a fila)', () => {
+  const L = EDL.compete.local;
+  const sala = L.criarSala({ activityRef: 'y', itemCount: 3, scoring: salaDeTeste.scoring }).dados;
+  const t = L.entrar(sala.code, 'Gama').dados;
+  const arg = { roomId: sala.roomId, teamId: t.team_id, questionIdx: 0,
+                chosenIdx: 0, isCorrect: true, secsLeft: 5, elapsedMs: 10 };
+
+  assert.equal(L.registrarResposta(arg).ok, true);
+  const r2 = L.registrarResposta(arg);
+  assert.equal(r2.ok, false);
+  assert.equal(r2.permanente, true, 'duplicata precisa ser permanente, senão a fila repete para sempre');
+});
+
+test('local: questão fora da atividade é recusada', () => {
+  const L = EDL.compete.local;
+  const sala = L.criarSala({ activityRef: 'z', itemCount: 2, scoring: salaDeTeste.scoring }).dados;
+  const t = L.entrar(sala.code, 'Delta').dados;
+  const r = L.registrarResposta({ roomId: sala.roomId, teamId: t.team_id, questionIdx: 99,
+    chosenIdx: 0, isCorrect: true, secsLeft: 5, elapsedMs: 10 });
+  assert.equal(r.ok, false);
+  assert.equal(r.permanente, true);
+});
+
+test('local: apelido é normalizado e o duplicado é recusado', () => {
+  const L = EDL.compete.local;
+  const sala = L.criarSala({ activityRef: 'w', itemCount: 1, scoring: salaDeTeste.scoring }).dados;
+  const a = L.entrar(sala.code, '  Os   Kochs  ');
+  assert.equal(a.ok, true);
+  assert.equal(a.dados.nickname, 'Os Kochs', 'espaços internos e das pontas devem colapsar');
+
+  const curto = L.entrar(sala.code, 'x');
+  assert.equal(curto.ok, false, 'apelido de 1 caractere deve ser recusado');
+});
+
+test('local: código de sala não usa caracteres ambíguos', () => {
+  const L = EDL.compete.local;
+  const sala = L.criarSala({ activityRef: 'v', itemCount: 1, scoring: salaDeTeste.scoring }).dados;
+  assert.match(sala.code, /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/,
+    'o código não pode conter 0, O, 1, I ou L');
+});
+
 /* ------------------------------------------------------------------
  * Relatório final
  * ---------------------------------------------------------------- */

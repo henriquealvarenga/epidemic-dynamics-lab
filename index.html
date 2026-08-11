@@ -330,6 +330,16 @@
   <script src="content/about.js" defer></script>
   <script src="js/core/screens.js" defer></script>
 
+  <!-- Modo competição (opcional). A ordem é de dependência:
+       config → rest/estado/local → api (que amarra os três e assina
+       EDL.quizEvents). Nenhum deles abre conexão ao carregar: quem só lê
+       os módulos não faz uma requisição sequer. -->
+  <script src="js/compete/config.js" defer></script>
+  <script src="js/compete/rest.js" defer></script>
+  <script src="js/compete/estado.js" defer></script>
+  <script src="js/compete/local.js" defer></script>
+  <script src="js/compete/api.js" defer></script>
+
   <!-- Datasets (carregados antes dos módulos que dependem deles) -->
   <script src="assets/data/soho-1854-cholera.js" defer></script>
   <script src="assets/data/haiti/haiti-cholera-2010.js" defer></script>
