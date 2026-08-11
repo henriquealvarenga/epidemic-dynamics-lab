@@ -2,9 +2,25 @@ name: Publicar no GitHub Pages
 
 # O site é estático (HTML/CSS/JS puro, sem etapa de compilação): a publicação
 # apenas empacota o repositório como está e envia ao Pages.
+#
+# Dois jobs:
+#   1. testes    → node tests/run.js. Roda também em PR. Bloqueia a publicação.
+#   2. publicar  → empacota e envia ao Pages. Só em push para main.
+#
+# Sem filtro de `paths` de propósito: como a publicação empacota o repositório
+# inteiro (`path: '.'`), qualquer arquivo pode afetar o site. Um filtro que
+# esquecesse um diretório faria mudanças pararem de publicar em silêncio —
+# é exatamente o que aconteceu no projeto irmão do Exame do Estado Mental,
+# onde `atividades/**` ficou de fora da lista e o front-end deixou de subir.
+#
+# ATENÇÃO: o job de testes é bloqueante. Se ele falhar, o site NÃO é
+# republicado e o conteúdo anterior continua no ar. Confira a aba Actions
+# quando um push não aparecer no site.
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -18,23 +34,42 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  testes:
+    name: Testes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v7
+
+      - name: Configurar Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+
+      # Sem `npm install`: o runner usa apenas node:assert nativo.
+      - name: Rodar a suíte
+        run: node tests/run.js
+
   publicar:
+    name: Publicar
+    needs: testes
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Baixar repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Configurar o Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Empacotar o site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: '.'
 
       - name: Publicar
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
