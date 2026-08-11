@@ -240,7 +240,7 @@
             body:
               `O verão quente de 1858 concentra dejetos humanos e animais no rio Tâmisa. O mau cheiro é ` +
               `insuportável até dentro do Parlamento, acelerando a aprovação do plano de Joseph Bazalgette ` +
-              `para a construção do sistema de esgoto de Londres${cite('halliday2013great')}. Resultado: ` +
+              `para a construção do sistema de esgoto de Londres${cite('halliday2007filth')}. Resultado: ` +
               `redução drástica das epidemias de cólera nas décadas seguintes — validando, na prática, a ` +
               `hipótese de Snow antes mesmo que ela fosse universalmente aceita na teoria.`
           },
