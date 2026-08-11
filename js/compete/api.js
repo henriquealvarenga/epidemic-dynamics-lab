@@ -12,10 +12,11 @@
  * rede falhar na entrada, cai para local. A aula acontece de um jeito ou
  * de outro.
  *
- * AQUI TAMBÉM MORA A PONTE COM O QUIZ
- *   Ao entrar numa sala, este arquivo assina `EDL.quizEvents` e passa a
- *   enfileirar cada resposta. O motor de quiz não sabe que competição
- *   existe, e os 8 módulos não mudaram uma linha por causa disso.
+ * O MODO GAME É UMA ATIVIDADE PRÓPRIA
+ *   As questões da competição vêm de compete/banco-jogo.js, não dos
+ *   quizzes dos módulos. A tela do jogo chama registrarResposta()
+ *   explicitamente — nada aqui escuta o barramento global, para que abrir
+ *   um módulo no meio da rodada não conte pontos na competição.
  *
  * Exporta: window.EDL.compete.api
  * ========================================================================= */
@@ -27,7 +28,6 @@
   const cfg = compete.config;
 
   let modoAtual = null;          // 'sala' | 'local' — resolvido na 1ª conexão
-  let desassinarQuiz = null;
 
   function modo() {
     return modoAtual || (compete.rest.configValida() ? 'sala' : 'local');
@@ -127,12 +127,10 @@
       score: d.score || 0
     };
     compete.estado.definir(info);
-    ligarPonteDoQuiz();
     return { ok: true, dados: info };
   }
 
   async function sair() {
-    desligarPonteDoQuiz();
     compete.estado.limpar();
     return { ok: true };
   }
@@ -141,30 +139,28 @@
    * Ponte com o quiz
    * --------------------------------------------------------------------- */
 
-  function ligarPonteDoQuiz() {
-    if (desassinarQuiz) return;                    // idempotente
-    if (!EDL.quizEvents) {
-      console.warn('[EDL/compete] EDL.quizEvents ausente — respostas não serão registradas.');
-      return;
-    }
-    desassinarQuiz = EDL.quizEvents.on('answer', function (ev) {
-      if (!compete.estado.emSala()) return;
-      const id = compete.estado.get();
-      /* Só registra respostas do módulo da sala. Se o grupo abrir outro
-       * módulo por engano, aquilo é treino, não vale para a competição. */
-      if (ev.moduleId !== id.activityRef) return;
-
-      compete.estado.enfileirar({
-        roomId: id.roomId, teamId: id.teamId,
-        questionIdx: ev.index, chosenIdx: ev.pickedIndex,
-        isCorrect: !!ev.correct, secsLeft: ev.secsLeft,
-        elapsedMs: ev.elapsedMs
-      });
+  /**
+   * Registra uma resposta da rodada. Chamado EXPLICITAMENTE pela tela do
+   * jogo, via `onAnswer` do EDL.quiz.run.
+   *
+   * Por que explícito, e não assinando EDL.quizEvents: o modo game é uma
+   * atividade PRÓPRIA, separada dos módulos. Se escutássemos o barramento
+   * global, um grupo que abrisse um módulo para consultar a teoria no meio
+   * da rodada teria aquelas respostas contadas na competição. Aqui, só o
+   * que a tela do jogo emite conta.
+   *
+   * O barramento continua servindo ao histórico local (progress.js) e aos
+   * sons (sfx.js), que valem em qualquer contexto.
+   */
+  function registrarResposta(ev) {
+    if (!compete.estado.emSala()) return;
+    const id = compete.estado.get();
+    compete.estado.enfileirar({
+      roomId: id.roomId, teamId: id.teamId,
+      questionIdx: ev.index, chosenIdx: ev.pickedIndex,
+      isCorrect: !!ev.correct, secsLeft: ev.secsLeft,
+      elapsedMs: ev.elapsedMs
     });
-  }
-
-  function desligarPonteDoQuiz() {
-    if (desassinarQuiz) { desassinarQuiz(); desassinarQuiz = null; }
   }
 
   /* Transporte da fila. Fica aqui porque estado.js não conhece backend. */
@@ -234,14 +230,13 @@
     return function parar() { clearInterval(t); };
   }
 
-  /* Reconecta a ponte se o aparelho já estava numa sala (F5). */
+  /* Restaura o modo se o aparelho já estava numa sala (F5). */
   if (compete.estado.emSala()) {
     modoAtual = compete.estado.get().modo || null;
-    ligarPonteDoQuiz();
   }
 
   compete.api = {
     modo, criarSala, entrar, sair, placar, estatisticas, encerrarSala, observar,
-    ligarPonteDoQuiz, desligarPonteDoQuiz
+    registrarResposta
   };
 })();

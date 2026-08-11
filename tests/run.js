@@ -562,7 +562,7 @@ test('local: código de sala não usa caracteres ambíguos', () => {
   const L = EDL.compete.local;
   const sala = L.criarSala({ activityRef: 'v', itemCount: 1, scoring: salaDeTeste.scoring }).dados;
   assert.match(sala.code, /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/,
-    'o código não pode conter 0, O, 1, I ou L');
+    'o código não pode conter 0, O, 1 nem I');
 });
 
 /* ------------------------------------------------------------------

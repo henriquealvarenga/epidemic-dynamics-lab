@@ -318,6 +318,9 @@
   <!-- Histórico detalhado por pergunta. DEVE vir depois de state.js (encadeia
        EDL.resetScores) e de quiz-engine.js (assina EDL.quizEvents). -->
   <script src="js/core/progress.js" defer></script>
+  <!-- Sons sintetizados (sem arquivo de áudio). Assina EDL.quizEvents, então
+       vale para o modo solo também — DEVE vir depois de quiz-engine.js. -->
+  <script src="js/core/sfx.js" defer></script>
   <!-- Bibliografia: carregada como <script> (não fetch) para funcionar em file:// -->
   <script src="references/references.js" defer></script>
   <script src="js/core/references-view.js" defer></script>
@@ -338,7 +341,9 @@
   <script src="js/compete/rest.js" defer></script>
   <script src="js/compete/estado.js" defer></script>
   <script src="js/compete/local.js" defer></script>
+  <script src="js/compete/banco-jogo.js" defer></script>
   <script src="js/compete/api.js" defer></script>
+  <script src="js/compete/tela-jogar.js" defer></script>
 
   <!-- Datasets (carregados antes dos módulos que dependem deles) -->
   <script src="assets/data/soho-1854-cholera.js" defer></script>

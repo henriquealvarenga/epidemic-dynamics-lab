@@ -3312,3 +3312,204 @@ sup.cite a:focus-visible {
   border-radius: 3px;
   vertical-align: baseline;
 }
+
+/* =========================================================================
+   MODO COMPETIÇÃO
+   Reusa os tokens de :root. Nada aqui é carregado condicionalmente — são
+   ~120 linhas num arquivo de 3.300, e separar num <link> por rota custaria
+   mais complexidade do que economiza.
+   ========================================================================= */
+
+.compete-wrap { max-width: 560px; margin: 0 auto; padding: 0 1rem 4rem; }
+
+.compete-card {
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: 2rem 1.5rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.compete-titulo { font-size: 1.6rem; margin: .25rem 0 .5rem; }
+.compete-sub    { color: var(--text-secondary); line-height: 1.55; margin: 0 0 1.5rem; }
+
+.compete-badge-sala {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem; letter-spacing: .12em;
+  padding: .25rem .6rem; border-radius: var(--r-sm);
+  background: rgba(0, 217, 192, .12); color: var(--accent);
+  margin-bottom: .5rem;
+}
+
+.compete-label {
+  display: block; text-align: left;
+  font-size: .82rem; font-weight: 600;
+  margin: 1rem 0 .35rem; color: var(--text-secondary);
+}
+
+.compete-input {
+  width: 100%; box-sizing: border-box;
+  padding: .85rem 1rem;
+  background: var(--bg-0);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  font-size: 1rem; font-family: inherit;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.compete-input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-accent);
+}
+
+/* Código projetado no telão: monoespaçado e espaçado, para não confundir
+   caracteres parecidos a três metros de distância. */
+.compete-input-codigo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem; letter-spacing: .35em;
+  text-align: center; text-transform: uppercase;
+}
+
+.compete-dica {
+  text-align: left; font-size: .76rem;
+  color: var(--text-muted); margin: .35rem 0 0;
+}
+
+.compete-erro {
+  margin: 1rem 0 0; padding: .7rem .9rem;
+  background: rgba(255, 107, 107, .12);
+  border: 1px solid var(--c-infected);
+  border-radius: var(--r-sm);
+  color: var(--c-infected);
+  font-size: .88rem; text-align: left;
+}
+
+.compete-btn-grande { width: 100%; margin-top: 1.5rem; padding: .95rem; font-size: 1rem; }
+
+.compete-aviso {
+  padding: .6rem .8rem; margin: 0 0 1rem;
+  background: rgba(255, 217, 61, .1);
+  border: 1px solid var(--c-exposed);
+  border-radius: var(--r-sm);
+  color: var(--c-exposed);
+  font-size: .82rem;
+}
+
+.compete-placar {
+  display: flex; align-items: baseline; justify-content: center;
+  gap: .6rem; flex-wrap: wrap;
+  margin: 0 0 1.25rem; min-height: 1.5rem;
+}
+.compete-placar-pos {
+  font-size: 2rem; font-weight: 800; color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+}
+.compete-placar-det { color: var(--text-secondary); font-size: .88rem; }
+
+.compete-sync {
+  margin-top: 1rem; font-size: .8rem; line-height: 1.45;
+  padding: .5rem .7rem; border-radius: var(--r-sm);
+}
+.compete-sync.ok       { color: var(--text-muted); }
+.compete-sync.pendente { color: var(--c-exposed); background: rgba(255, 217, 61, .08); }
+
+.compete-rodape { margin: 1.5rem 0 0; font-size: .82rem; color: var(--text-muted); }
+.compete-rodape a { color: var(--accent); }
+
+.btn-link {
+  background: none; border: none; padding: 0;
+  color: var(--text-muted); font: inherit; font-size: .82rem;
+  text-decoration: underline; cursor: pointer;
+}
+.btn-link:hover { color: var(--c-infected); }
+
+/* Botão de mudo — fixo, discreto, fora do fluxo de leitura. */
+.sfx-toggle {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 60;
+  width: 2.5rem; height: 2.5rem;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-2); border: 1px solid var(--border-1);
+  border-radius: 50%; cursor: pointer;
+  font-size: 1rem; line-height: 1;
+  opacity: .55; transition: opacity var(--t-fast), transform var(--t-fast);
+}
+.sfx-toggle:hover { opacity: 1; }
+.sfx-toggle:focus-visible { outline: none; opacity: 1; box-shadow: var(--shadow-accent); }
+.sfx-toggle:active { transform: scale(.92); }
+
+@media (max-width: 540px) {
+  .compete-card { padding: 1.5rem 1.1rem; }
+  .compete-input-codigo { font-size: 1.3rem; letter-spacing: .25em; }
+}
+
+/* Rodada do modo game */
+.compete-jogo {
+  max-width: 720px; margin: 1rem auto 0;
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: 1.25rem;
+}
+
+/* Pódio ao fim da rodada */
+.compete-podio { display: flex; flex-direction: column; gap: .4rem; margin-top: 1.25rem; }
+.compete-podio-linha {
+  display: grid; grid-template-columns: 2.2rem minmax(0,1fr) 4.5rem auto;
+  align-items: center; gap: .5rem;
+  padding: .35rem .5rem; border-radius: var(--r-sm);
+  font-size: .88rem;
+}
+.compete-podio-linha.eu { background: rgba(0,217,192,.1); }
+.compete-podio-pos  { font-size: 1.05rem; text-align: center; }
+.compete-podio-nome {
+  text-align: left; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.compete-podio-barra {
+  height: .5rem; background: var(--bg-3);
+  border-radius: 999px; overflow: hidden;
+}
+.compete-podio-barra i {
+  display: block; height: 100%; background: var(--accent);
+  transition: width .6s cubic-bezier(.2,.8,.2,1);
+}
+.compete-podio-pts {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem; color: var(--text-secondary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .compete-podio-barra i { transition: none; }
+}
+
+/* Card de entrada na competição, no topo da grade de módulos */
+.compete-home {
+  width: 100%; display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.25rem; margin: 0 0 1.25rem;
+  background: linear-gradient(135deg, rgba(0,217,192,.13), rgba(0,217,192,.04));
+  border: 1px solid var(--accent);
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  cursor: pointer; text-align: left; font: inherit;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.compete-home:hover { transform: translateY(-2px); box-shadow: var(--shadow-accent); }
+.compete-home:focus-visible { outline: none; box-shadow: var(--shadow-accent); }
+.compete-home.na-sala {
+  background: linear-gradient(135deg, rgba(255,217,61,.12), rgba(255,217,61,.03));
+  border-color: var(--c-exposed);
+}
+.compete-home-icone { font-size: 1.6rem; line-height: 1; flex: 0 0 auto; }
+.compete-home-txt   { display: flex; flex-direction: column; gap: .15rem; flex: 1 1 auto; min-width: 0; }
+.compete-home-txt strong { font-size: 1rem; }
+.compete-home-txt span   { font-size: .84rem; color: var(--text-secondary); }
+.compete-home-seta  { font-size: 1.2rem; color: var(--accent); flex: 0 0 auto; }
+.compete-home.na-sala .compete-home-seta { color: var(--c-exposed); }
+
+@media (max-width: 540px) {
+  .compete-home { padding: .85rem 1rem; gap: .75rem; }
+  .compete-home-txt strong { font-size: .92rem; }
+  .compete-home-txt span   { font-size: .78rem; }
+}

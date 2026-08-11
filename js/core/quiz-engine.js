@@ -57,6 +57,7 @@
  *     bonusPerSec = 5,
  *     lateAnswerPoints = 50,
  *     basePoints = 100,
+ *     startAt = 0,                // retomar a partir desta questão
  *     onAnswer?:   (event)  => {} // uma vez por pergunta respondida
  *     onComplete?: (result) => {} // { correct, total, score }
  *   })
@@ -158,9 +159,15 @@
       return;
     }
 
+    /* Índice inicial. Serve à retomada do modo competição: se o grupo deu
+     * F5 no meio da rodada, o servidor informa em qual questão ele estava
+     * (max(question_idx)+1) e o quiz recomeça de lá — sem permitir refazer
+     * as anteriores, que já pontuaram. Clampado ao tamanho do banco. */
+    const inicio = Math.max(0, Math.min(Number(opts.startAt) || 0, bank.length));
+
     // Estado local da tentativa atual
     const state = {
-      idx: 0,
+      idx: inicio,
       correct: 0,
       score: 0,
       answered: false,
@@ -194,7 +201,7 @@
         <div class="quiz-intro" role="region" aria-labelledby="quiz-intro-title">
           <h3 id="quiz-intro-title" class="quiz-intro-title">Pronto para começar?</h3>
           <p class="quiz-intro-meta">
-            <strong>${bank.length} perguntas</strong> · <strong>${opts.secondsPerQ} segundos cada</strong>
+            <strong>${bank.length - inicio} pergunta(s)</strong> · <strong>${opts.secondsPerQ} segundos cada</strong>
           </p>
           <p class="quiz-intro-hint">
             Acerto rápido vale mais pontos. Resposta após o tempo vale meio-crédito.
@@ -456,7 +463,7 @@
 
       body.querySelector('#q-redo').addEventListener('click', () => {
         // Reset de estado e volta para a intro — dá um respiro entre rodadas
-        state.idx = 0; state.correct = 0; state.score = 0;
+        state.idx = inicio; state.correct = 0; state.score = 0;
         state.answered = false; state.expired = false;
         renderIntro();
       });
