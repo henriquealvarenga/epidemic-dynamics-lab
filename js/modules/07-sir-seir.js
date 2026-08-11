@@ -585,6 +585,7 @@
     subtitle: 'Simulador livre A×B, desafios de intervenção, modelos realistas.',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       const cm   = EDL.citations.create({ idPrefix: 'm07-ref-' });
       const cite = (...keys) => cm.cite(...keys);

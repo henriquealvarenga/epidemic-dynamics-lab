@@ -670,6 +670,7 @@
     subtitle: 'Número básico de reprodução, tempo de duplicação, comparador A×B.',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       const cm   = EDL.citations.create({ idPrefix: 'm05-ref-' });
       const cite = (...keys) => cm.cite(...keys);

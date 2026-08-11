@@ -744,6 +744,7 @@
     subtitle: 'Microrganismo → reservatório → portal de saída → transmissão → portal de entrada → hospedeiro suscetível.',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       const cm   = EDL.citations.create({ idPrefix: 'm03-ref-' });
       const cite = (...keys) => cm.cite(...keys);

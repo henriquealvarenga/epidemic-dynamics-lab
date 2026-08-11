@@ -1139,6 +1139,75 @@ a.footer-link:hover { border-bottom: none; color: var(--accent); }
   border: none;
   padding: 0;
 }
+
+/* Detalhamento por módulo: evolução entre tentativas + pontos fracos.
+   Preenchido por screens.js a partir de EDL.progress. */
+#progress-detail:not(:empty) {
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+.progress-module {
+  background: var(--bg-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-sm);
+  padding: .7rem .9rem;
+}
+.progress-module-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.progress-module-name {
+  font-weight: 600;
+  font-size: .92rem;
+}
+.progress-module-stats {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.progress-trend        { margin-left: .35rem; font-weight: 600; }
+.progress-trend.up     { color: var(--c-recovered); }
+.progress-trend.down   { color: var(--c-infected); }
+
+.progress-hard-label {
+  margin-top: .6rem;
+  font-size: .76rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+}
+.progress-hard-list {
+  list-style: none;
+  margin: .3rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+.progress-hard-item {
+  font-size: .84rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  padding-left: .1rem;
+}
+.progress-hard-rate {
+  display: inline-block;
+  margin-right: .45rem;
+  padding: .05rem .4rem;
+  border-radius: var(--r-sm);
+  background: rgba(255, 107, 107, .15);
+  color: var(--c-infected);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
 #progress-summary {
   font-family: 'JetBrains Mono', monospace;
   font-size: .88rem;

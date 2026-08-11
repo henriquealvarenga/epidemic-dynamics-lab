@@ -580,6 +580,7 @@
     subtitle: 'Endemia, surto, epidemia, pandemia. Reservatórios, risco, caso notificado.',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       const cm   = EDL.citations.create({ idPrefix: 'm02-ref-' });
       const cite = (...keys) => cm.cite(...keys);

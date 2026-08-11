@@ -308,6 +308,145 @@ test('doublingTime: fórmula log(2) / log(R₀)', () => {
   assert.ok(Math.abs(d(1.1) - Math.log(2) / Math.log(1.1)) < 1e-10);
 });
 
+/* ==================================================================
+ * Pontuação (quiz-engine.js) e histórico detalhado (progress.js)
+ *
+ * Estes dois arquivos precisam de `localStorage`, que não existe no
+ * Node. O stub abaixo é suficiente porque ambos usam apenas
+ * getItem/setItem/removeItem e já toleram falha (try/catch).
+ * ================================================================ */
+
+global.localStorage = (function () {
+  let store = {};
+  return {
+    getItem:    k => (k in store ? store[k] : null),
+    setItem:    (k, v) => { store[k] = String(v); },
+    removeItem: k => { delete store[k]; },
+    _clear:     () => { store = {}; }
+  };
+})();
+global.window.localStorage = global.localStorage;
+
+load('js/core/config.js');
+load('js/core/state.js');
+load('js/core/quiz-engine.js');
+load('js/core/progress.js');
+
+test('scoringConfig espelha config.js', () => {
+  const s = EDL.quiz.scoringConfig();
+  assert.equal(s.seconds,     EDL.config.quizSecondsPerQ);
+  assert.equal(s.base,        EDL.config.quizBasePoints);
+  assert.equal(s.bonusPerSec, EDL.config.quizBonusPerSec);
+  assert.equal(s.late,        EDL.config.quizLateAnswerPoints);
+});
+
+test('maxPointsPerQuestion: base + segundos × bônus (regressão do 200 fixo)', () => {
+  const c = EDL.config;
+  const esperado = c.quizBasePoints + c.quizSecondsPerQ * c.quizBonusPerSec;
+  assert.equal(EDL.quiz.maxPointsPerQuestion(), esperado);
+  // Com a config vigente (30s, 100, 5) são 250 — o valor antigo era 200.
+  assert.equal(EDL.quiz.maxPointsPerQuestion(), 250);
+});
+
+test('getMaxPossibleScore usa o teto derivado, não um número fixo', () => {
+  EDL.modules = [
+    { id: 'a', status: 'available',  quizCount: 4 },
+    { id: 'b', status: 'available',  quizCount: 6 },
+    { id: 'c', status: 'coming-soon', quizCount: 9 }   // não conta
+  ];
+  assert.equal(EDL.getMaxPossibleScore(), 10 * EDL.quiz.maxPointsPerQuestion());
+});
+
+test('registerModule deriva quizCount de getQuiz() quando ausente', () => {
+  EDL.modules = [];
+  EDL.registerModule({ id: 'x', getQuiz: () => [1, 2, 3] });
+  assert.equal(EDL.getModule('x').quizCount, 3);
+});
+
+test('getModuleQuiz devolve [] para módulo sem getQuiz, sem lançar', () => {
+  EDL.modules = [];
+  EDL.registerModule({ id: 'sem-banco', quizCount: 0 });
+  assert.deepEqual(EDL.getModuleQuiz('sem-banco'), []);
+  assert.deepEqual(EDL.getModuleQuiz('inexistente'), []);
+});
+
+test('quizEvents: emite, entrega e permite cancelar a assinatura', () => {
+  const vistos = [];
+  const off = EDL.quizEvents.on('answer', ev => vistos.push(ev.index));
+  EDL.quizEvents.emit('answer', { index: 0 });
+  EDL.quizEvents.emit('answer', { index: 1 });
+  off();
+  EDL.quizEvents.emit('answer', { index: 2 });
+  assert.deepEqual(vistos, [0, 1]);
+});
+
+test('quizEvents: assinante que lança não impede os demais', () => {
+  const vistos = [];
+  const offA = EDL.quizEvents.on('answer', () => { throw new Error('boom'); });
+  const offB = EDL.quizEvents.on('answer', ev => vistos.push(ev.index));
+  const errOriginal = console.error;
+  console.error = () => {};                 // silencia o log esperado
+  try { EDL.quizEvents.emit('answer', { index: 7 }); }
+  finally { console.error = errOriginal; offA(); offB(); }
+  assert.deepEqual(vistos, [7]);
+});
+
+test('progress: acumula acertos, erros e distrator por pergunta', () => {
+  EDL.progress.reset();
+  const ev = (index, correct, pickedIndex) => EDL.quizEvents.emit('answer', {
+    moduleId: '05-r0', index, correct, pickedIndex,
+    elapsedMs: 1000, total: 5
+  });
+  ev(0, true,  0);
+  ev(0, false, 2);
+  ev(0, false, 2);          // distrator 2 pegou duas vezes
+  const mod = EDL.progress.getModule('05-r0');
+  assert.equal(mod.items['0'].seen, 3);
+  assert.equal(mod.items['0'].hits, 1);
+  assert.equal(mod.items['0'].picks['2'], 2);
+});
+
+test('progress: hardestItems ordena por taxa de erro e exige exposição mínima', () => {
+  EDL.progress.reset();
+  const ev = (index, correct) => EDL.quizEvents.emit('answer', {
+    moduleId: 'm', index, correct, pickedIndex: 1, elapsedMs: 500, total: 3
+  });
+  ev(0, false); ev(0, false);      // 100% de erro, visto 2x
+  ev(1, true);  ev(1, false);      //  50% de erro, visto 2x
+  ev(2, false);                    // visto só 1x → fica de fora do ranking
+  const dificeis = EDL.progress.hardestItems('m');
+  assert.deepEqual(dificeis.map(d => d.index), [0, 1]);
+  assert.equal(dificeis[0].errorRate, 1);
+});
+
+test('progress: trend compara a última tentativa com a anterior', () => {
+  EDL.progress.reset();
+  const fim = score => EDL.quizEvents.emit('complete', {
+    moduleId: 'm', score, correct: 3, total: 5
+  });
+  fim(400); fim(650);
+  const s = EDL.progress.moduleSummary('m');
+  assert.equal(s.attemptCount, 2);
+  assert.equal(s.trend, 250);
+  assert.equal(s.bestScore, 650);
+});
+
+test('progress: evento sem moduleId é ignorado (não polui o histórico)', () => {
+  EDL.progress.reset();
+  EDL.quizEvents.emit('answer', { moduleId: null, index: 0, correct: true });
+  assert.deepEqual(EDL.progress._data().modules, {});
+});
+
+test('progress: EDL.resetScores também limpa o histórico detalhado', () => {
+  EDL.quizEvents.emit('answer', {
+    moduleId: 'm', index: 0, correct: false, pickedIndex: 1, elapsedMs: 10
+  });
+  assert.ok(EDL.progress.getModule('m'));
+  EDL.resetScores();
+  assert.equal(EDL.progress.getModule('m'), null);
+  assert.deepEqual(EDL.state.scores, {});
+});
+
 /* ------------------------------------------------------------------
  * Relatório final
  * ---------------------------------------------------------------- */

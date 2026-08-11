@@ -314,6 +314,9 @@
   <script src="js/core/state.js" defer></script>
   <script src="js/core/plot.js" defer></script>
   <script src="js/core/quiz-engine.js" defer></script>
+  <!-- Histórico detalhado por pergunta. DEVE vir depois de state.js (encadeia
+       EDL.resetScores) e de quiz-engine.js (assina EDL.quizEvents). -->
+  <script src="js/core/progress.js" defer></script>
   <!-- Bibliografia: carregada como <script> (não fetch) para funcionar em file:// -->
   <script src="references/references.js" defer></script>
   <script src="js/core/references-view.js" defer></script>

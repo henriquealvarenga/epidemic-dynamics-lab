@@ -1041,10 +1041,14 @@
   function renderActivity(container) {
     const sec = document.createElement('section');
     sec.className = 'module-section';
+    // Número de perguntas e cronômetro saem da fonte de verdade (o banco e
+    // config.js). Estavam escritos à mão e ficaram desatualizados quando o
+    // tempo por pergunta mudou de 20s para 30s.
+    const secs = EDL.quiz.scoringConfig().seconds;
     sec.innerHTML = `
       <h2>4. Atividade — consolide o aprendizado</h2>
       <p>
-        Seis perguntas cronometradas (20 segundos cada) com pontuação e bônus de
+        ${QUIZ.length} perguntas cronometradas (${secs} segundos cada) com pontuação e bônus de
         velocidade. Após o tempo você ainda pode responder, valendo meio-crédito.
         Feedback explicativo em cada resposta; seu melhor resultado é salvo e
         contabilizado no progresso total.
@@ -1086,6 +1090,7 @@
     subtitle: 'Definição, etimologia, tipos de prevenção e marcos históricos.',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       // CitationManager fresco a cada render — zera numeração e mapa.
       cm = EDL.citations.create({ idPrefix: 'm01-ref-' });

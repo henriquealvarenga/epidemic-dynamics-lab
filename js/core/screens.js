@@ -278,6 +278,86 @@
         (max > 0 ? ` — máximo possível ${fmt(max)}${pct}` : '') + '.';
       if (resetBtn) resetBtn.disabled = false;
     }
+
+    renderProgressDetail(container);
+  }
+
+  /**
+   * Detalhamento por módulo abaixo do resumo: quanto o aluno evoluiu entre
+   * tentativas e quais perguntas ele erra de forma recorrente.
+   *
+   * O `bestScore` sozinho não responde "estou melhorando?" nem "o que eu
+   * ainda não sei?" — que são as duas perguntas que o aluno realmente faz.
+   * Os dados vêm de EDL.progress (chave edl.progress.v1); se esse arquivo
+   * não tiver carregado, a seção simplesmente não aparece.
+   */
+  function renderProgressDetail(container) {
+    const host = container.querySelector('#progress-detail');
+    if (!host) return;
+    host.innerHTML = '';
+    if (!EDL.progress) return;
+
+    const blocos = (EDL.modules || [])
+      .map(mod => ({ mod, resumo: EDL.progress.moduleSummary(mod.id) }))
+      .filter(x => x.resumo)
+      .map(({ mod, resumo }) => {
+        const banco = EDL.getModuleQuiz(mod.id);
+        const dificeis = resumo.hardest
+          .map(h => {
+            const q = banco[h.index];
+            const texto = q ? shorten(stripTags(q.q), 90)
+                            : `Pergunta ${h.index + 1}`;
+            return `<li class="progress-hard-item">
+                      <span class="progress-hard-rate">${Math.round(h.errorRate * 100)}% erro</span>
+                      ${escapeHtml(texto)}
+                    </li>`;
+          }).join('');
+
+        return `
+          <div class="progress-module">
+            <div class="progress-module-top">
+              <span class="progress-module-name">${escapeHtml(mod.title)}</span>
+              <span class="progress-module-stats">
+                ${fmtPt(resumo.bestScore)} pts
+                · ${resumo.attemptCount} tentativa(s)
+                ${renderTrend(resumo.trend)}
+              </span>
+            </div>
+            ${dificeis
+              ? `<div class="progress-hard-label">Onde você mais erra:</div>
+                 <ul class="progress-hard-list">${dificeis}</ul>`
+              : ''}
+          </div>`;
+      });
+
+    if (blocos.length) host.innerHTML = blocos.join('');
+  }
+
+  /** Seta de evolução entre as duas últimas tentativas. null = 1ª tentativa. */
+  function renderTrend(trend) {
+    if (trend === null || trend === 0) return '';
+    const up = trend > 0;
+    return `<span class="progress-trend ${up ? 'up' : 'down'}">
+              ${up ? '▲' : '▼'} ${fmtPt(Math.abs(trend))}
+            </span>`;
+  }
+
+  function stripTags(html) {
+    return String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function shorten(s, max) {
+    return s.length > max ? s.slice(0, max - 1).trimEnd() + '…' : s;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, ch => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]
+    ));
+  }
+
+  function fmtPt(n) {
+    return Math.round(n).toLocaleString('pt-BR');
   }
 
   /**

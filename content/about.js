@@ -53,6 +53,10 @@ window.EDL.content.about = `
   <section class="progress-section">
     <h2>Seu progresso</h2>
     <p id="progress-summary" class="muted">Carregando…</p>
+    <!-- Detalhamento por módulo: evolução entre tentativas e pontos fracos.
+         Preenchido por screens.js a partir de EDL.progress; fica vazio
+         enquanto o aluno não tiver histórico suficiente. -->
+    <div id="progress-detail"></div>
     <button type="button" class="btn btn-ghost btn-small" id="progress-reset">
       Zerar progresso
     </button>

@@ -1284,6 +1284,7 @@
     subtitle: 'Cólera: Soho (1854) e Haiti (2010)',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       // CitationManager fresco a cada render — zera numeração e mapa.
       // O idPrefix 'm08-ref-' isola os ids HTML deste módulo dos ids da

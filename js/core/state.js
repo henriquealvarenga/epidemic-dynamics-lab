@@ -95,13 +95,35 @@
   };
 
   /** Pontuação máxima possível somando todos os módulos registrados como
-   *  'available'. Cada pergunta vale até 200 pts (100 base + 100 bônus). */
+   *  'available'.
+   *
+   *  O teto por pergunta é DERIVADO da configuração vigente
+   *  (base + segundos × bônus), nunca hardcoded: até então havia um 200
+   *  fixo aqui que não acompanhou a mudança do cronômetro de 20s para 30s
+   *  em config.js, e o valor real passou a ser 250. O efeito era a barra de
+   *  progresso da home superestimar o desempenho do aluno — mascarado pelo
+   *  Math.min(100, ...) em app.js, que grampeava o excesso em silêncio.
+   *
+   *  Resolvido em tempo de CHAMADA (e não de carga) porque este arquivo é
+   *  carregado antes de quiz-engine.js no index.html. */
   EDL.getMaxPossibleScore = function () {
-    const MAX_PER_Q = 200;
+    const maxPerQ = (EDL.quiz && typeof EDL.quiz.maxPointsPerQuestion === 'function')
+      ? EDL.quiz.maxPointsPerQuestion()
+      : maxPerQuestionFallback();
     return EDL.modules
       .filter(m => m.status === 'available')
-      .reduce((sum, m) => sum + (m.quizCount || 0) * MAX_PER_Q, 0);
+      .reduce((sum, m) => sum + (m.quizCount || 0) * maxPerQ, 0);
   };
+
+  /** Espelha a fórmula de quiz-engine.js caso ele não tenha carregado.
+   *  Os mesmos padrões de config.js, para não divergir de novo. */
+  function maxPerQuestionFallback() {
+    const cfg = EDL.config || {};
+    const base    = cfg.quizBasePoints   || 100;
+    const seconds = cfg.quizSecondsPerQ  || 30;
+    const bonus   = cfg.quizBonusPerSec  || 5;
+    return base + seconds * bonus;
+  }
 
   /**
    * Registro de módulos. Cada módulo auto-se-registra chamando
@@ -133,11 +155,38 @@
       console.warn('[EDL] Módulo já registrado, sobrescrevendo:', mod.id);
       EDL.modules = EDL.modules.filter(m => m.id !== mod.id);
     }
+    // Se o módulo expõe getQuiz(), quizCount deixa de ser um número que
+    // alguém precisa lembrar de atualizar ao editar o banco de perguntas.
+    if (typeof mod.quizCount !== 'number' && typeof mod.getQuiz === 'function') {
+      try { mod.quizCount = (mod.getQuiz() || []).length; }
+      catch (err) { console.warn('[EDL] getQuiz() falhou em', mod.id, err); }
+    }
     EDL.modules.push(mod);
   };
 
   EDL.getModule = function (id) {
     return EDL.modules.find(m => m.id === id) || null;
+  };
+
+  /** Banco de perguntas de um módulo, para consumidores externos ao módulo
+   *  (ex.: a tela do professor no modo competição, que precisa dos
+   *  enunciados sem montar a simulação D3 do módulo inteiro).
+   *
+   *  Retorna [] em vez de lançar: um módulo sem getQuiz() é uma limitação
+   *  conhecida, não um erro fatal — quem chama decide como degradar. */
+  EDL.getModuleQuiz = function (id) {
+    const mod = EDL.getModule(id);
+    if (!mod || typeof mod.getQuiz !== 'function') {
+      console.warn('[EDL] módulo sem getQuiz():', id);
+      return [];
+    }
+    try {
+      const bank = mod.getQuiz();
+      return Array.isArray(bank) ? bank : [];
+    } catch (err) {
+      console.warn('[EDL] getQuiz() falhou em', id, err);
+      return [];
+    }
   };
 
   /* ---------------------------------------------------------------------

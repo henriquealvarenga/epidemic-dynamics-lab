@@ -5,12 +5,17 @@
  * de desafio cronometrado, com pontuação gamificada salva globalmente.
  *
  * REGRAS DE PONTUAÇÃO:
- *   Tempo padrão por pergunta: 20 segundos.
+ *   Os valores vigentes vivem em js/core/config.js — os números citados
+ *   abaixo refletem a configuração padrão (30s, 100, 5, 50). Se você
+ *   editar config.js, use EDL.quiz.scoringConfig() em vez de reproduzir
+ *   estes números à mão em outro lugar.
+ *
+ *   Tempo padrão por pergunta: 30 segundos.
  *
  *   Acerto dentro do tempo:
  *       100 pts base + (segundosRestantes × 5) de bônus de velocidade
- *       → mínimo 100 pts (respondendo no último segundo)
- *       → máximo 200 pts (respondendo no primeiro segundo)
+ *       → mínimo 105 pts (respondendo no último segundo)
+ *       → máximo 250 pts (respondendo no primeiro segundo)
  *
  *   Acerto após o tempo expirar (tempo esgotado mas opções ainda ativas):
  *       50 pts fixos — meio-crédito. Pressão do relógio diminuída, mas
@@ -48,12 +53,38 @@
  * API pública:
  *   EDL.quiz.run(container, {
  *     bank,                       // array de perguntas (obrigatório)
- *     secondsPerQ = 20,
+ *     secondsPerQ = 30,
  *     bonusPerSec = 5,
  *     lateAnswerPoints = 50,
  *     basePoints = 100,
+ *     onAnswer?:   (event)  => {} // uma vez por pergunta respondida
  *     onComplete?: (result) => {} // { correct, total, score }
  *   })
+ *
+ *   EDL.quiz.maxPointsPerQuestion() → int
+ *   EDL.quiz.scoringConfig()        → { seconds, base, bonusPerSec, late }
+ *
+ * HOOK onAnswer — payload:
+ *   {
+ *     index,          // 0-based, qual pergunta do banco
+ *     total,          // tamanho do banco
+ *     pickedIndex,    // alternativa marcada
+ *     correctIndex,   // gabarito
+ *     correct,        // boolean
+ *     awarded,        // pontos desta pergunta
+ *     secsLeft,       // 0..secondsPerQ — a entrada do cálculo de pontos
+ *     expired,        // respondeu depois do cronômetro?
+ *     elapsedMs,      // tempo real até responder
+ *     runningScore, runningCorrect
+ *   }
+ *
+ *   `secsLeft` é a grandeza autoritativa da pontuação (não `elapsedMs`):
+ *   quem recalcular pontos em outro lugar precisa reproduzir exatamente a
+ *   fórmula daqui, senão o número no feedback ("+250 pts") diverge do
+ *   número exibido em qualquer placar externo — e o aluno percebe.
+ *
+ *   O hook é fire-and-forget e roda dentro de try/catch: uma falha do
+ *   consumidor (ex.: rede caída no modo competição) nunca trava o quiz.
  *
  * Exporta: window.EDL.quiz
  * ========================================================================= */
@@ -77,6 +108,48 @@
     lateAnswerPoints: CFG.quizLateAnswerPoints || 50
   };
 
+  /* -----------------------------------------------------------------------
+   * Barramento de eventos do quiz — EDL.quizEvents
+   *
+   * Existe ao lado dos callbacks `onAnswer`/`onComplete` das opts, e não no
+   * lugar deles, porque os dois resolvem problemas diferentes:
+   *
+   *   - opts.onAnswer   → para QUEM CHAMA run() e já controla a chamada.
+   *   - EDL.quizEvents  → para consumidores PASSIVOS que não controlam a
+   *                       chamada. Os 8 módulos invocam
+   *                       `EDL.quiz.run(el, { bank: QUIZ })` cada um por si;
+   *                       sem o barramento, todo recurso transversal novo
+   *                       (histórico local, modo competição, telemetria)
+   *                       obrigaria a editar os 8 arquivos de novo.
+   *
+   * Eventos: 'answer' e 'complete'. Ambos carregam `moduleId`.
+   * Assinantes falhos são isolados em try/catch — nada aqui pode travar
+   * o quiz do aluno.
+   * --------------------------------------------------------------------- */
+  const listeners = Object.create(null);
+
+  EDL.quizEvents = {
+    on(name, fn) {
+      if (typeof fn !== 'function') return () => {};
+      (listeners[name] || (listeners[name] = [])).push(fn);
+      return () => EDL.quizEvents.off(name, fn);   // devolve o "unsubscribe"
+    },
+    off(name, fn) {
+      const arr = listeners[name];
+      if (!arr) return;
+      const i = arr.indexOf(fn);
+      if (i >= 0) arr.splice(i, 1);
+    },
+    emit(name, payload) {
+      const arr = listeners[name];
+      if (!arr || !arr.length) return;
+      arr.slice().forEach(fn => {
+        try { fn(payload); }
+        catch (err) { console.error(`[EDL quiz] assinante de '${name}' falhou:`, err); }
+      });
+    }
+  };
+
   function run(container, userOpts = {}) {
     const opts = { ...DEFAULTS, ...userOpts };
     const bank = opts.bank;
@@ -93,7 +166,8 @@
       answered: false,
       expired: false,        // flag: true quando o cronômetro chegou a 0 sem resposta
       timerId: null,
-      secsLeft: 0
+      secsLeft: 0,
+      qStartedAt: 0          // performance.now() no início da pergunta (para elapsedMs)
     };
 
     // Shell do quiz — sem seletor de modo
@@ -256,6 +330,30 @@
 
       nextBtn.hidden = false;
       nextBtn.textContent = (state.idx === bank.length - 1) ? 'Ver resultado →' : 'Próxima →';
+
+      /* Notifica consumidores externos (histórico local, modo competição).
+       * Fire-and-forget: emitido DEPOIS que a UI já está pronta, dentro de
+       * try/catch, para que nenhum consumidor consiga travar o quiz. */
+      const event = {
+        moduleId:       (EDL.state && EDL.state.currentModuleId) || null,
+        index:          state.idx,
+        total:          bank.length,
+        pickedIndex:    pickedIdx,
+        correctIndex:   q.answer,
+        correct:        correct,
+        awarded:        awarded,
+        secsLeft:       wasExpired ? 0 : secsLeft,
+        expired:        wasExpired,
+        elapsedMs:      Math.max(0, Math.round(now() - state.qStartedAt)),
+        runningScore:   state.score,
+        runningCorrect: state.correct
+      };
+
+      if (typeof opts.onAnswer === 'function') {
+        try { opts.onAnswer(event); }
+        catch (err) { console.error('[EDL quiz] onAnswer lançou erro:', err); }
+      }
+      EDL.quizEvents.emit('answer', event);
     }
 
     /* ------------------------------------------------------------------
@@ -267,6 +365,7 @@
      * ---------------------------------------------------------------- */
     function startTimer() {
       state.secsLeft = opts.secondsPerQ;
+      state.qStartedAt = now();
       const bar = body.querySelector('#quiz-timer-bar');
       const txt = body.querySelector('#quiz-timer-text');
       updateTimerVisual(bar, txt);
@@ -363,13 +462,19 @@
       });
       body.querySelector('#q-home').addEventListener('click', () => EDL.screens.goTo('home'));
 
+      const result = {
+        moduleId: moduleId || null,
+        correct:  state.correct,
+        total:    total,
+        score:    state.score,
+        maxPossible: maxPossible
+      };
+
       if (typeof opts.onComplete === 'function') {
-        try {
-          opts.onComplete({ correct: state.correct, total, score: state.score });
-        } catch (err) {
-          console.error('[EDL quiz] onComplete lançou erro:', err);
-        }
+        try { opts.onComplete(result); }
+        catch (err) { console.error('[EDL quiz] onComplete lançou erro:', err); }
       }
+      EDL.quizEvents.emit('complete', result);
     }
 
     /* ------------------------------------------------------------------
@@ -399,6 +504,13 @@
       return Math.round(n).toLocaleString('pt-BR');
     }
 
+    /** Relógio monotônico, com fallback para navegadores sem performance.now. */
+    function now() {
+      return (window.performance && typeof performance.now === 'function')
+        ? performance.now()
+        : Date.now();
+    }
+
     function escapeHtml(s) {
       return String(s).replace(/[&<>"]/g, ch => (
         { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]
@@ -417,5 +529,26 @@
     renderIntro();
   }
 
-  EDL.quiz = { run };
+  /* -----------------------------------------------------------------------
+   * Fonte única da regra de pontuação.
+   *
+   * Existe porque a fórmula precisava ser reproduzida em outros lugares
+   * (barra de progresso da home, "máximo possível" da tela Sobre) e estava
+   * sendo copiada à mão — o que já tinha divergido do config.js na prática.
+   * Qualquer consumidor novo deve chamar estas funções em vez de recalcular.
+   * --------------------------------------------------------------------- */
+  function maxPointsPerQuestion() {
+    return DEFAULTS.basePoints + DEFAULTS.secondsPerQ * DEFAULTS.bonusPerSec;
+  }
+
+  function scoringConfig() {
+    return {
+      seconds:     DEFAULTS.secondsPerQ,
+      base:        DEFAULTS.basePoints,
+      bonusPerSec: DEFAULTS.bonusPerSec,
+      late:        DEFAULTS.lateAnswerPoints
+    };
+  }
+
+  EDL.quiz = { run, maxPointsPerQuestion, scoringConfig };
 })();

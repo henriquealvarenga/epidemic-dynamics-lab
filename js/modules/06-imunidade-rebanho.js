@@ -718,6 +718,7 @@
     subtitle: 'Limiar 1 − 1/R₀, vacinação, simulação de rede de contatos.',
     status: 'available',
     quizCount: QUIZ.length,
+    getQuiz() { return QUIZ; },
     render(container) {
       const cm   = EDL.citations.create({ idPrefix: 'm06-ref-' });
       const cite = (...keys) => cm.cite(...keys);
