@@ -65,10 +65,32 @@ jobs:
       - name: Configurar o Pages
         uses: actions/configure-pages@v6
 
+      # O site é servido a partir da raiz do repositório, mas o repositório
+      # também guarda coisas que não são do aluno: notas internas, testes,
+      # scripts de manutenção. Sem esta etapa, `path: '.'` publicava tudo —
+      # docs-internos/RASCUNHO_*.md ficaria legível na URL do site.
+      # Copiar para _site/ preserva a estrutura de caminhos (inclusive o
+      # .nojekyll) e só tira o que não deve ir ao ar.
+      - name: Montar o site sem os arquivos internos
+        run: |
+          mkdir -p _site
+          rsync -a ./ _site/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.claude' \
+            --exclude '_site' \
+            --exclude '_scratch' \
+            --exclude '_sources' \
+            --exclude 'docs-internos' \
+            --exclude 'tests' \
+            --exclude 'scripts'
+          echo "Conteúdo publicado:"
+          ls -A _site
+
       - name: Empacotar o site
         uses: actions/upload-pages-artifact@v5
         with:
-          path: '.'
+          path: '_site'
 
       - name: Publicar
         id: deployment

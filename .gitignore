@@ -37,3 +37,6 @@ _sources/
 # Claude Code — permissões locais são pessoais; launch.json é config de dev
 # compartilhada (aponta para scripts/devserver.py) e fica versionado.
 .claude/settings.local.json
+
+# Staging da publicação, montado pelo CI
+_site/
