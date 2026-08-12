@@ -522,4 +522,34 @@
     onEnter(container) { render(container); },
     onLeave() { limpar(); }
   });
+
+  /* -----------------------------------------------------------------------
+   * Link no rodapé
+   *
+   * Sem isto a rota #/sala existia mas não havia como chegar nela pela
+   * interface — só digitando o endereço. Rodapé é o lugar certo: o aluno
+   * não precisa dele, mas o professor acha em dez segundos, e não ocupa
+   * espaço no caminho de quem veio estudar.
+   *
+   * Injetado daqui, e não escrito no index.html, pelo mesmo motivo do card
+   * da home: apagar js/compete/ devolve o site ao estado anterior sem
+   * deixar link órfão.
+   * --------------------------------------------------------------------- */
+  function injetarLinkRodape() {
+    const links = document.querySelector('.footer-links');
+    if (!links || document.getElementById('link-console-prof')) return;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.id = 'link-console-prof';
+    b.className = 'footer-link';
+    b.textContent = 'Console do professor';
+    b.addEventListener('click', () => EDL.screens.goTo('sala'));
+    links.appendChild(b);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injetarLinkRodape);
+  } else {
+    injetarLinkRodape();
+  }
 })();
