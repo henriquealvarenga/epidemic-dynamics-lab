@@ -15,6 +15,9 @@ lendo o resultado.
 
 ## O que há aqui
 
+- **`HANDOFF-modo-competicao.md`** — documento de continuidade do modo
+  competição: estado, decisões e o porquê delas, bugs encontrados e o que ficou
+  pendente. **Leia este primeiro** ao retomar aquele trabalho.
 - **`RASCUNHO_MODULO8_REORGANIZADO.md`** — o planejamento da reorganização do módulo 8 em três
   seções (Soho 1854 → Haiti 2010 → Reflexão), com o texto redigido da subseção "O Custo do
   Saneamento" e as decisões de design discutidas antes de virar código.
