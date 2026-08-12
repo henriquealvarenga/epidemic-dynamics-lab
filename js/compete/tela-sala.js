@@ -244,8 +244,12 @@
       <section class="compete-card">
         <h1 class="compete-titulo">Nova rodada</h1>
         <p class="compete-sub">
-          O banco tem <strong>${compete.bancoJogo.total} questões</strong>.
-          As sorteadas são as mesmas para todos os grupos da sala.
+          Configure abaixo e abra a sala. <strong>O código de entrada é criado
+          nesse momento</strong> — aparece em fonte grande, pronto para projetar.
+        </p>
+        <p class="compete-sub" style="margin-top:-.75rem">
+          O banco tem <strong>${compete.bancoJogo.total} questões</strong>; as
+          sorteadas são as mesmas para todos os grupos da sala.
         </p>
 
         ${local ? `<p class="compete-aviso">
@@ -269,7 +273,7 @@
         <p id="erro-criar" class="compete-erro" role="alert" hidden></p>
 
         <button type="button" class="btn btn-primary compete-btn-grande" id="btn-criar">
-          Abrir sala →
+          Abrir sala e gerar o código →
         </button>
 
         <p class="compete-rodape">
