@@ -248,17 +248,92 @@
     return s ? { ok: true, sessao: s } : { ok: false, erro: 'resposta de login inesperada' };
   }
 
-  /** Envia o código de 6 dígitos para o e-mail do professor.
-   *  `create_user: false` é essencial: sem ele, qualquer visitante que
-   *  digite o próprio e-mail cria uma conta no projeto. */
+  /** URL para onde o magic link deve voltar. Precisa estar na allowlist de
+   *  Redirect URLs do projeto, senão o GoTrue ignora e usa a Site URL. */
+  function urlDeRetorno() {
+    return location.origin + location.pathname + '#/sala';
+  }
+
+  /**
+   * Envia o e-mail de acesso ao professor.
+   *
+   * `create_user: false` é essencial: sem ele, qualquer visitante que
+   * digite o próprio e-mail cria uma conta no projeto.
+   *
+   * O QUE CHEGA — link ou código de 6 dígitos — é decidido pelo TEMPLATE
+   * do projeto, não por esta chamada. E o Supabase só permite editar
+   * templates quando há SMTP customizado configurado; com o serviço de
+   * e-mail interno, vale o template padrão, que manda LINK. Daí este
+   * cliente tratar o retorno por link (ver capturarRedirect).
+   */
   async function enviarCodigo(email) {
     if (!configValida()) return { ok: false, erro: 'modo competição desligado' };
-    const r = await pedir(AUTH() + '/otp', {
-      method: 'POST',
-      body: { email: String(email || '').trim(), create_user: false }
-    });
+    const r = await pedir(
+      AUTH() + '/otp?redirect_to=' + encodeURIComponent(urlDeRetorno()), {
+        method: 'POST',
+        body: { email: String(email || '').trim(), create_user: false }
+      });
     return r.ok ? { ok: true } : { ok: false, erro: r.erro };
   }
+
+  /* -----------------------------------------------------------------------
+   * Retorno do magic link
+   *
+   * O GoTrue devolve o usuário para a Redirect URL com os tokens no
+   * FRAGMENTO: #access_token=…&refresh_token=…&type=magiclink
+   *
+   * Isso colide de frente com o roteador deste site, que lê a rota do
+   * mesmo fragmento — sem tratar, o `route()` veria lixo e cairia na home,
+   * perdendo o login. Por isso capturamos ANTES de qualquer roteamento
+   * (este arquivo carrega antes de app.js, que é quem chama screens.init).
+   *
+   * Depois de guardar a sessão, `history.replaceState` limpa o endereço:
+   * token de acesso não pode ficar no histórico do navegador, nem ser
+   * copiado junto quando alguém compartilha a URL.
+   * --------------------------------------------------------------------- */
+  function capturarRedirect() {
+    const h = location.hash || '';
+    if (h.indexOf('access_token=') < 0) return false;
+
+    const p = new URLSearchParams(h.replace(/^#\/?/, ''));
+    const access = p.get('access_token');
+    if (!access) return false;
+
+    professor.definirDaResposta({
+      access_token: access,
+      refresh_token: p.get('refresh_token')
+    });
+
+    try {
+      history.replaceState(null, '',
+        location.pathname + location.search + '#/sala');
+    } catch (err) {
+      location.hash = '#/sala';
+    }
+    return true;
+  }
+
+  let entrouPorLink = capturarRedirect();
+
+  /* Também na troca de fragmento, e não só na carga.
+   *
+   * Se o professor já estiver com o site aberto quando clicar no link do
+   * e-mail, o navegador NÃO recarrega a página: o endereço difere apenas
+   * no fragmento, então ele só dispara `hashchange`. Sem este ouvinte, a
+   * captura não rodaria e o login seria silenciosamente perdido — a tela
+   * voltaria ao formulário sem explicação nenhuma.
+   *
+   * Descoberto testando: o primeiro teste navegou só trocando o hash e a
+   * captura não aconteceu. */
+  window.addEventListener('hashchange', function () {
+    if ((location.hash || '').indexOf('access_token=') < 0) return;
+    if (capturarRedirect()) {
+      entrouPorLink = true;
+      /* A tela precisa se redesenhar já logada. Recarregar é o caminho
+       * mais simples e seguro: o estado de sessão é lido na carga. */
+      location.reload();
+    }
+  });
 
   /**
    * Login por e-mail e senha — alternativa ao OTP.
@@ -386,6 +461,8 @@
   compete.rest = {
     configValida, localForcado, forcarLocal,
     aluno, professor,
+    entrouPorLink: () => entrouPorLink,
+    urlDeRetorno,
     entrarAnonimo, enviarCodigo, verificarCodigo, entrarComSenha, renovar,
     rpc, selecionar, inserir, atualizar, saude,
     _lerClaims: lerClaims   // exposto para os testes

@@ -9,21 +9,25 @@
  *   é zero, porque criar sala exige estar na allowlist aulas.instructors.
  *   A autorização mora no RLS; esta tela é cortesia.
  *
- * DOIS MÉTODOS DE LOGIN, E NENHUM É MAGIC LINK
- *   O magic link volta com #access_token=… no fragmento — exatamente onde
- *   vive o roteador deste site. Fora isso, na aula o e-mail chega no
- *   celular enquanto a projeção está no notebook: um código atravessa
- *   aparelhos, um link não.
+ * DOIS MÉTODOS DE LOGIN
  *
- *   CÓDIGO POR E-MAIL (OTP): sem senha para lembrar, e com
- *   create_user:false nenhum visitante cria conta digitando o próprio
- *   e-mail.
+ *   LINK POR E-MAIL. Eu tinha escolhido código de 6 dígitos para evitar o
+ *   #access_token=… que o magic link devolve no fragmento — exatamente
+ *   onde vive o roteador deste site. Uma restrição do Supabase inverteu a
+ *   decisão: só é possível EDITAR TEMPLATES quando há SMTP customizado
+ *   configurado. Com o serviço de e-mail interno vale o template padrão,
+ *   que manda link e não código.
  *
- *   SENHA: alternativa que NÃO depende de e-mail chegar. Existe porque o
- *   envio depende de configuração de SMTP, que pode falhar exatamente no
- *   dia da aula — e falhou aqui: SMTP do Gmail devolvendo 535 por exigir
- *   App Password em vez da senha da conta. O projeto irmão do Exame do
- *   Estado Mental usa senha pelo mesmo motivo, registrado lá como
+ *   Como o SMTP próprio deste projeto estava quebrado (Gmail devolvendo
+ *   535 por exigir App Password), exigir código significaria exigir
+ *   configuração de infraestrutura antes de a aula existir. O link não
+ *   exige nada — e a colisão com o roteador é resolvida em
+ *   compete/rest.js, que captura os tokens e limpa o endereço ANTES de
+ *   qualquer roteamento.
+ *
+ *   SENHA. Alternativa que não depende de e-mail chegar, para o dia em
+ *   que a entrega demorar com a turma esperando. O projeto irmão do Exame
+ *   do Estado Mental usa senha pelo mesmo motivo, registrado lá como
  *   "confiável numa sala de aula".
  *
  * POLLING, NÃO WEBSOCKET
@@ -109,13 +113,13 @@
       <section class="compete-card">
         <h1 class="compete-titulo">Entrar</h1>
         <p class="compete-sub">
-          Um código de 6 dígitos será enviado ao seu e-mail. Só e-mails já
+          Um link de acesso será enviado ao seu e-mail. Só e-mails já
           cadastrados como professor recebem.
         </p>
 
         <div class="sala-abas" role="tablist">
           <button type="button" class="sala-aba ativa" data-metodo="otp" role="tab"
-                  aria-selected="true">Código por e-mail</button>
+                  aria-selected="true">Link por e-mail</button>
           <button type="button" class="sala-aba" data-metodo="senha" role="tab"
                   aria-selected="false">Senha</button>
         </div>
@@ -131,18 +135,11 @@
                    autocomplete="current-password" placeholder="••••••••" />
           </div>
 
-          <div id="bloco-codigo" hidden>
-            <label class="compete-label" for="campo-otp">Código recebido</label>
-            <input id="campo-otp" class="compete-input compete-input-codigo"
-                   type="text" inputmode="numeric" autocomplete="one-time-code"
-                   maxlength="6" placeholder="000000" />
-          </div>
-
           <p id="erro-otp" class="compete-erro" role="alert" hidden></p>
           <p id="aviso-otp" class="compete-sync ok" role="status" hidden></p>
 
           <button type="submit" class="btn btn-primary compete-btn-grande" id="btn-otp">
-            Enviar código →
+            Enviar link →
           </button>
         </form>
 
@@ -156,14 +153,12 @@
 
     const form  = wrap.querySelector('#form-otp');
     const email = wrap.querySelector('#campo-email');
-    const bloco = wrap.querySelector('#bloco-codigo');
-    const otp   = wrap.querySelector('#campo-otp');
     const erro  = wrap.querySelector('#erro-otp');
     const aviso = wrap.querySelector('#aviso-otp');
     const botao = wrap.querySelector('#btn-otp');
     const blocoSenha = wrap.querySelector('#bloco-senha');
     const senha = wrap.querySelector('#campo-senha');
-    let enviado = false;
+    let enviado = false;   // eslint-disable-line no-unused-vars
     let metodo = 'otp';
 
     wrap.querySelectorAll('.sala-aba').forEach(aba => {
@@ -174,15 +169,9 @@
           a.setAttribute('aria-selected', String(a === aba));
         });
         blocoSenha.hidden = metodo !== 'senha';
-        bloco.hidden = metodo !== 'otp' || !enviado;
         erro.hidden = true; aviso.hidden = true;
-        botao.textContent = metodo === 'senha' ? 'Entrar →'
-                          : (enviado ? 'Entrar →' : 'Enviar código →');
+        botao.textContent = metodo === 'senha' ? 'Entrar →' : 'Enviar link →';
       });
-    });
-
-    otp.addEventListener('input', () => {
-      otp.value = otp.value.replace(/\D/g, '');
     });
 
     form.addEventListener('submit', async ev => {
@@ -199,30 +188,17 @@
         return;
       }
 
-      if (!enviado) {
-        botao.textContent = 'Enviando…';
-        const r = await compete.rest.enviarCodigo(email.value);
-        botao.disabled = false;
-        if (!r.ok) {
-          erro.textContent = r.erro; erro.hidden = false;
-          botao.textContent = 'Enviar código →';
-          return;
-        }
-        enviado = true;
-        bloco.hidden = false;
-        aviso.textContent = 'Código enviado. Confira também o spam.';
-        aviso.hidden = false;
-        botao.textContent = 'Entrar →';
-        setTimeout(() => { try { otp.focus(); } catch (e) {} }, 60);
-        return;
-      }
-
-      botao.textContent = 'Verificando…';
-      const r = await compete.rest.verificarCodigo(email.value, otp.value);
+      botao.textContent = 'Enviando…';
+      const r = await compete.rest.enviarCodigo(email.value);
       botao.disabled = false;
-      botao.textContent = 'Entrar →';
+      botao.textContent = 'Enviar link →';
       if (!r.ok) { erro.textContent = r.erro; erro.hidden = false; return; }
-      render(document.getElementById('screen-sala'));
+
+      enviado = true;
+      aviso.innerHTML = 'Link enviado. Abra o e-mail <strong>neste mesmo ' +
+        'computador</strong> e clique em "Sign in" — é a aba da projeção que ' +
+        'precisa ficar logada. Confira o spam se demorar.';
+      aviso.hidden = false;
     });
 
     wrap.querySelector('#btn-local').addEventListener('click', () => {
