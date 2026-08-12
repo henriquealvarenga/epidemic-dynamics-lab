@@ -174,14 +174,24 @@
       });
     });
 
+    /* Guarda contra envio concorrente. Não é zelo excessivo: o serviço de
+     * e-mail interno do Supabase permite DOIS e-mails por hora, então um
+     * clique duplo custa metade da cota do professor — e ele descobriria
+     * isso só na segunda tentativa, já sem crédito. `botao.disabled` não
+     * basta, porque não cobre Enter no formulário nem envio programático. */
+    let enviando = false;
+
     form.addEventListener('submit', async ev => {
       ev.preventDefault();
+      if (enviando) return;
+      enviando = true;
       erro.hidden = true;
       botao.disabled = true;
 
       if (metodo === 'senha') {
         botao.textContent = 'Entrando…';
         const r = await compete.rest.entrarComSenha(email.value, senha.value);
+        enviando = false;
         botao.disabled = false; botao.textContent = 'Entrar →';
         if (!r.ok) { erro.textContent = r.erro; erro.hidden = false; return; }
         render(document.getElementById('screen-sala'));
@@ -190,9 +200,14 @@
 
       botao.textContent = 'Enviando…';
       const r = await compete.rest.enviarCodigo(email.value);
+      enviando = false;
       botao.disabled = false;
       botao.textContent = 'Enviar link →';
-      if (!r.ok) { erro.textContent = r.erro; erro.hidden = false; return; }
+      if (!r.ok) {
+        aviso.hidden = true;                 // não deixar sucesso e erro juntos
+        erro.textContent = r.erro; erro.hidden = false;
+        return;
+      }
 
       enviado = true;
       aviso.innerHTML = 'Link enviado. Abra o e-mail <strong>neste mesmo ' +
