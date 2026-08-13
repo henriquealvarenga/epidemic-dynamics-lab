@@ -330,7 +330,9 @@
       const alvo = wrap.querySelector('#res-teste');
       alvo.textContent = ' testando…';
       const r = await compete.rest.saude();
-      alvo.textContent = r.ok ? ' ✓ conectado' : ' ✗ ' + (r.erro || 'sem conexão');
+      alvo.textContent = r.ok
+        ? ' ✓ conectado' + (r.detalhe ? ' — ' + r.detalhe : '')
+        : ' ✗ ' + (r.erro || 'sem conexão');
     });
 
     wrap.querySelectorAll('[data-voltar]').forEach(b => {
@@ -556,9 +558,57 @@
     links.appendChild(b);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injetarLinkRodape);
-  } else {
+  /* -----------------------------------------------------------------------
+   * Entrada do professor NA HOME
+   *
+   * O link do rodapé continua sendo o lugar natural, mas medindo a home
+   * ele está a 2602px numa página de 2704px — três telas abaixo do card do
+   * aluno, que fica a 386px. Um link que ninguém encontra é um link que não
+   * existe: na verificação ponta a ponta o próprio professor perguntou por
+   * onde entrava, e antes disso o §7 já tinha mostrado que quem cai na home
+   * sem rumo vai parar na tela do ALUNO, porque é a única coisa visível.
+   *
+   * Fica logo abaixo do card da competição, em corpo pequeno e alinhado à
+   * direita: acima da dobra, sem disputar espaço com quem veio estudar.
+   * --------------------------------------------------------------------- */
+  function injetarLinkHome() {
+    const card = document.getElementById('compete-card-home');
+    if (!card) return;                       // sem card, o rodapé dá conta
+    const anterior = document.getElementById('compete-prof-home');
+    if (anterior) anterior.remove();
+
+    const p = document.createElement('p');
+    p.id = 'compete-prof-home';
+    p.className = 'compete-prof-home';
+
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn-link';
+    b.textContent = 'Sou o professor — abrir o console →';
+    b.addEventListener('click', () => EDL.screens.goTo('sala'));
+
+    p.appendChild(b);
+    card.insertAdjacentElement('afterend', p);
+  }
+
+  /* A home é reconstruída a cada volta, e o card da competição é
+   * reinjetado junto. O listener de tela-jogar.js foi registrado antes
+   * deste (o arquivo carrega antes), então o card já existe quando
+   * chegamos aqui. */
+  window.addEventListener('hashchange', () => {
+    if (location.hash === '' || location.hash === '#/' || location.hash === '#/home') {
+      setTimeout(injetarLinkHome, 0);
+    }
+  });
+
+  function injetarEntradas() {
     injetarLinkRodape();
+    injetarLinkHome();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injetarEntradas);
+  } else {
+    injetarEntradas();
   }
 })();

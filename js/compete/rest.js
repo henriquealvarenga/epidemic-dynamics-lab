@@ -555,11 +555,42 @@
     return r.ok ? { ok: true } : { ok: false, erro: r.erro, status: r.status };
   }
 
-  /** Ping barato para o botão "testar conexão" da tela do professor. */
+  /**
+   * Ping barato para o botão "testar conexão" da tela do professor.
+   *
+   * NÃO use a raiz do PostgREST (`/rest/v1/`): ela devolve o documento
+   * OpenAPI e o Supabase passou a exigir CHAVE SECRETA para lê-la
+   * ("Secret API key required"). Com a chave publishable — a única que este
+   * site tem, e corretamente — o teste dava 401 SEMPRE. O botão existe para
+   * o professor decidir, na frente da turma, se o problema é a rede; um
+   * diagnóstico que acusa falha com tudo no ar é pior do que não ter botão.
+   * Descoberto na verificação ponta a ponta.
+   *
+   * O que testamos agora, em duas camadas:
+   *   1. `/auth/v1/health` — endereço público de verdade. Passa: o projeto
+   *      está no ar e a rede o alcança.
+   *   2. logado, uma leitura real no schema `aulas` — é o que prova que a
+   *      Data API responde e que o schema está exposto. Sem sessão não dá
+   *      para tentar: `anon` não tem USAGE no schema, e o 401 seria só o
+   *      RLS funcionando.
+   */
   async function saude() {
     if (!configValida()) return { ok: false, erro: 'modo competição desligado' };
-    const r = await pedir(REST() + '/', { method: 'GET' });
-    return r.ok || r.status === 200 ? { ok: true } : { ok: false, erro: r.erro };
+
+    const r = await pedir(AUTH() + '/health', { method: 'GET' });
+    if (!r.ok) return { ok: false, erro: r.erro };
+
+    const sessao = professor.get() ? professor : (aluno.get() ? aluno : null);
+    if (!sessao) return { ok: true, detalhe: 'projeto no ar' };
+
+    const token = await tokenDe(sessao);
+    if (!token) return { ok: true, detalhe: 'projeto no ar (sessão vencida)' };
+
+    const d = await pedir(REST() + '/rooms?select=id&limit=1', {
+      method: 'GET', token: token, headers: cabecalhosSchema('GET')
+    });
+    return d.ok ? { ok: true, detalhe: 'projeto e banco no ar' }
+                : { ok: false, erro: d.erro };
   }
 
   compete.rest = {

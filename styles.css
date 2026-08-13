@@ -3508,10 +3508,22 @@ sup.cite a:focus-visible {
 .compete-home-seta  { font-size: 1.2rem; color: var(--accent); flex: 0 0 auto; }
 .compete-home.na-sala .compete-home-seta { color: var(--c-exposed); }
 
+/* Entrada do professor na home. Discreta de propósito: quem veio estudar
+   não precisa dela, mas ela tem de existir ACIMA da dobra — o link do
+   rodapé ficava a três telas de rolagem, e na prática não existia. */
+.compete-prof-home {
+  margin: -.75rem 0 1.25rem;
+  text-align: right;
+  font-size: .82rem;
+}
+.compete-prof-home .btn-link { color: var(--text-secondary); }
+.compete-prof-home .btn-link:hover { color: var(--accent); }
+
 @media (max-width: 540px) {
   .compete-home { padding: .85rem 1rem; gap: .75rem; }
   .compete-home-txt strong { font-size: .92rem; }
   .compete-home-txt span   { font-size: .78rem; }
+  .compete-prof-home { text-align: center; }
 }
 
 /* =========================================================================
