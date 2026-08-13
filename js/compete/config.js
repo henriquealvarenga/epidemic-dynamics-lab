@@ -51,7 +51,14 @@
       queue:    'edl.compete.queue.v1', // respostas aguardando envio
       authStudent: 'edl.compete.auth.aluno.v1',
       authTeacher: 'edl.compete.auth.prof.v1',
-      forcarLocal: 'edl.compete.local.forcado.v1'
+      forcarLocal: 'edl.compete.local.forcado.v1',
+
+      /* Única chave de sessionStorage da lista: guarda o motivo de um
+       * retorno de magic link que falhou, só até a tela de login mostrá-lo.
+       * Precisa de storage (e não de uma variável) porque o caminho do
+       * hashchange recarrega a página; e é de sessão porque um aviso de
+       * link expirado não deve reaparecer amanhã. */
+      erroLink: 'edl.compete.link.erro.v1'
     },
 
     /* Ritmo da rede. Números herdados do projeto irmão do Exame do Estado

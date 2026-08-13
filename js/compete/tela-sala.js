@@ -92,17 +92,23 @@
     wrap.className = 'sala-wrap';
     container.appendChild(wrap);
 
+    /* Um retorno de magic link que falhou deixa o motivo guardado no
+     * rest.js. Consumimos SEMPRE aqui, mesmo quando não há tela de login
+     * para mostrá-lo, senão um aviso velho reapareceria numa entrada
+     * futura da mesma aba. */
+    const erroDoLink = compete.rest.erroDoLink();
+
     if (salaAtual) return renderConsole(wrap);
 
     /* Em modo local não há login: é o ensaio, ou a aula acontecendo sem
      * rede. Vai direto para a criação da sala. */
     const precisaLogin = compete.rest.configValida() && !compete.rest.professor.valida();
-    if (precisaLogin) renderLogin(wrap);
+    if (precisaLogin) renderLogin(wrap, erroDoLink);
     else renderCriar(wrap);
   }
 
   /* ---- Login ---- */
-  function renderLogin(wrap) {
+  function renderLogin(wrap, erroInicial) {
     wrap.innerHTML = `
       <nav class="module-topbar">
         <button type="button" class="btn btn-ghost btn-small" data-voltar>← Sair</button>
@@ -160,6 +166,14 @@
     const senha = wrap.querySelector('#campo-senha');
     let enviado = false;   // eslint-disable-line no-unused-vars
     let metodo = 'otp';
+
+    /* Chegou aqui vindo de um link que não funcionou: diga isso na cara.
+     * O silêncio é o bug — o professor devolvido à home sem explicação foi
+     * parar na tela do aluno tentando adivinhar o caminho. */
+    if (erroInicial) {
+      erro.textContent = erroInicial;
+      erro.hidden = false;
+    }
 
     wrap.querySelectorAll('.sala-aba').forEach(aba => {
       aba.addEventListener('click', () => {

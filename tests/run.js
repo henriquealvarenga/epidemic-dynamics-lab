@@ -565,6 +565,90 @@ test('local: código de sala não usa caracteres ambíguos', () => {
     'o código não pode conter 0, O, 1 nem I');
 });
 
+/* ==================================================================
+ * Retorno do magic link (compete/rest.js)
+ *
+ * O GoTrue devolve o professor com tokens OU com erro no MESMO lugar de
+ * onde este site lê a rota. Enquanto o erro não era reconhecido, o
+ * roteador não achava rota nenhuma, caía na home em silêncio, e o card
+ * mais visível de lá leva à TELA DO ALUNO — o relato que abriu a
+ * pendência do §7 do handoff.
+ *
+ * rest.js inteiro depende do navegador; o que dá para testar em Node é
+ * justamente o pedaço que errou: a leitura do endereço. Os stubs abaixo
+ * cobrem só o que o arquivo toca ao carregar.
+ * ================================================================ */
+
+global.location = { hash: '', search: '', pathname: '/', reload() {} };
+global.history  = { replaceState() {} };
+global.sessionStorage = (function () {
+  let store = {};
+  return {
+    getItem:    k => (k in store ? store[k] : null),
+    setItem:    (k, v) => { store[k] = String(v); },
+    removeItem: k => { delete store[k]; }
+  };
+})();
+global.window.addEventListener = function () {};
+
+load('js/compete/rest.js');
+
+const lerLink = (frag, query) => EDL.compete.rest._lerRetornoDoLink(frag, query);
+
+test('link: fragmento com tokens vira sessão', () => {
+  const r = lerLink('#access_token=abc&refresh_token=def&type=magiclink', '');
+  assert.equal(r.tipo, 'sessao');
+  assert.equal(r.access, 'abc');
+  assert.equal(r.refresh, 'def');
+});
+
+test('link: otp_expired vira erro que manda pedir outro link', () => {
+  const r = lerLink(
+    '#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid', '');
+  assert.equal(r.tipo, 'erro');
+  assert.match(r.erro, /uma vez só/);
+  assert.match(r.erro, /senha/);   // precisa oferecer a saída que não depende de e-mail
+});
+
+test('link: erro sem error_code também é reconhecido', () => {
+  // Nem toda versão do GoTrue manda error_code; o `error` sozinho basta.
+  const r = lerLink('#error=access_denied&error_description=Something+went+wrong', '');
+  assert.equal(r.tipo, 'erro');
+});
+
+test('link: erro na query, e não no fragmento, também é lido', () => {
+  const r = lerLink('#/sala', '?error_code=otp_expired');
+  assert.equal(r.tipo, 'erro');
+});
+
+test('link: error_description desconhecida chega ao professor', () => {
+  const r = lerLink('#error_code=alguma_coisa&error_description=Servidor+fora+do+ar', '');
+  assert.match(r.erro, /Servidor fora do ar/);   // o '+' precisa virar espaço
+});
+
+test('link: rota normal do site NÃO é confundida com retorno de link', () => {
+  // Este é o teste que protege a navegação: se qualquer hash virasse
+  // "retorno de link", toda troca de tela recarregaria a página.
+  ['#/sala', '#/jogar', '#/jogar/ABC234', '#/home', '#/module/05-r0', '', '#'].forEach(h => {
+    assert.equal(lerLink(h, ''), null, `${h} não é retorno de link`);
+  });
+});
+
+test('link: erro é entregue uma vez só', () => {
+  // A tela consome o aviso ao mostrá-lo. Se ele sobrevivesse, reapareceria
+  // numa entrada futura no console, sem link nenhum por perto.
+  global.sessionStorage.setItem('edl.compete.link.erro.v1', 'link velho');
+  assert.equal(EDL.compete.rest.erroDoLink(), 'link velho');
+  assert.equal(EDL.compete.rest.erroDoLink(), null);
+});
+
+test('link: claims do JWT são lidas sem validar assinatura', () => {
+  const b64 = o => Buffer.from(JSON.stringify(o)).toString('base64url');
+  const jwt = b64({ alg: 'HS256' }) + '.' + b64({ sub: 'u1', email: 'p@x.y', exp: 42 }) + '.sig';
+  assert.equal(EDL.compete.rest._lerClaims(jwt).email, 'p@x.y');
+  assert.equal(EDL.compete.rest._lerClaims('não é um jwt'), null);
+});
+
 /* ------------------------------------------------------------------
  * Relatório final
  * ---------------------------------------------------------------- */

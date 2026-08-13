@@ -290,30 +290,111 @@
    * Depois de guardar a sessão, `history.replaceState` limpa o endereço:
    * token de acesso não pode ficar no histórico do navegador, nem ser
    * copiado junto quando alguém compartilha a URL.
+   *
+   * O RETORNO TAMBÉM PODE SER UM ERRO, e ele não pode ser engolido:
+   *   #error=access_denied&error_code=otp_expired&error_description=…
+   *
+   * É o que acontece quando o link já foi usado — inclusive quando quem o
+   * usou foi um filtro antivírus do provedor de e-mail, que abre os links
+   * da mensagem antes de o professor clicar. Sem tratar, o roteador não
+   * reconhece esse fragmento, cai na home em silêncio, e a coisa mais
+   * visível ali é o card "Entrar numa competição": o professor termina na
+   * TELA DO ALUNO sem entender por quê. Foi exatamente o relato que abriu
+   * esta pendência.
    * --------------------------------------------------------------------- */
-  function capturarRedirect() {
-    const h = location.hash || '';
-    if (h.indexOf('access_token=') < 0) return false;
 
-    const p = new URLSearchParams(h.replace(/^#\/?/, ''));
-    const access = p.get('access_token');
-    if (!access) return false;
+  /**
+   * Lê o que o GoTrue devolveu no endereço. Pura de propósito — é o pedaço
+   * que os testes conseguem exercitar sem navegador.
+   *
+   * O erro chega no FRAGMENTO no fluxo implícito (o nosso) e na QUERY em
+   * alguns caminhos do GoTrue; ler os dois custa uma linha e evita
+   * depender de qual deles a versão do servidor escolheu hoje.
+   *
+   * Devolve { tipo: 'sessao', access, refresh } | { tipo: 'erro', erro }
+   * | null quando o endereço é só uma rota normal do site.
+   */
+  function lerRetornoDoLink(fragmento, consulta) {
+    const doHash  = new URLSearchParams(String(fragmento || '').replace(/^#\/?/, ''));
+    const doQuery = new URLSearchParams(String(consulta || '').replace(/^\?/, ''));
+    const pega = k => doHash.get(k) || doQuery.get(k);
 
-    professor.definirDaResposta({
-      access_token: access,
-      refresh_token: p.get('refresh_token')
-    });
+    const access = pega('access_token');
+    if (access) return { tipo: 'sessao', access: access, refresh: pega('refresh_token') };
 
-    try {
-      history.replaceState(null, '',
-        location.pathname + location.search + '#/sala');
-    } catch (err) {
-      location.hash = '#/sala';
-    }
-    return true;
+    const codigo = pega('error_code') || pega('error');
+    if (codigo) return { tipo: 'erro', erro: mensagemDoLink(codigo, pega('error_description')) };
+
+    return null;
   }
 
-  let entrouPorLink = capturarRedirect();
+  /** O que o professor lê na tela quando o link não funcionou. */
+  function mensagemDoLink(codigo, descricao) {
+    if (codigo === 'otp_expired' || codigo === 'access_denied') {
+      return 'Este link de acesso não vale mais: cada um funciona uma vez só, ' +
+             'e alguns filtros de e-mail o abrem antes de você. Peça outro — ' +
+             'ou entre com senha, que não depende de e-mail.';
+    }
+    const d = String(descricao || '').trim();
+    return d ? 'O login pelo link falhou: ' + d
+             : 'O login pelo link falhou. Peça outro link, ou entre com senha.';
+  }
+
+  /* O motivo do erro precisa atravessar o `location.reload()` do caminho do
+   * hashchange, então vai para o sessionStorage — memória só como reserva
+   * para navegação privativa. Some ao fechar a aba, que é a vida útil certa
+   * para um aviso de tela. */
+  let erroLinkMemoria = null;
+
+  function guardarErroDoLink(msg) {
+    erroLinkMemoria = msg;
+    try { sessionStorage.setItem(cfg.storageKeys.erroLink, msg); }
+    catch (err) { /* fica só em memória, e só nesta aba */ }
+  }
+
+  /** Lê E CONSOME o erro do último retorno de link. */
+  function erroDoLink() {
+    let msg = erroLinkMemoria;
+    erroLinkMemoria = null;
+    try {
+      msg = sessionStorage.getItem(cfg.storageKeys.erroLink) || msg;
+      sessionStorage.removeItem(cfg.storageKeys.erroLink);
+    } catch (err) { /* fica com o que estava em memória */ }
+    return msg || null;
+  }
+
+  /** Tira do endereço o que o GoTrue pendurou nele e aponta para #/sala.
+   *  Vale tanto para os tokens (que não podem ficar no histórico) quanto
+   *  para o erro (que já foi guardado e não deve sobreviver a um F5). */
+  function limparEndereco() {
+    const q = new URLSearchParams(String(location.search || '').replace(/^\?/, ''));
+    ['access_token', 'refresh_token', 'expires_in', 'expires_at', 'token_type',
+     'type', 'error', 'error_code', 'error_description'].forEach(k => q.delete(k));
+    const cauda = q.toString();
+    const alvo = location.pathname + (cauda ? '?' + cauda : '') + '#/sala';
+    try { history.replaceState(null, '', alvo); }
+    catch (err) { location.hash = '#/sala'; }
+  }
+
+  /** Devolve 'sessao', 'erro' ou false (endereço sem retorno de link). */
+  function capturarRedirect() {
+    const r = lerRetornoDoLink(location.hash, location.search);
+    if (!r) return false;
+
+    if (r.tipo === 'sessao') {
+      professor.definirDaResposta({
+        access_token: r.access,
+        refresh_token: r.refresh
+      });
+    } else {
+      guardarErroDoLink(r.erro);
+    }
+
+    limparEndereco();
+    return r.tipo;
+  }
+
+  let entrouPorLink = capturarRedirect() === 'sessao';
 
   /* Também na troca de fragmento, e não só na carga.
    *
@@ -324,15 +405,38 @@
    * voltaria ao formulário sem explicação nenhuma.
    *
    * Descoberto testando: o primeiro teste navegou só trocando o hash e a
-   * captura não aconteceu. */
-  window.addEventListener('hashchange', function () {
-    if ((location.hash || '').indexOf('access_token=') < 0) return;
-    if (capturarRedirect()) {
-      entrouPorLink = true;
-      /* A tela precisa se redesenhar já logada. Recarregar é o caminho
-       * mais simples e seguro: o estado de sessão é lido na carga. */
-      location.reload();
+   * captura não aconteceu.
+   *
+   * Só o FRAGMENTO é consultado aqui: a query não muda numa troca de hash e
+   * já foi tratada na carga — relê-la faria um retorno velho disparar de
+   * novo a cada navegação do site. */
+  window.addEventListener('hashchange', function (ev) {
+    if (!lerRetornoDoLink(location.hash, '')) return;   // rota normal: não mexe
+    const tipo = capturarRedirect();
+    if (!tipo) return;
+    if (tipo === 'sessao') entrouPorLink = true;
+
+    /* Este hashchange é nosso: nenhum outro ouvinte deve tratá-lo.
+     *
+     * `location.reload()` só AGENDA a recarga — os ouvintes seguintes ainda
+     * rodam. O roteador rodaria, renderizaria a tela do professor e, ao
+     * fazê-lo, CONSUMIRIA o aviso de link inválido (ele é entregue uma vez
+     * só) numa pintura que a recarga jogaria fora um instante depois: o
+     * professor recarregaria numa tela de login muda. Custou um teste
+     * descobrir, e o sintoma era idêntico ao bug original.
+     *
+     * Funciona porque os dois ouvintes são do mesmo alvo (window) e este
+     * foi registrado primeiro — rest.js carrega antes de app.js, que é
+     * quem chama screens.init. É a mesma ordem de que a captura na carga
+     * já depende. */
+    if (ev && typeof ev.stopImmediatePropagation === 'function') {
+      ev.stopImmediatePropagation();
     }
+
+    /* A tela precisa se redesenhar já logada — ou já com o aviso de que o
+     * link falhou. Recarregar é o caminho mais simples e seguro: sessão e
+     * aviso são lidos do storage na carga. */
+    location.reload();
   });
 
   /**
@@ -462,9 +566,11 @@
     configValida, localForcado, forcarLocal,
     aluno, professor,
     entrouPorLink: () => entrouPorLink,
+    erroDoLink,
     urlDeRetorno,
     entrarAnonimo, enviarCodigo, verificarCodigo, entrarComSenha, renovar,
     rpc, selecionar, inserir, atualizar, saude,
-    _lerClaims: lerClaims   // exposto para os testes
+    _lerClaims: lerClaims,               // expostos para os testes
+    _lerRetornoDoLink: lerRetornoDoLink
   };
 })();

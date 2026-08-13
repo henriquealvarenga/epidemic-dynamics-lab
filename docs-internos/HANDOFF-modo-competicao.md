@@ -1,23 +1,24 @@
 # Handoff — Modo Competição
 
 Documento de continuidade para retomar em outra sessão. Última atualização:
-**12/08/2026**. Atualize ao fim de cada bloco de trabalho.
+**13/08/2026**. Atualize ao fim de cada bloco de trabalho.
 
 **Onde paramos:** o backend está no ar e testado, as duas telas funcionam, e o
-professor conseguiu entrar no console pelo magic link. A única pendência aberta
-é um relato de que, ao voltar do e-mail, a tela do **aluno** apareceu em vez da
-do professor — não confirmado, ver §7.
+professor conseguiu entrar no console pelo magic link. O relato da tela do
+**aluno** aparecendo em vez da do professor foi reproduzido e corrigido (§7) —
+as duas hipóteses estavam certas, uma era consequência da outra. A pendência
+seguinte é a verificação ponta a ponta contra o Supabase real.
 
 ---
 
 ## 1. Estado do repositório
 
-Branch **`modo-competicao`**, 14 commits à frente da `main`, **não publicado**.
+Branch **`modo-competicao`**, 15 commits à frente da `main`, **não publicado**.
 A `main` está publicada e contém a Fase 0 (histórico de progresso, sons, CI).
 
 ```bash
 git checkout modo-competicao          # onde o trabalho está
-node tests/run.js                     # 46 testes
+node tests/run.js                     # 54 testes
 python3 scripts/devserver.py 8120     # servidor SEM cache (importante — ver §6)
 ```
 
@@ -87,9 +88,26 @@ tratamento de erro e o futuro cliente de Realtime são nossos para manter.
 depois — e mesmo lá o poll continuará vivo como rede de segurança, porque um
 WebSocket que cai em silêncio congela o telão sem avisar ninguém.
 
-## 4. Bugs encontrados hoje, e o que cada um ensina
+## 4. Bugs encontrados, e o que cada um ensina
 
 Todos apareceram **testando**, não revisando. Vale repetir o método.
+
+**O retorno do magic link só sabia dar certo (13/08).** A captura lia
+`access_token` do fragmento e ignorava a outra coisa que o GoTrue devolve pelo
+mesmo caminho: `#error=access_denied&error_code=otp_expired`. Sem reconhecer o
+erro, o roteador não achava rota nenhuma, caía na home **em silêncio** — e o que
+mais salta aos olhos ali é o card "Entrar numa competição". Daí o professor
+terminar na tela do aluno. Ensina que **o caminho de erro de um login também é
+uma tela**, e que um link de uso único falha por motivo banal: alguns filtros
+antivírus de e-mail abrem os links da mensagem antes do destinatário, gastando o
+link antes do primeiro clique humano.
+
+**`location.reload()` não interrompe os outros ouvintes (13/08).** Descoberto ao
+testar a correção acima: o `reload()` só agenda a recarga, então o roteador ainda
+rodava, pintava a tela do professor e nisso **consumia** o aviso de link
+inválido — que é entregue uma vez só — numa pintura que a recarga jogava fora.
+O sintoma era idêntico ao bug original: tela muda, sem explicação. Resolvido com
+`stopImmediatePropagation()`: quando a captura assume a navegação, ela é dela.
 
 **RLS controla linhas, não colunas.** A policy que deixa o professor renomear e
 bloquear um grupo deixava também reescrever o `score` agregado. O teste gravou
@@ -154,7 +172,14 @@ magic link.
 
 **Cache do servidor de dev.** `python -m http.server` serve JS antigo e o
 sintoma parece bug de lógica. Use `python3 scripts/devserver.py`. Já mordeu duas
-vezes hoje, e é o item marcado como "(recorrente)" no projeto do EEM.
+vezes, e é o item marcado como "(recorrente)" no projeto do EEM.
+
+**E o cache da ABA já aberta, mesmo com o servidor certo.** O `devserver.py`
+manda `no-store` e mesmo assim uma aba que já estava aberta continuou executando
+o JS anterior — recarregar, inclusive forçado, não bastou; a correção só apareceu
+em **aba nova**. Custou uma rodada de diagnóstico atrás de um bug que já estava
+corrigido no disco. Antes de acreditar num teste de front, confirme que a página
+tem o código novo (algo como `typeof EDL.compete.rest._lerRetornoDoLink`).
 
 **`document.hidden` é `true` no painel automatizado do navegador.** O poll não
 roda. Para testar, sobrescreva com `Object.defineProperty`.
@@ -166,20 +191,28 @@ qualquer teste que navegue por hash.
 
 ## 7. Pendências
 
-**ABERTA E PRIORITÁRIA — tela do aluno em vez do console.** O professor relatou
-que, ao voltar do magic link, apareceu a tela do aluno. Não confirmado: minutos
-antes ele havia relatado que a tela de criar sala apareceu corretamente. Duas
-hipóteses:
+**RESOLVIDA (13/08) — tela do aluno em vez do console.** As duas hipóteses
+estavam certas, e a segunda explicava a primeira: o retorno do link **não**
+pousava em `#/jogar`, mas quando o link vinha com **erro** em vez de token
+(`#error=access_denied&error_code=otp_expired`, que é o que o GoTrue devolve
+para link já usado), a captura não reconhecia nada, o roteador caía na **home**
+sem avisar, e o card mais visível de lá leva à tela do aluno. O professor não
+"clicou no lugar errado": foi despejado num lugar onde aquele era o caminho
+óbvio.
 
-- recarregou a página, caiu na home e clicou no card "Entrar numa competição"
-  (sem bug, só dois caminhos parecidos);
-- o retorno do link pousou em `#/jogar` (bug na captura, que meus testes não
-  pegaram).
+Reproduzido no navegador nos dois caminhos — carga direta e clique com o site já
+aberto. Hoje qualquer retorno do link vai para `#/sala`, o endereço é limpo
+(fragmento e query), e o motivo aparece escrito na tela de login: *"Este link de
+acesso não vale mais: cada um funciona uma vez só, e alguns filtros de e-mail o
+abrem antes de você. Peça outro — ou entre com senha."*
 
-**Para diagnosticar:** peça o que está depois do `#` no endereço e o título na
-tela — "Entrar na sala" é do aluno, "Nova rodada" é do professor. Se a sessão
-do professor tiver sobrevivido (`localStorage['edl.compete.auth.prof.v1']`), é a
-primeira hipótese.
+Oito testes novos em `tests/run.js` cobrem a leitura do retorno (54 no total);
+`rest.js` passou a ser carregado pelo runner, o que antes não acontecia.
+
+**Consequência prática para o dia da aula:** um link de uso único pode chegar
+gasto, porque filtros de e-mail o abrem antes do destinatário. O **login por
+senha** não depende disso e continua sendo o caminho confiável com a turma
+esperando.
 
 **Revisão das 30 questões** em `js/compete/banco-jogo.js`. Conteúdo médico
 gerado, com aviso no cabeçalho do arquivo. Confira sobretudo os números de R₀,
@@ -197,11 +230,13 @@ Tudo foi testado, mas em partes — o backend com SQL e o front em modo local.
 ## 8. Como retomar
 
 1. Ler este documento e o [supabase/README.md](../supabase/README.md).
-2. `git checkout modo-competicao` e `node tests/run.js` (esperado: 46/46).
-3. Resolver a pendência de §7 antes de qualquer coisa nova.
-4. Fazer a verificação ponta a ponta contra o Supabase real.
+2. `git checkout modo-competicao` e `node tests/run.js` (esperado: 54/54).
+3. Fazer a verificação ponta a ponta contra o Supabase real — é o próximo passo,
+   e é o único que ainda pode mudar o desenho.
+4. Revisar as 30 questões do banco do modo game.
 5. Só então decidir sobre publicar e sobre Realtime.
 
-**O método que funcionou hoje, e vale manter:** testar contra o sistema real em
-vez de confiar no desenho. Todos os oito bugs acima vieram daí — nenhum
-apareceu em revisão de código.
+**O método que funcionou, e vale manter:** testar contra o sistema real em vez de
+confiar no desenho. Os dez bugs acima vieram daí — nenhum apareceu em revisão de
+código. O do magic link é o caso exemplar: o desenho estava certo para o caminho
+feliz, e o caminho de erro simplesmente não existia.
