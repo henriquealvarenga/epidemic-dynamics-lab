@@ -6,21 +6,25 @@ Documento de continuidade para retomar em outra sessão. Última atualização:
 **Onde paramos:** a **verificação ponta a ponta contra o Supabase real está
 feita** (§7) — console logado, sala aberta, três grupos jogando, placar e mapa de
 calor ao vivo, pódio e encerramento, com as duas tentativas de fraude recusadas
-pelo servidor. O bug do §7 anterior (tela do aluno em vez do console) foi
-reproduzido e corrigido. A pendência prioritária agora é outra, descoberta na
-própria verificação: **uma sala aberta só é alcançável do navegador e da origem
-que a criaram** — de qualquer outro lugar não há como retomá-la nem encerrá-la.
+pelo servidor. Os bugs que ela revelou estão corrigidos, incluindo o maior deles:
+o console agora **recupera do servidor a sala que ficou aberta**, em vez de
+depender do `localStorage` do navegador que a criou.
+
+O que falta é confirmar essa recuperação contra o servidor real — a lógica tem
+testes e a tela foi verificada no navegador, mas com a consulta simulada, porque
+as sessões do professor foram revogadas ao fim do dia. São dois minutos: abrir
+uma sala, fechar a aba, voltar ao console.
 
 ---
 
 ## 1. Estado do repositório
 
-Branch **`modo-competicao`**, 16 commits à frente da `main`, **não publicado**.
+Branch **`modo-competicao`**, 17 commits à frente da `main`, **não publicado**.
 A `main` está publicada e contém a Fase 0 (histórico de progresso, sons, CI).
 
 ```bash
 git checkout modo-competicao          # onde o trabalho está
-node tests/run.js                     # 54 testes
+node tests/run.js                     # 61 testes
 python3 scripts/devserver.py 8120     # servidor SEM cache (importante — ver §6)
 ```
 
@@ -34,7 +38,8 @@ por questão em `js/core/progress.js`, sons sintetizados em `js/core/sfx.js`,
 testes rodando no CI, `scripts/devserver.py`.
 
 **Backend.** Schema `aulas` no projeto Supabase **Afya**
-(`yfnilksnqehysxunujli`), 9 migrations versionadas em `supabase/migrations/`.
+(`yfnilksnqehysxunujli`), 8 migrations versionadas em `supabase/migrations/`,
+todas aplicadas no projeto (conferido em 13/08).
 Multi-instituição e multi-app: um projeto por INSTITUIÇÃO, nunca por aula. Ver
 [supabase/README.md](../supabase/README.md) para as decisões de schema.
 
@@ -276,20 +281,36 @@ encerramento. O que ficou provado, e que só o servidor real poderia provar:
 - **O mapa de calor entrega o dado pedagógico:** a questão com 0% mostrou o
   distrator que a "turma" escolheu em peso ("Erro mais comum: Pandemia").
 
-**ABERTA E PRIORITÁRIA — sala aberta só é alcançável de onde foi criada.** O
-console guarda a sala em `localStorage`, que é por origem e por navegador. Se o
-professor abrir o console de outro lugar — outra porta, o endereço publicado,
-outro computador, ou depois de limpar o navegador — a tela oferece **criar outra
-sala**, e não há caminho nenhum para retomar ou encerrar a que está no ar. Ela
-fica viva até `expires_at` (6h), e quem tiver o código continua respondendo numa
-rodada que o professor considera terminada. Aconteceu em 13/08: o encerramento só
-foi possível pelo navegador que abriu a sala.
+**RESOLVIDA (13/08) — sala aberta só era alcançável de onde foi criada.** O
+console guardava a sala só no `localStorage`, que é por origem e por navegador.
+Abrir o console de outro lugar — outra porta, o endereço publicado, outro
+computador, ou depois de limpar o navegador — oferecia **criar outra sala**, sem
+caminho nenhum para retomar ou encerrar a que estava no ar. Ela ficava viva até
+`expires_at` (6h) e quem tivesse o código continuava respondendo numa rodada
+dada por encerrada. Aconteceu na própria verificação.
 
-**A correção é pequena:** ao entrar no console, consultar
-`rooms?owner_uid=eq.<uid>&status=eq.open` e oferecer "você tem a sala XXXX aberta
-— retomar ou encerrar". A policy de leitura do professor já existe; é uma
-consulta a mais na entrada da tela. Resolve também o caso do F5 que a persistência
-em `localStorage` só cobriu pela metade.
+Agora, ao entrar no console sem sala em memória, ele **pergunta ao servidor**
+(`rooms?owner_uid=eq.<uid>&status=eq.open`, com a atividade embutida para trazer
+`item_count`) e oferece **Retomar** ou **Encerrar** — ou abrir outra assim mesmo,
+para quem realmente quer duas. `rooms_select` e `cat_read_activities` já
+permitiam a leitura; faltava perguntar.
+
+Três decisões que não se deduzem do código:
+
+- **Falha de leitura não vira "não há sala".** `selecionar` devolve `[]` em
+  qualquer erro, o que é certo para o painel projetado — mas aqui as duas
+  situações levam a decisões opostas. Daí `selecionarDetalhado`, e o aviso na
+  tela de criação quando não deu para conferir.
+- **Sala vencida não é oferecida.** O cron que fecha expiradas roda a cada 15
+  min, então uma sala morta ainda aparece como `open` por alguns minutos.
+  Retomar nela seria mentira: o trigger e o `join_room` já a recusam.
+- **O filtro de expiração é no cliente**, porque `now()` não é literal aceito na
+  query do PostgREST.
+
+**Limite conhecido:** isto vale para quem ENTRA no console. Um console já aberto
+noutra aba não percebe que a sala foi encerrada em outra — `salaAtual` vive em
+memória além do storage. Só incomoda se o professor mantiver dois consoles
+abertos ao mesmo tempo.
 
 **Duas referências do módulo 8** aguardando conferência na Crossref: ver
 [docs-internos/README.md](README.md).
@@ -299,9 +320,11 @@ em `localStorage` só cobriu pela metade.
 ## 8. Como retomar
 
 1. Ler este documento e o [supabase/README.md](../supabase/README.md).
-2. `git checkout modo-competicao` e `node tests/run.js` (esperado: 54/54).
-3. Recuperar a sala aberta pelo servidor (§7) — é o que separa o modo competição
-   de aguentar um imprevisto no meio da aula.
+2. `git checkout modo-competicao` e `node tests/run.js` (esperado: 61/61).
+3. **Conferir a recuperação de sala contra o servidor real** — a lógica tem
+   testes e a tela foi verificada no navegador com a consulta simulada, mas a
+   consulta de verdade, com sessão de professor, ainda não rodou. Basta abrir uma
+   sala, fechar a aba e voltar ao console.
 4. Arrumar Site URL e Redirect URLs no painel (§5), que já custaram cota de e-mail.
 5. Revisar as 30 questões do banco do modo game.
 6. SMTP transacional, e com ele o retorno do código de 6 dígitos (§5).

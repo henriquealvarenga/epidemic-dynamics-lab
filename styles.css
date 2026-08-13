@@ -3508,6 +3508,25 @@ sup.cite a:focus-visible {
 .compete-home-seta  { font-size: 1.2rem; color: var(--accent); flex: 0 0 auto; }
 .compete-home.na-sala .compete-home-seta { color: var(--c-exposed); }
 
+/* Sala aberta recuperada do servidor. Fica em destaque de propósito: é a
+   tela que impede o professor de abrir uma segunda sala com a turma na
+   primeira, então precisa ler-se de relance. */
+.sala-abertas { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .6rem; }
+.sala-aberta {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: .8rem 1rem;
+  background: rgba(255,217,61,.07);
+  border: 1px solid var(--c-exposed);
+  border-radius: var(--r-md);
+}
+.sala-aberta-txt { display: flex; flex-direction: column; gap: .15rem; flex: 1 1 12rem; min-width: 0; }
+.sala-aberta-code {
+  font-family: var(--font-mono, monospace); font-size: 1.35rem;
+  letter-spacing: .12em; color: var(--c-exposed);
+}
+.sala-aberta-txt span { font-size: .82rem; color: var(--text-secondary); }
+.sala-aberta-acoes { display: flex; gap: .5rem; flex: 0 0 auto; }
+
 /* Entrada do professor na home. Discreta de propósito: quem veio estudar
    não precisa dela, mas ela tem de existir ACIMA da dobra — o link do
    rodapé ficava a três telas de rolagem, e na prática não existia. */

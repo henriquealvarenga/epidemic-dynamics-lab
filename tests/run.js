@@ -58,6 +58,28 @@ function test(name, fn) {
   }
 }
 
+/* Variante assíncrona.
+ *
+ * O runner é síncrono por design — o que se testava aqui eram funções
+ * puras. A recuperação da sala aberta não é: ela atravessa a camada de
+ * rede, que os testes substituem. Em vez de espalhar `await` por tudo,
+ * cada teste assíncrono registra sua promessa e o relatório final espera
+ * por todas antes de decidir o exit code.
+ */
+const assincronos = [];
+
+function testAsync(name, fn) {
+  const meu = ++count;
+  assincronos.push(Promise.resolve().then(fn).then(
+    () => { passed++; console.log(`ok ${meu} - ${name}`); },
+    err => {
+      failed++;
+      console.log(`not ok ${meu} - ${name}`);
+      String(err.message || err).split('\n').slice(0, 5).forEach(l => console.log('  ' + l));
+    }
+  ));
+}
+
 /* ==================================================================
  * math.js
  * ================================================================ */
@@ -649,13 +671,125 @@ test('link: claims do JWT são lidas sem validar assinatura', () => {
   assert.equal(EDL.compete.rest._lerClaims('não é um jwt'), null);
 });
 
+/* ==================================================================
+ * Recuperar a sala aberta do servidor (compete/api.js)
+ *
+ * A sala aberta era lembrada só no localStorage — que é por origem e por
+ * navegador. Abrir o console de outro lugar oferecia CRIAR OUTRA sala com
+ * a turma na primeira, e não havia caminho para encerrar a que estava no
+ * ar. Agora o console pergunta ao servidor.
+ *
+ * O que dá para testar em Node é o que mais quebraria calado: a tradução
+ * da linha do PostgREST para o objeto que o console consome. Um campo
+ * errado aqui não dá erro — pinta um console mudo, com sorteio de
+ * questões diferente do que a turma está vendo.
+ * ================================================================ */
+
+load('js/compete/estado.js');
+load('js/compete/banco-jogo.js');
+load('js/compete/api.js');
+
+/* `expires_at` RELATIVO ao agora, e não uma data escrita à mão: uma sala
+ * dura 6h, então qualquer data fixa vira passado e o teste passa a falhar
+ * sozinho. Já aconteceu ao escrever este arquivo. */
+const linhaDoServidor = {
+  id: '813d2ea6-3da8-44d1-8438-b10a372240df',
+  code: '74J4DH',
+  status: 'open',
+  scoring: { seconds: 30, base: 100, bonus_per_sec: 5, late: 50 },
+  label: 'Turma B',
+  created_at: new Date(Date.now() - 20 * 60000).toISOString(),
+  expires_at: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
+  activities: { external_id: 'game-v1', item_count: 10 }
+};
+
+test('sala do servidor: campos batem com os que o console consome', () => {
+  const s = EDL.compete.api._salaDoServidor(linhaDoServidor);
+  // renderConsole() usa roomId, code e itemCount; sortear() usa code+itemCount.
+  assert.equal(s.roomId, '813d2ea6-3da8-44d1-8438-b10a372240df');
+  assert.equal(s.code, '74J4DH');
+  assert.equal(s.itemCount, 10, 'item_count vem da atividade embutida, não da sala');
+  assert.equal(s.activityRef, 'game-v1');
+  assert.equal(s.status, 'open');
+  assert.deepEqual(s.scoring, linhaDoServidor.scoring);
+  assert.equal(s.label, 'Turma B');
+});
+
+test('sala do servidor: retomada sorteia as MESMAS questões da turma', () => {
+  // O sorteio é derivado do código. Se a retomada mudasse itemCount ou
+  // code, o telão do professor mostraria questões que ninguém respondeu.
+  const s = EDL.compete.api._salaDoServidor(linhaDoServidor);
+  const daRetomada = EDL.compete.bancoJogo.sortear(s.code, s.itemCount);
+  const daSalaOriginal = EDL.compete.bancoJogo.sortear('74J4DH', 10);
+  assert.deepEqual(daRetomada.map(q => q.q), daSalaOriginal.map(q => q.q));
+});
+
+test('sala do servidor: linha sem atividade embutida não quebra', () => {
+  const s = EDL.compete.api._salaDoServidor({ id: 'x', code: 'ABC234', status: 'open' });
+  assert.equal(s.code, 'ABC234');
+  assert.equal(s.itemCount, undefined);
+  assert.equal(s.activityRef, undefined);
+});
+
+test('sala do servidor: entrada nula devolve nulo', () => {
+  assert.equal(EDL.compete.api._salaDoServidor(null), null);
+});
+
+/* Os casos abaixo trocam só a camada de rede: o resto do caminho é o
+ * mesmo que roda no navegador. */
+function comRespostaDoServidor(resposta, fn) {
+  const rest = EDL.compete.rest;
+  const selOriginal = rest.selecionarDetalhado;
+  const uidOriginal = rest.professor.uid;
+  rest.selecionarDetalhado = async () => resposta;
+  rest.professor.uid = () => 'uid-de-teste';
+  return Promise.resolve(fn()).finally(() => {
+    rest.selecionarDetalhado = selOriginal;
+    rest.professor.uid = uidOriginal;
+  });
+}
+
+const linhaExpirada = Object.assign({}, linhaDoServidor, {
+  id: 'velha', code: 'AAA234',
+  expires_at: new Date(Date.now() - 60000).toISOString()
+});
+
+testAsync('salas abertas: a expirada é descartada', async () => {
+  await comRespostaDoServidor({ ok: true, dados: [linhaDoServidor, linhaExpirada] }, async () => {
+    const r = await EDL.compete.api.salasAbertas();
+    assert.equal(r.ok, true);
+    assert.equal(r.salas.length, 1, 'sala vencida não pode ser oferecida para retomar');
+    assert.equal(r.salas[0].code, '74J4DH');
+  });
+});
+
+testAsync('salas abertas: falha de leitura NÃO vira "não há sala"', async () => {
+  // A distinção é o ponto: [] liberaria abrir uma segunda sala com a turma
+  // inteira na primeira.
+  await comRespostaDoServidor({ ok: false, erro: 'sem conexão' }, async () => {
+    const r = await EDL.compete.api.salasAbertas();
+    assert.equal(r.ok, false);
+    assert.equal(r.erro, 'sem conexão');
+  });
+});
+
+testAsync('salas abertas: sem nenhuma aberta devolve lista vazia', async () => {
+  await comRespostaDoServidor({ ok: true, dados: [] }, async () => {
+    const r = await EDL.compete.api.salasAbertas();
+    assert.equal(r.ok, true);
+    assert.equal(r.salas.length, 0);
+  });
+});
+
 /* ------------------------------------------------------------------
  * Relatório final
  * ---------------------------------------------------------------- */
-console.log('');
-console.log(`1..${count}`);
-console.log(`# passing: ${passed}/${count}`);
-if (failed > 0) {
-  console.log(`# failing: ${failed}`);
-  process.exit(1);
-}
+Promise.all(assincronos).then(() => {
+  console.log('');
+  console.log(`1..${count}`);
+  console.log(`# passing: ${passed}/${count}`);
+  if (failed > 0) {
+    console.log(`# failing: ${failed}`);
+    process.exit(1);
+  }
+});

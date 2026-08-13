@@ -103,8 +103,131 @@
     /* Em modo local não há login: é o ensaio, ou a aula acontecendo sem
      * rede. Vai direto para a criação da sala. */
     const precisaLogin = compete.rest.configValida() && !compete.rest.professor.valida();
-    if (precisaLogin) renderLogin(wrap, erroDoLink);
-    else renderCriar(wrap);
+    if (precisaLogin) return renderLogin(wrap, erroDoLink);
+
+    /* Logado, mas sem sala em memória. Isso NÃO significa que não há sala
+     * no ar: o `localStorage` é por origem e por navegador, e a sala pode
+     * ter sido aberta em outro. Perguntar ao servidor antes de oferecer
+     * criar outra é o que impede o professor de abrir uma segunda sala com
+     * a turma inteira na primeira. */
+    if (compete.rest.configValida()) return renderProcurando(wrap);
+
+    renderCriar(wrap);
+  }
+
+  /* ---- Procurando sala aberta no servidor ---- */
+
+  /* Invalida pinturas assíncronas de uma entrada anterior: se o professor
+   * sair da tela enquanto a consulta está no ar, a resposta não pode
+   * repintar por cima do que ele está vendo agora. */
+  let geracao = 0;
+
+  function renderProcurando(wrap) {
+    const minha = ++geracao;
+
+    wrap.innerHTML = `
+      <nav class="module-topbar">
+        <button type="button" class="btn btn-ghost btn-small" data-voltar>← Sair</button>
+        <div class="module-topbar-title">Console do professor</div>
+        <div class="module-topbar-spacer"></div>
+      </nav>
+      <section class="compete-card">
+        <p class="compete-sub" role="status">Procurando salas abertas suas…</p>
+      </section>`;
+    wrap.querySelectorAll('[data-voltar]').forEach(b => {
+      b.addEventListener('click', () => EDL.screens.goTo('home'));
+    });
+
+    compete.api.salasAbertas().then(r => {
+      if (minha !== geracao || !wrap.isConnected) return;   // já saiu da tela
+      if (r.ok && r.salas.length) return renderRetomar(wrap, r.salas);
+      renderCriar(wrap, r.ok ? null : r.erro);
+    });
+  }
+
+  /* ---- Retomar ou encerrar uma sala que ficou aberta ---- */
+  function renderRetomar(wrap, salas) {
+    const linhas = salas.map((s, i) => `
+      <li class="sala-aberta" data-i="${i}">
+        <div class="sala-aberta-txt">
+          <strong class="sala-aberta-code">${esc(s.code)}</strong>
+          <span>${s.itemCount} questões${s.label ? ' · ' + esc(s.label) : ''}
+                ${s.expiraEm ? ' · ' + esc(quantoFalta(s.expiraEm)) : ''}</span>
+        </div>
+        <div class="sala-aberta-acoes">
+          <button type="button" class="btn btn-primary btn-small" data-retomar="${i}">Retomar</button>
+          <button type="button" class="btn btn-ghost btn-small" data-encerrar="${i}">Encerrar</button>
+        </div>
+      </li>`).join('');
+
+    wrap.innerHTML = `
+      <nav class="module-topbar">
+        <button type="button" class="btn btn-ghost btn-small" data-voltar>← Sair</button>
+        <div class="module-topbar-title">Console do professor</div>
+        <div class="module-topbar-spacer"></div>
+      </nav>
+
+      <section class="compete-card">
+        <h1 class="compete-titulo">${salas.length > 1 ? 'Você tem salas abertas' : 'Você tem uma sala aberta'}</h1>
+        <p class="compete-sub">
+          Está no ar agora, e os grupos ainda conseguem responder. Retome para
+          voltar ao placar, ou encerre antes de abrir outra rodada.
+        </p>
+        <ul class="sala-abertas">${linhas}</ul>
+        <p id="erro-retomar" class="compete-erro" role="alert" hidden></p>
+        <p class="compete-rodape">
+          <button type="button" class="btn-link" id="btn-outra">
+            Abrir outra sala mesmo assim
+          </button>
+        </p>
+      </section>`;
+
+    const erro = wrap.querySelector('#erro-retomar');
+
+    wrap.querySelectorAll('[data-retomar]').forEach(b => {
+      b.addEventListener('click', () => {
+        guardarSala(salas[Number(b.dataset.retomar)]);
+        render(document.getElementById('screen-sala'));
+      });
+    });
+
+    wrap.querySelectorAll('[data-encerrar]').forEach(b => {
+      b.addEventListener('click', async () => {
+        const s = salas[Number(b.dataset.encerrar)];
+        const ok = window.confirm(
+          'Encerrar a sala ' + s.code + '?\n\n' +
+          'Os grupos param de conseguir responder.'
+        );
+        if (!ok) return;
+        b.disabled = true; b.textContent = 'Encerrando…';
+        const r = await compete.api.encerrarSala(s.roomId);
+        if (r && r.ok === false) {
+          b.disabled = false; b.textContent = 'Encerrar';
+          erro.textContent = r.erro; erro.hidden = false;
+          return;
+        }
+        render(document.getElementById('screen-sala'));   // reconsulta o servidor
+      });
+    });
+
+    wrap.querySelector('#btn-outra').addEventListener('click', () => renderCriar(wrap));
+    wrap.querySelectorAll('[data-voltar]').forEach(b => {
+      b.addEventListener('click', () => EDL.screens.goTo('home'));
+    });
+  }
+
+  /** Quanto falta, e não a hora do relógio: uma sala dura 6h e o horário
+   *  absoluto atravessa a meia-noite sem dizer o dia. Na aula o que importa
+   *  é "ainda tenho tempo" ou "está para vencer". */
+  function quantoFalta(iso) {
+    const ms = Date.parse(iso) - Date.now();
+    if (isNaN(ms)) return '';
+    if (ms <= 0) return 'expirada';
+    const min = Math.round(ms / 60000);
+    if (min < 60) return 'expira em ' + min + ' min';
+    const h = Math.floor(min / 60);
+    const resto = min % 60;
+    return 'expira em ' + h + 'h' + (resto ? String(resto).padStart(2, '0') : '');
   }
 
   /* ---- Login ---- */
@@ -242,8 +365,13 @@
     });
   }
 
-  /* ---- Criar sala ---- */
-  function renderCriar(wrap) {
+  /* ---- Criar sala ----
+   *
+   * `falhaDaBusca` chega preenchido quando não deu para perguntar ao
+   * servidor se já existe sala aberta. Dizer isso importa: sem o aviso, a
+   * tela fica idêntica à de quem realmente não tem sala nenhuma, e o
+   * professor abre a segunda rodada achando que a primeira não existe. */
+  function renderCriar(wrap, falhaDaBusca) {
     const tamanhos = compete.bancoJogo.tamanhos;
     const seg = EDL.quiz.scoringConfig().seconds;
     const local = compete.api.modo() === 'local';
@@ -269,6 +397,11 @@
         ${local ? `<p class="compete-aviso">
           Modo local: a sala vive só neste computador, entre abas. Bom para
           ensaiar.</p>` : ''}
+
+        ${falhaDaBusca ? `<p class="compete-aviso">
+          Não deu para conferir no servidor se você já tem uma sala aberta
+          (${esc(falhaDaBusca)}). Se tiver, ela continua no ar — abrir outra
+          aqui deixaria a turma dividida entre duas.</p>` : ''}
 
         <label class="compete-label">Quantas questões nesta rodada?</label>
         <div class="sala-tamanhos" role="radiogroup" aria-label="Número de questões">

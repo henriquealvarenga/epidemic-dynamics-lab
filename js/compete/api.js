@@ -90,6 +90,76 @@
   }
 
   /* -----------------------------------------------------------------------
+   * Recuperar a sala aberta PELO SERVIDOR
+   *
+   * A sala aberta era lembrada só no `localStorage`, que é por origem e por
+   * navegador. Consequência descoberta na verificação de 13/08: abrir o
+   * console de outro lugar — outra porta, o endereço publicado, outro
+   * computador, ou depois de limpar o navegador — oferecia CRIAR OUTRA
+   * sala, sem caminho nenhum para retomar ou encerrar a que estava no ar.
+   * Ela ficava viva até expirar (6h) e quem tinha o código continuava
+   * respondendo numa rodada que o professor dava por encerrada.
+   *
+   * O servidor sempre soube a resposta; faltava perguntar. `rooms_select`
+   * já permite ao dono ler as próprias salas, e `cat_read_activities`
+   * permite ler a atividade embutida — uma consulta só resolve.
+   * --------------------------------------------------------------------- */
+
+  /** Traduz uma linha do PostgREST no formato que o console consome.
+   *  Pura: é o pedaço que os testes alcançam sem rede. */
+  function salaDoServidor(linha) {
+    if (!linha) return null;
+    const atv = linha.activities || {};
+    const sala = normalizarSala({
+      room_id:     linha.id,
+      code:        linha.code,
+      status:      linha.status,
+      scoring:     linha.scoring,
+      external_id: atv.external_id,
+      item_count:  atv.item_count
+    });
+    sala.label     = linha.label || null;
+    sala.criadaEm  = linha.created_at || null;
+    sala.expiraEm  = linha.expires_at || null;
+    return sala;
+  }
+
+  /**
+   * Salas ainda abertas deste professor.
+   *
+   * Devolve { ok, salas } ou { ok:false, erro }: a diferença entre "não há
+   * sala aberta" e "não consegui perguntar" muda o que a tela oferece.
+   *
+   * O filtro de expiração é feito aqui, e não no PostgREST, porque `now()`
+   * não é literal aceito na query — e porque o cron que fecha salas
+   * vencidas roda a cada 15 min, então uma sala expirada pode ainda constar
+   * como `open` por alguns minutos. Ela não aceita mais resposta nenhuma
+   * (o trigger e o `join_room` checam `expires_at` de forma síncrona), logo
+   * oferecer "retomar" nela seria mentira.
+   */
+  async function salasAbertas() {
+    if (!remoto()) return { ok: true, salas: [] };
+
+    const uid = compete.rest.professor.uid();
+    if (!uid) return { ok: true, salas: [] };
+
+    const r = await compete.rest.selecionarDetalhado('rooms',
+      'select=id,code,status,scoring,label,created_at,expires_at,' +
+      'activities(external_id,item_count)' +
+      '&owner_uid=eq.' + encodeURIComponent(uid) +
+      '&status=eq.open&order=created_at.desc',
+      compete.rest.professor);
+
+    if (!r.ok) return { ok: false, erro: r.erro };
+
+    const agora = Date.now();
+    const salas = r.dados
+      .map(salaDoServidor)
+      .filter(s => s && (!s.expiraEm || Date.parse(s.expiraEm) > agora));
+    return { ok: true, salas: salas };
+  }
+
+  /* -----------------------------------------------------------------------
    * Grupo
    * --------------------------------------------------------------------- */
 
@@ -237,6 +307,7 @@
 
   compete.api = {
     modo, criarSala, entrar, sair, placar, estatisticas, encerrarSala, observar,
-    registrarResposta
+    registrarResposta, salasAbertas,
+    _salaDoServidor: salaDoServidor   // exposto para os testes
   };
 })();

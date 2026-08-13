@@ -516,17 +516,32 @@
     return r.ok ? { ok: true, dados: r.dados } : { ok: false, erro: r.erro, status: r.status };
   }
 
-  /** SELECT. Devolve SEMPRE um array — [] em qualquer falha. */
-  async function selecionar(recurso, consulta, sessao) {
-    if (!configValida()) return [];
+  /**
+   * SELECT que CONTA se falhou: { ok, dados } ou { ok:false, erro }.
+   *
+   * O painel projetado prefere engolir erro de leitura a quebrar na frente
+   * da turma — por isso `selecionar` existe e devolve []. Mas há uma
+   * decisão em que os dois casos são opostos: ao procurar uma sala aberta
+   * do professor, "não há nenhuma" libera abrir outra, enquanto "não
+   * consegui perguntar" precisa dizer isso em vez de deixar ele abrir uma
+   * segunda sala com a turma na primeira.
+   */
+  async function selecionarDetalhado(recurso, consulta, sessao) {
+    if (!configValida()) return { ok: false, erro: 'modo competição desligado' };
     const token = sessao ? await tokenDe(sessao) : null;
-    if (sessao && !token) return [];
+    if (sessao && !token) return { ok: false, erro: 'Sessão expirada. Recarregue a página.' };
 
     const r = await pedir(REST() + '/' + recurso + (consulta ? '?' + consulta : ''), {
       method: 'GET', token: token, headers: cabecalhosSchema('GET')
     });
-    if (!r.ok) return [];
-    return Array.isArray(r.dados) ? r.dados : [];
+    if (!r.ok) return { ok: false, erro: r.erro, status: r.status };
+    return { ok: true, dados: Array.isArray(r.dados) ? r.dados : [] };
+  }
+
+  /** SELECT. Devolve SEMPRE um array — [] em qualquer falha. */
+  async function selecionar(recurso, consulta, sessao) {
+    const r = await selecionarDetalhado(recurso, consulta, sessao);
+    return r.ok ? r.dados : [];
   }
 
   async function inserir(recurso, linhas, sessao) {
@@ -600,7 +615,7 @@
     erroDoLink,
     urlDeRetorno,
     entrarAnonimo, enviarCodigo, verificarCodigo, entrarComSenha, renovar,
-    rpc, selecionar, inserir, atualizar, saude,
+    rpc, selecionar, selecionarDetalhado, inserir, atualizar, saude,
     _lerClaims: lerClaims,               // expostos para os testes
     _lerRetornoDoLink: lerRetornoDoLink
   };
