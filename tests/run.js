@@ -698,6 +698,7 @@ const linhaDoServidor = {
   status: 'open',
   scoring: { seconds: 30, base: 100, bonus_per_sec: 5, late: 50 },
   label: 'Turma B',
+  item_count: 10,
   created_at: new Date(Date.now() - 20 * 60000).toISOString(),
   expires_at: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
   activities: { external_id: 'game-v1', item_count: 10 }
@@ -722,6 +723,26 @@ test('sala do servidor: retomada sorteia as MESMAS questões da turma', () => {
   const daRetomada = EDL.compete.bancoJogo.sortear(s.code, s.itemCount);
   const daSalaOriginal = EDL.compete.bancoJogo.sortear('74J4DH', 10);
   assert.deepEqual(daRetomada.map(q => q.q), daSalaOriginal.map(q => q.q));
+});
+
+test('sala do servidor: o tamanho vem DA SALA, não da atividade', () => {
+  // O item_count da atividade é reescrito a cada rodada nova. Retomar por
+  // ele daria ao professor um sorteio diferente do que a turma está
+  // respondendo — foi o que aconteceu com a sala de 30 questões, que o
+  // banco passou a reportar como 10 depois de outra rodada ser aberta.
+  const s = EDL.compete.api._salaDoServidor(
+    Object.assign({}, linhaDoServidor, {
+      item_count: 30,
+      activities: { external_id: 'game-v1', item_count: 10 }
+    }));
+  assert.equal(s.itemCount, 30);
+});
+
+test('sala do servidor: sala antiga sem a coluna cai na atividade', () => {
+  // Salas criadas antes da migration de 14/08 não têm item_count próprio.
+  const linha = Object.assign({}, linhaDoServidor);
+  delete linha.item_count;
+  assert.equal(EDL.compete.api._salaDoServidor(linha).itemCount, 10);
 });
 
 test('sala do servidor: linha sem atividade embutida não quebra', () => {

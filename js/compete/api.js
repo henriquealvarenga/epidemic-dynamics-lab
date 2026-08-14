@@ -116,7 +116,12 @@
       status:      linha.status,
       scoring:     linha.scoring,
       external_id: atv.external_id,
-      item_count:  atv.item_count
+      /* DA SALA, não da atividade. O item_count da atividade é reescrito
+       * a cada rodada nova (ver a migration de 14/08): retomar por ele
+       * daria ao professor um sorteio diferente do que a turma está
+       * respondendo. A atividade só serve de reserva para salas antigas,
+       * criadas antes da coluna existir. */
+      item_count:  linha.item_count != null ? linha.item_count : atv.item_count
     });
     sala.label     = linha.label || null;
     sala.criadaEm  = linha.created_at || null;
@@ -188,7 +193,7 @@
     if (!uid) return { ok: true, salas: [] };
 
     const r = await compete.rest.selecionarDetalhado('rooms',
-      'select=id,code,status,scoring,label,created_at,expires_at,' +
+      'select=id,code,status,scoring,label,item_count,created_at,expires_at,' +
       'activities(external_id,item_count)' +
       '&owner_uid=eq.' + encodeURIComponent(uid) +
       '&status=eq.open&order=created_at.desc',
