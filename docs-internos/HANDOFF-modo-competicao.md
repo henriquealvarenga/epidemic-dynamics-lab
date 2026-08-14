@@ -19,17 +19,21 @@ uma sala, fechar a aba, voltar ao console.
 
 ## 1. Estado do repositório
 
-Branch **`modo-competicao`**, 17 commits à frente da `main`, **não publicado**.
-A `main` está publicada e contém a Fase 0 (histórico de progresso, sons, CI).
+**PUBLICADO em 13/08.** O branch `modo-competicao` foi mesclado na `main` por
+fast-forward e está no ar em https://henriquealvarenga.com/epidemic-dynamics-lab/.
+O trabalho agora acontece na `main`, e **todo push nela publica** — o workflow
+roda os testes (bloqueantes) e só então envia ao Pages.
 
 ```bash
-git checkout modo-competicao          # onde o trabalho está
 node tests/run.js                     # 66 testes
 python3 scripts/devserver.py 8120     # servidor SEM cache (importante — ver §6)
+gh run list --limit 3                 # o deploy saiu?
 ```
 
-Nada foi mesclado nem publicado. Publicar exige decidir se o modo competição
-vai ao ar para o público antes da primeira aula real.
+Verificado no site publicado, e não só no local: o modo competição carrega, o
+console alcança o Supabase do domínio real (CORS e chave publishable nunca
+tinham sido exercitados fora do `localhost`), a sessão anônima é criada, e um
+código inexistente devolve "Sala não encontrada" sem cair para o modo local.
 
 ## 2. O que existe
 

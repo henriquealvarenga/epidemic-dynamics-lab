@@ -146,9 +146,17 @@
    * tentar responder e levar um 403. A policy `rooms_select` já deixa o
    * membro ler a própria sala — `is_member_of(id)`.
    *
-   * Devolve { ok, status } ou { ok:false }: sem resposta do servidor, a
-   * tela não muda nada. Achar que a sala acabou por causa de uma falha de
-   * rede seria pior do que o bug — expulsaria o grupo no meio da aula.
+   * Devolve { ok, status } ou { ok:false }.
+   *
+   * A distinção que importa, e que eu errei na primeira versão: **"não
+   * consegui perguntar" não é a mesma coisa que "perguntei e a sala não
+   * está lá"**. Rede caída tem de deixar a tela como está — concluir que a
+   * aula acabou por causa de um timeout tiraria o grupo do jogo no meio da
+   * rodada. Mas uma resposta VAZIA do servidor é uma resposta: a sala foi
+   * apagada, expirou e saiu na faxina, ou o grupo não é mais membro dela.
+   * Em nenhum desses casos faz sentido continuar oferecendo "voltar para a
+   * sala" — foi exatamente o que apareceu na tela depois de a sala de teste
+   * ser apagada.
    */
   async function situacaoDaSala(roomId) {
     if (!remoto()) return { ok: false };
@@ -157,11 +165,20 @@
     const r = await compete.rest.selecionarDetalhado('rooms',
       'select=status,expires_at&id=eq.' + encodeURIComponent(roomId),
       compete.rest.aluno);
-    if (!r.ok || !r.dados.length) return { ok: false };
+
+    if (!r.ok) return { ok: false };                    // não deu para perguntar
+    if (!r.dados.length) return { ok: true, status: 'sumiu' };  // respondeu: não existe
 
     const linha = r.dados[0];
     const vencida = linha.expires_at && Date.parse(linha.expires_at) <= Date.now();
     return { ok: true, status: vencida ? 'closed' : linha.status };
+  }
+
+  /** A sala ainda aceita o grupo? Só `open` e `running` valem; qualquer
+   *  outra coisa — encerrada, vencida, apagada — é rodada terminada. */
+  function salaAcabou(situacao) {
+    if (!situacao || !situacao.ok) return false;        // na dúvida, não mexe
+    return situacao.status !== 'open' && situacao.status !== 'running';
   }
 
   async function salasAbertas() {
@@ -334,7 +351,7 @@
 
   compete.api = {
     modo, criarSala, entrar, sair, placar, estatisticas, encerrarSala, observar,
-    registrarResposta, salasAbertas, situacaoDaSala,
+    registrarResposta, salasAbertas, situacaoDaSala, salaAcabou,
     _salaDoServidor: salaDoServidor   // exposto para os testes
   };
 })();

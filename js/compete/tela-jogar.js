@@ -198,7 +198,7 @@
      * Assíncrono e tolerante: se a consulta falhar, a tela fica como está.
      * Concluir "acabou" por causa de rede ruim tiraria o grupo da aula. */
     compete.api.situacaoDaSala(id.roomId).then(r => {
-      if (!r.ok || r.status !== 'closed') return;
+      if (!compete.api.salaAcabou(r)) return;
       if (!wrap.isConnected) return;
 
       const botao = wrap.querySelector('#btn-ir-modulo');
@@ -454,7 +454,7 @@
      * convencer o card de que a aula terminou. */
     if (!naSala) return;
     compete.api.situacaoDaSala(compete.estado.get().roomId).then(r => {
-      if (!r.ok || r.status !== 'closed') return;
+      if (!compete.api.salaAcabou(r)) return;
       const atual = document.getElementById('compete-card-home');
       if (!atual) return;
       atual.classList.remove('na-sala');

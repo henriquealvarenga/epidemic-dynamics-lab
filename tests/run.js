@@ -782,6 +782,49 @@ testAsync('salas abertas: sem nenhuma aberta devolve lista vazia', async () => {
 });
 
 /* ==================================================================
+ * "A rodada acabou?" — a distinção que o professor cobrou
+ *
+ * Rede caída e sala inexistente chegam pelo mesmo caminho e pedem
+ * decisões opostas: no primeiro caso a tela não pode mudar nada (seria
+ * expulsar o grupo no meio da aula por um timeout), no segundo ela tem
+ * de parar de oferecer "voltar para a sala" — que foi o que ficou na
+ * home depois de a sala de teste ser apagada.
+ * ================================================================ */
+
+test('rodada acabou: sala aberta ou rodando não muda nada', () => {
+  assert.equal(EDL.compete.api.salaAcabou({ ok: true, status: 'open' }), false);
+  assert.equal(EDL.compete.api.salaAcabou({ ok: true, status: 'running' }), false);
+});
+
+test('rodada acabou: encerrada ou apagada terminam a rodada', () => {
+  assert.equal(EDL.compete.api.salaAcabou({ ok: true, status: 'closed' }), true);
+  assert.equal(EDL.compete.api.salaAcabou({ ok: true, status: 'sumiu' }), true);
+});
+
+test('rodada acabou: sem resposta do servidor, NÃO se conclui nada', () => {
+  // A falha tem de ser silenciosa: rede ruim não pode convencer a tela de
+  // que a aula terminou.
+  assert.equal(EDL.compete.api.salaAcabou({ ok: false }), false);
+  assert.equal(EDL.compete.api.salaAcabou(null), false);
+  assert.equal(EDL.compete.api.salaAcabou(undefined), false);
+});
+
+testAsync('rodada acabou: resposta vazia do servidor é resposta, não falha', async () => {
+  await comRespostaDoServidor({ ok: true, dados: [] }, async () => {
+    const r = await EDL.compete.api.situacaoDaSala('sala-apagada');
+    assert.equal(r.ok, true, 'o servidor respondeu — isso não é falha de rede');
+    assert.equal(EDL.compete.api.salaAcabou(r), true);
+  });
+});
+
+testAsync('rodada acabou: falha de leitura não vira sala apagada', async () => {
+  await comRespostaDoServidor({ ok: false, erro: 'sem conexão' }, async () => {
+    const r = await EDL.compete.api.situacaoDaSala('sala-1');
+    assert.equal(EDL.compete.api.salaAcabou(r), false);
+  });
+});
+
+/* ==================================================================
  * Banco do modo game — invariantes que a primeira aula real cobrou
  *
  * Os três defeitos abaixo passaram por revisão de código e só
