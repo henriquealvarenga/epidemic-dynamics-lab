@@ -24,7 +24,7 @@ A `main` está publicada e contém a Fase 0 (histórico de progresso, sons, CI).
 
 ```bash
 git checkout modo-competicao          # onde o trabalho está
-node tests/run.js                     # 61 testes
+node tests/run.js                     # 66 testes
 python3 scripts/devserver.py 8120     # servidor SEM cache (importante — ver §6)
 ```
 
@@ -159,6 +159,34 @@ página de 2704px** — três telas abaixo do card do aluno, que fica a 386px. N
 verificação ponta a ponta o próprio professor perguntou por onde entrava. É a
 mesma lição do bug do §7: quem cai na home sem rumo encontra só a tela do ALUNO.
 Agora há um link discreto logo abaixo do card da competição, acima da dobra.
+
+**A primeira rodada real cobrou o que revisão de código não pega (13/08).** O
+professor jogou a competição no site publicado e achou, em minutos, cinco coisas:
+
+- **Negrito entregava a resposta.** Estava em 14 das 30 questões, sempre na
+  alternativa certa e nunca num distrator. Mesma família do gabarito enviesado
+  na posição B — quem percebe o padrão acerta metade do banco sem saber nada.
+- **Uma questão dizia "no caso anterior".** Como a rodada sorteia N das 30 e
+  embaralha, ela caía **sem o caso** em 9 de 15 sorteios simulados: impossível de
+  responder, e o aluno não tem como voltar para reler. O cenário agora é
+  repetido na própria questão, descrito sem nomear a doença para não entregar a
+  resposta da outra.
+- **Duas questões estavam ruins de conteúdo.** A da cloração tinha gabarito
+  discutível (a água é veículo, mas também reservatório ambiental do vibrião) —
+  o próprio professor errou e ficou em dúvida se o gabarito estava certo, que é
+  sinal de item ambíguo, não de item difícil. A de "tempo de duplicação em
+  ciclos" usava ciclo como unidade de tempo sem nunca definir, e virava
+  tautologia depois de decifrada.
+- **Encerrar a sala não convencia a interface.** O botão virava "Sala
+  encerrada", mas o topo seguia dizendo "Sala em andamento" e o "Sair" ainda
+  avisava que a sala continuava aberta para os grupos. Três textos sobre o mesmo
+  fato, dois deles falsos.
+- **O card do aluno na home convidava para uma rodada morta.** "Voltar para a
+  sala XXXX" ficava para sempre, e só sumia quando o grupo entrava em outra.
+
+As invariantes do banco viraram teste (negrito, dependência entre questões,
+concentração do gabarito, feedback obrigatório): nenhuma delas quebra nada, todas
+apenas ensinam errado, e é por isso que passariam de novo sem um teste vigiando.
 
 ## 5. Configuração do Supabase — estado atual
 
@@ -320,7 +348,7 @@ abertos ao mesmo tempo.
 ## 8. Como retomar
 
 1. Ler este documento e o [supabase/README.md](../supabase/README.md).
-2. `git checkout modo-competicao` e `node tests/run.js` (esperado: 61/61).
+2. `git checkout modo-competicao` e `node tests/run.js` (esperado: 66/66).
 3. **Conferir a recuperação de sala contra o servidor real** — a lógica tem
    testes e a tela foi verificada no navegador com a consulta simulada, mas a
    consulta de verdade, com sessão de professor, ainda não rodou. Basta abrir uma

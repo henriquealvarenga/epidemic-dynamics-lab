@@ -137,6 +137,33 @@
    * (o trigger e o `join_room` checam `expires_at` de forma síncrona), logo
    * oferecer "retomar" nela seria mentira.
    */
+  /**
+   * Situação da sala em que o GRUPO está, direto do servidor.
+   *
+   * A tela do aluno guardava só a identidade local, então uma rodada
+   * encerrada continuava parecendo em andamento: a home seguia oferecendo
+   * "Voltar para a sala XXXX" para sempre, e o grupo só descobria o fim ao
+   * tentar responder e levar um 403. A policy `rooms_select` já deixa o
+   * membro ler a própria sala — `is_member_of(id)`.
+   *
+   * Devolve { ok, status } ou { ok:false }: sem resposta do servidor, a
+   * tela não muda nada. Achar que a sala acabou por causa de uma falha de
+   * rede seria pior do que o bug — expulsaria o grupo no meio da aula.
+   */
+  async function situacaoDaSala(roomId) {
+    if (!remoto()) return { ok: false };
+    if (!roomId) return { ok: false };
+
+    const r = await compete.rest.selecionarDetalhado('rooms',
+      'select=status,expires_at&id=eq.' + encodeURIComponent(roomId),
+      compete.rest.aluno);
+    if (!r.ok || !r.dados.length) return { ok: false };
+
+    const linha = r.dados[0];
+    const vencida = linha.expires_at && Date.parse(linha.expires_at) <= Date.now();
+    return { ok: true, status: vencida ? 'closed' : linha.status };
+  }
+
   async function salasAbertas() {
     if (!remoto()) return { ok: true, salas: [] };
 
@@ -307,7 +334,7 @@
 
   compete.api = {
     modo, criarSala, entrar, sair, placar, estatisticas, encerrarSala, observar,
-    registrarResposta, salasAbertas,
+    registrarResposta, salasAbertas, situacaoDaSala,
     _salaDoServidor: salaDoServidor   // exposto para os testes
   };
 })();

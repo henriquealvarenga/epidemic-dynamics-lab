@@ -190,6 +190,30 @@
       renderJogo(wrap, id);
     });
 
+    /* A rodada pode ter acabado enquanto esta aba estava fechada. Sem
+     * perguntar ao servidor, o grupo só descobriria tentando responder e
+     * levando um 403 — e a home continuaria oferecendo "Voltar para a sala"
+     * indefinidamente, como aconteceu na primeira rodada em produção.
+     *
+     * Assíncrono e tolerante: se a consulta falhar, a tela fica como está.
+     * Concluir "acabou" por causa de rede ruim tiraria o grupo da aula. */
+    compete.api.situacaoDaSala(id.roomId).then(r => {
+      if (!r.ok || r.status !== 'closed') return;
+      if (!wrap.isConnected) return;
+
+      const botao = wrap.querySelector('#btn-ir-modulo');
+      if (botao) { botao.disabled = true; botao.textContent = 'Rodada encerrada'; }
+
+      const sub = wrap.querySelector('.compete-sub');
+      if (sub) {
+        sub.innerHTML = 'Esta rodada foi <strong>encerrada pelo professor</strong>. ' +
+          'A pontuação de vocês está guardada; o placar final está no telão.';
+      }
+
+      const sair = wrap.querySelector('#btn-sair');
+      if (sair) sair.textContent = 'Sair da sala e voltar aos módulos';
+    });
+
     wrap.querySelector('#btn-sair').addEventListener('click', async () => {
       const ok = window.confirm(
         'Sair da sala?\n\nAs respostas já enviadas continuam valendo. ' +
@@ -420,6 +444,28 @@
 
     card.addEventListener('click', () => EDL.screens.goTo('jogar'));
     secao.insertBefore(card, secao.firstElementChild);
+
+    /* "Voltar para a sala XXXX" continuava convidando o grupo para uma
+     * rodada que o professor já tinha encerrado — some só quando ele entra
+     * noutra sala. Relatado na primeira aula em produção. Perguntamos ao
+     * servidor e, se acabou, o card deixa de prometer uma rodada viva.
+     *
+     * Assíncrono e silencioso em caso de falha: rede ruim não pode
+     * convencer o card de que a aula terminou. */
+    if (!naSala) return;
+    compete.api.situacaoDaSala(compete.estado.get().roomId).then(r => {
+      if (!r.ok || r.status !== 'closed') return;
+      const atual = document.getElementById('compete-card-home');
+      if (!atual) return;
+      atual.classList.remove('na-sala');
+      atual.innerHTML =
+        `<span class="compete-home-icone" aria-hidden="true">🏁</span>
+         <span class="compete-home-txt">
+           <strong>Rodada encerrada</strong>
+           <span>Sala ${esc(compete.estado.codigo())} · veja como vocês foram</span>
+         </span>
+         <span class="compete-home-seta" aria-hidden="true">→</span>`;
+    });
   }
 
   /* A home é re-renderizada a cada volta; o card precisa acompanhar o

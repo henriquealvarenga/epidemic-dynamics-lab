@@ -482,7 +482,7 @@
     wrap.innerHTML = `
       <nav class="module-topbar">
         <button type="button" class="btn btn-ghost btn-small" data-voltar>← Sair</button>
-        <div class="module-topbar-title">Sala em andamento</div>
+        <div class="module-topbar-title" id="titulo-sala">Sala em andamento</div>
         <div class="module-topbar-spacer"></div>
       </nav>
 
@@ -515,6 +515,13 @@
       </div>
     `;
 
+    /* O aviso do "Sair" depende de a sala AINDA estar no ar. Encerrada, ele
+     * vira mentira — e mentira do console é o pior tipo de bug aqui: o
+     * professor acabou de ler "Sala encerrada" no botão e recebe, no clique
+     * seguinte, um alerta dizendo que a sala continua aberta. Relatado na
+     * primeira rodada em produção. */
+    let encerrada = false;
+
     wrap.querySelector('#btn-podio').addEventListener('click', () => mostrarPodio(wrap));
     wrap.querySelector('#btn-encerrar').addEventListener('click', async () => {
       const ok = window.confirm(
@@ -524,11 +531,32 @@
       if (!ok) return;
       await compete.api.encerrarSala(s.roomId);
       guardarSala(null);
+      encerrada = true;
+
       const btn = wrap.querySelector('#btn-encerrar');
       btn.disabled = true; btn.textContent = 'Sala encerrada';
+
+      /* A tela inteira precisa concordar com o que acabou de acontecer.
+       * Antes, só o botão mudava: o topo continuava anunciando "Sala em
+       * andamento" e o "Sair" ainda avisava que a sala seguia aberta. O
+       * professor lia três coisas diferentes sobre o mesmo fato. */
+      const titulo = wrap.querySelector('#titulo-sala');
+      if (titulo) titulo.textContent = 'Sala encerrada';
+
+      const chamada = wrap.querySelector('.sala-instrucao');
+      if (chamada) {
+        chamada.textContent = 'Rodada encerrada. O placar abaixo é o resultado final.';
+      }
+
+      /* O poll para: não há mais nada mudando, e uma sala encerrada não
+       * precisa de duas consultas a cada 3 s até alguém fechar a aba. */
+      limpar();
     });
     wrap.querySelectorAll('[data-voltar]').forEach(b => {
       b.addEventListener('click', () => {
+        /* Sala já encerrada: não há o que avisar, e perguntar de novo só
+         * faria duvidar do que acabou de acontecer. */
+        if (encerrada) return EDL.screens.goTo('home');
         if (window.confirm('Sair do console? A sala continua aberta para os grupos.')) {
           guardarSala(null);
           EDL.screens.goTo('home');

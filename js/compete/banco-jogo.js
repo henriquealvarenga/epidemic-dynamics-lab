@@ -50,7 +50,7 @@
         'estuda apenas doenças infecciosas, enquanto a clínica cuida das crônicas',
         'só se aplica a surtos e emergências de saúde pública',
         'depende de exames laboratoriais, enquanto a clínica depende do exame físico',
-        'sua unidade de análise é a <strong>população</strong>, não o indivíduo'
+        'sua unidade de análise é a população, não o indivíduo'
       ],
       answer: 3,
       feedback: 'O deslocamento do indivíduo para a população é a virada que funda a disciplina — de Graunt contando mortes em Londres a Doll e Hill acompanhando médicos britânicos. Epidemiologia estuda doenças crônicas tanto quanto infecciosas.'
@@ -75,7 +75,7 @@
       opts: [
         'A descoberta do agente infeccioso do câncer de pulmão',
         'O primeiro ensaio clínico randomizado da história',
-        'As bases da <strong>inferência causal</strong> a partir de associações estatísticas',
+        'As bases da inferência causal a partir de associações estatísticas',
         'A criação da Classificação Internacional de Doenças'
       ],
       answer: 2,
@@ -106,7 +106,7 @@
       tema: 'conceitos',
       q: 'O que diferencia uma pandemia de uma epidemia?',
       opts: [
-        'A <strong>extensão geográfica</strong>: a pandemia atravessa continentes',
+        'A extensão geográfica: a pandemia atravessa continentes',
         'A gravidade dos casos e a letalidade',
         'A existência de vacina disponível',
         'O fato de o agente ser um vírus, e não uma bactéria'
@@ -138,7 +138,7 @@
         'A causa da doença cardiovascular',
         'Um reservatório',
         'Um desfecho da doença cardiovascular',
-        'Um <strong>fator de risco</strong>'
+        'Um fator de risco'
       ],
       answer: 3,
       feedback: 'Fator de risco é o atributo que aumenta a probabilidade do desfecho, sem ser suficiente nem necessário para causá-lo. Chamá-lo de "a causa" atribui a uma associação uma força que ela não tem.'
@@ -149,7 +149,7 @@
       opts: [
         'Porque a vacina do sarampo é mais eficaz',
         'Porque o sarampo tem R₀ menor',
-        'Porque o sarampo tem o <strong>ser humano como único reservatório</strong>, e a febre amarela tem ciclo silvestre em primatas',
+        'Porque o sarampo tem o ser humano como único reservatório, e a febre amarela tem ciclo silvestre em primatas',
         'Porque a febre amarela é endêmica e o sarampo não'
       ],
       answer: 2,
@@ -167,7 +167,7 @@
       q: 'Qual é o modo de transmissão em questão?',
       opts: [
         'Contato direto entre pessoas doentes',
-        'Contato da pele ou mucosa com <strong>água contaminada por urina de roedores</strong>',
+        'Contato da pele ou mucosa com água contaminada por urina de roedores',
         'Inalação de aerossóis da água parada',
         'Picada de mosquito que se reproduz na água parada'
       ],
@@ -176,7 +176,23 @@
     },
     {
       tema: 'cadeia',
-      q: 'No caso anterior, qual medida <strong>não</strong> interrompe a cadeia de transmissão?',
+      /* O cenário é REPETIDO de propósito, e não referenciado.
+       *
+       * Esta questão dizia "no caso anterior". Como a rodada sorteia N das
+       * 30 e embaralha, ela caía sem o caso em mais da metade dos sorteios
+       * simulados — pergunta impossível de responder — e, quando os dois
+       * caíam juntos, podiam ficar vinte questões distantes. O aluno não
+       * tem como voltar para reler.
+       *
+       * O texto abaixo descreve o mesmo caso SEM nomear a doença nem a via:
+       * assim ele não entrega a resposta da questão anterior, que pergunta
+       * exatamente qual é o modo de transmissão. */
+      scenario: {
+        title: 'Depois da enchente',
+        body: 'Duas semanas após uma enchente, moradores que ajudaram na limpeza das casas adoecem com febre alta, dor intensa nas panturrilhas e olhos avermelhados.',
+        meta: [{ label: 'Exposição', value: 'água de enchente' }]
+      },
+      q: 'Nesse caso, qual medida <strong>não</strong> interrompe a cadeia de transmissão?',
       opts: [
         'Controle de roedores',
         'Botas e luvas para quem limpa',
@@ -184,25 +200,32 @@
         'Drenagem das áreas alagadas'
       ],
       answer: 2,
-      feedback: 'Máscara protege via respiratória, que não é a porta de entrada aqui. Escolher a medida certa depende de saber em qual elo se está agindo — é o valor prático de conhecer a cadeia.'
+      feedback: 'Nada no caso aponta para via respiratória: a exposição é à água, pela pele e mucosas. Máscara protege uma porta de entrada que não está em jogo. As outras três agem em elos reais — o reservatório (roedores), a barreira de contato (botas e luvas) e o veículo (água parada).'
     },
     {
       tema: 'cadeia',
-      q: 'Clorar a água de abastecimento atua em qual elo da cadeia epidemiológica da cólera?',
+      /* Versão anterior perguntava em qual elo a CLORAÇÃO age, e a resposta
+       * "modo de transmissão" era discutível: a água é o veículo, mas
+       * também é reservatório ambiental do V. cholerae, então "reservatório"
+       * se defende. O professor errou a própria questão e ficou em dúvida
+       * se o gabarito estava certo — sinal de item ambíguo, não de item
+       * difícil. Aqui o sentido é invertido: dado o elo, qual medida age
+       * nele. Só a vacina age no hospedeiro, sem margem para discussão. */
+      q: 'Numa epidemia de cólera transmitida pela água de abastecimento, qual medida age sobre o hospedeiro suscetível?',
       opts: [
-        'Reservatório/fonte',
-        'Porta de saída',
-        'Modo de transmissão',
-        'Hospedeiro suscetível'
+        'Clorar a água de abastecimento',
+        'Tratar os doentes com reidratação e antibiótico',
+        'Vacinar a população contra a cólera',
+        'Construir rede de esgoto para o destino das fezes'
       ],
       answer: 2,
-      feedback: 'A cloração corta o veículo — a água que leva o <em>V. cholerae</em> das fezes à boca. Vacinar agiria no hospedeiro suscetível; tratar os doentes, no reservatório.'
+      feedback: 'Cada medida age num elo diferente: a cloração corta o veículo (modo de transmissão), o tratamento dos doentes reduz o reservatório humano, o esgoto fecha a porta de saída, e só a vacina age sobre o hospedeiro suscetível. Saber em qual elo se está agindo é o que permite escolher a medida certa para o que se tem em mãos.'
     },
     {
       tema: 'cadeia',
       q: 'Isolamento de um paciente com tuberculose pulmonar bacilífera age principalmente sobre:',
       opts: [
-        'O <strong>reservatório e a porta de saída</strong>',
+        'O reservatório e a porta de saída',
         'A porta de entrada do novo hospedeiro',
         'O agente etiológico',
         'A suscetibilidade da população'
@@ -231,7 +254,7 @@
         'Porque tem letalidade maior',
         'Porque o período de incubação é mais longo',
         'Porque não existia teste diagnóstico',
-        'Porque a transmissão começa <strong>antes</strong> do aparecimento dos sintomas'
+        'Porque a transmissão começa antes do aparecimento dos sintomas'
       ],
       answer: 3,
       feedback: 'No SARS a transmissão era ligada à doença sintomática, então isolar quem tinha febre funcionava. Com transmissão pré-sintomática, o portador circula transmitindo antes de qualquer suspeita — e a triagem por sintoma deixa de bastar.'
@@ -264,7 +287,7 @@
         'qualquer população, a qualquer momento do surto',
         'uma população fechada, sem entrada ou saída de pessoas',
         'uma população com cobertura vacinal de 50%',
-        'uma população <strong>inteiramente suscetível</strong>'
+        'uma população inteiramente suscetível'
       ],
       answer: 3,
       feedback: 'A condição de suscetibilidade total é o que torna o R₀ uma característica do par agente-população, e não do momento. Assim que parte da população fica imune, quem descreve a transmissão é o R efetivo.'
@@ -285,10 +308,22 @@
     },
     {
       tema: 'r0',
-      q: 'Uma doença com R₀ = 2 tem tempo de duplicação, em ciclos, de:',
-      opts: ['0,5 ciclo', '1 ciclo', '2 ciclos', '4 ciclos'],
+      /* A versão anterior era "uma doença com R₀ = 2 tem tempo de duplicação,
+       * em ciclos, de:", com resposta "1 ciclo". Dois defeitos: usava
+       * "ciclo" como unidade de tempo sem nunca dizer que ciclo é geração,
+       * e, entendida a linguagem, virava tautologia — R₀ = 2 dobra por
+       * definição. O professor não entendeu a questão, e ele escreveu o
+       * curso. Trocada pelo conceito que aquela confundia: R₀ diz quantos,
+       * o intervalo entre gerações diz em quanto tempo. */
+      q: 'Duas doenças têm o mesmo R₀ = 2, mas o intervalo entre uma geração de casos e a seguinte é de 3 dias numa e de 3 semanas na outra. O que muda?',
+      opts: [
+        'Nada: com o mesmo R₀, as duas epidemias evoluem do mesmo jeito',
+        'A de intervalo curto cresce muito mais rápido no calendário, embora o número de casos por geração seja o mesmo',
+        'A de intervalo longo infecta mais gente no total, porque circula por mais tempo',
+        'A de intervalo curto exige cobertura vacinal mais alta para atingir a imunidade de rebanho'
+      ],
       answer: 1,
-      feedback: 't = log(2) / log(R₀) = log2/log2 = <strong>1 ciclo</strong>. Com R₀ = 2, cada geração dobra o número de casos, por definição.'
+      feedback: 'R₀ diz QUANTOS casos cada caso gera; o intervalo entre gerações diz EM QUANTO TEMPO. As duas dobram a cada geração, mas uma dobra a cada 3 dias e a outra a cada 3 semanas — é a diferença entre uma epidemia que explode em um mês e outra que leva um ano. O limiar de rebanho depende só do R₀: 1 − 1/2 = 50% nas duas.'
     },
 
     /* ---------- Imunidade de rebanho (23–26) ---------- */
@@ -316,7 +351,7 @@
       q: 'Qual a avaliação epidemiológica correta?',
       opts: [
         'Imunidade de rebanho atingida; surto improvável',
-        'Cobertura <strong>abaixo</strong> do limiar de 80% — o surto pode se propagar',
+        'Cobertura abaixo do limiar de 80% — o surto pode se propagar',
         'Impossível avaliar sem conhecer a incidência prévia',
         'Imunidade de rebanho não se aplica a populações desse tamanho'
       ],
@@ -329,7 +364,7 @@
       opts: [
         'Porque a vacina antitetânica tem eficácia baixa',
         'Porque o R₀ do tétano é altíssimo',
-        'Porque <strong>não há transmissão pessoa a pessoa</strong> — a fonte é ambiental',
+        'Porque não há transmissão pessoa a pessoa — a fonte é ambiental',
         'Porque a imunidade dura pouco tempo'
       ],
       answer: 2,
@@ -344,7 +379,7 @@
         'Pessoas expostas que ficaram imunes sem adoecer',
         'Pessoas que morreram durante o surto',
         'Pessoas em isolamento domiciliar',
-        'Pessoas infectadas mas <strong>ainda não infectantes</strong>'
+        'Pessoas infectadas mas ainda não infectantes'
       ],
       answer: 3,
       feedback: 'O E modela o período latente — infectado, sem transmitir ainda. Isso atrasa e achata o pico em relação ao SIR com o mesmo R₀, e é essencial para doenças de latência longa.'
@@ -354,7 +389,7 @@
       q: 'Num SIR com R₀ = 3, cerca de 94% da população se infecta até o fim do surto, embora o limiar de rebanho seja 67%. Por quê?',
       opts: [
         'Porque o modelo assume que a imunidade não é duradoura',
-        'Por <strong>overshoot</strong>: ao cruzar o limiar ainda há muitos infectantes circulando',
+        'Por overshoot: ao cruzar o limiar ainda há muitos infectantes circulando',
         'Porque o cálculo do limiar não vale para R₀ maior que 2',
         'Porque o modelo ignora a recuperação'
       ],
@@ -369,7 +404,7 @@
       opts: [
         'Ter isolado o <em>Vibrio cholerae</em> ao microscópio',
         'Ter cunhado o termo "epidemiologia"',
-        'O <strong>Grand Experiment</strong>: comparar a mortalidade entre clientes de duas companhias de água',
+        'O Grand Experiment: comparar a mortalidade entre clientes de duas companhias de água',
         'Ter provado que o cólera se transmitia por miasmas'
       ],
       answer: 2,

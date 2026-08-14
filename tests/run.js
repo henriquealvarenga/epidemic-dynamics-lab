@@ -781,6 +781,72 @@ testAsync('salas abertas: sem nenhuma aberta devolve lista vazia', async () => {
   });
 });
 
+/* ==================================================================
+ * Banco do modo game — invariantes que a primeira aula real cobrou
+ *
+ * Os três defeitos abaixo passaram por revisão de código e só
+ * apareceram com o professor JOGANDO a rodada em produção. Nenhum deles
+ * quebra nada: a rodada roda, o placar soma, e a questão simplesmente
+ * ensina errado. Por isso viram teste — é o único jeito de não voltarem
+ * quando alguém acrescentar a questão 31.
+ * ================================================================ */
+
+const BANCO = EDL.compete.bancoJogo.todas();
+
+test('banco: nenhuma alternativa tem negrito', () => {
+  // O negrito estava em 14 das 30, SEMPRE na alternativa certa e nunca
+  // num distrator: quem percebesse o padrão acertava metade do banco
+  // sem saber nada. Mesma família do gabarito enviesado na posição B.
+  const vazando = [];
+  BANCO.forEach((q, i) => q.opts.forEach(o => {
+    if (/<strong>|<b>/.test(o)) vazando.push(i + ': ' + o.replace(/<[^>]*>/g, ''));
+  }));
+  assert.deepEqual(vazando, [], 'alternativa com destaque entrega a resposta');
+});
+
+test('banco: nenhuma questão depende de outra questão', () => {
+  // A rodada sorteia N das 30 e embaralha. Uma questão que diga "no caso
+  // anterior" cai sem o caso na maioria dos sorteios — e o aluno não tem
+  // como voltar para reler.
+  const dependentes = BANCO
+    .map((q, i) => ({ i, q: q.q }))
+    .filter(x => /caso anterior|questão anterior|pergunta anterior|item anterior/i.test(x.q));
+  assert.deepEqual(dependentes, [], 'questão órfã quando o sorteio não traz a outra');
+});
+
+test('banco: questão que fala de um caso carrega o próprio cenário', () => {
+  // Generaliza o teste acima: "nesse caso", "esse evento", "este paciente"
+  // só fazem sentido se o cenário vier junto na mesma tela.
+  const semCenario = BANCO
+    .map((q, i) => ({ i, q: q.q, temCenario: !!q.scenario }))
+    .filter(x => /\b(nesse caso|neste caso|esse evento|este evento|este paciente|esse paciente|em questão)\b/i.test(x.q))
+    .filter(x => !x.temCenario)
+    .map(x => x.i + ': ' + x.q);
+  assert.deepEqual(semCenario, [], 'referência a um caso que a tela não mostra');
+});
+
+test('banco: gabarito não se concentra numa posição', () => {
+  // 16 das 30 já caíram na posição B uma vez: quem percebesse acertava
+  // metade chutando. O teto de 40% dá folga para o banco crescer sem
+  // exigir rebalanceamento a cada questão nova.
+  const dist = [0, 0, 0, 0];
+  BANCO.forEach(q => dist[q.answer]++);
+  const teto = Math.ceil(BANCO.length * 0.4);
+  dist.forEach((n, pos) => {
+    assert.ok(n <= teto,
+      `posição ${'ABCD'[pos]} tem ${n} respostas certas de ${BANCO.length} (teto ${teto})`);
+  });
+});
+
+test('banco: toda questão é jogável e explica o erro', () => {
+  BANCO.forEach((q, i) => {
+    assert.equal(q.opts.length, 4, `questão ${i} não tem 4 alternativas`);
+    assert.ok(q.answer >= 0 && q.answer < 4, `questão ${i} com gabarito fora da faixa`);
+    assert.ok((q.feedback || '').trim().length > 20,
+      `questão ${i} sem feedback — o aluno erra e não aprende por quê`);
+  });
+});
+
 /* ------------------------------------------------------------------
  * Relatório final
  * ---------------------------------------------------------------- */
