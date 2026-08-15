@@ -46,3 +46,6 @@ supabase/.temp/
 
 # Quarto — cache de render da página Leituras
 .quarto/
+
+/.quarto/
+**/*.quarto_ipynb
