@@ -11,6 +11,11 @@ Depois de gerar, é preciso renderizar a página:
 
     python3 scripts/leituras2md.py && quarto render leituras.qmd
 
+O `--check` (que o CI roda) cobre os três derivados do .bib, porque cada um
+some em silêncio quando é esquecido: o `_leituras-refs.md`, o `leituras.html`
+renderizado e os números citados na prosa dos arquivos de FONTES_PROSA. Ver
+`check()`, no fim do arquivo.
+
 Por que existe
 --------------
 A página agrupa 51 artigos por CONCEITO (causalidade, exposição, risco…), não
@@ -221,23 +226,37 @@ def agrupa(entradas: list) -> dict:
     Aborta se alguma entrada tiver `concept` ausente ou desconhecido: sem
     seção, a referência simplesmente não apareceria na página, e um erro que
     só se manifesta como ausência é dos que passam despercebidos por meses.
+
+    Aborta também se faltar `year`, pelo mesmo motivo em outra forma: a entrada
+    apareceria, mas com a calha do ano vazia, ordenada antes de tudo, e — o
+    estrago maior — arrastaria a faixa do topo da página para "–2019", já que
+    string vazia é o menor ano possível. Nada disso levanta exceção sozinho.
     """
     validos = {cid for cid, *_ in CONCEITOS}
     grupos: dict[str, list] = {cid: [] for cid in validos}
     problemas = []
+    houve_concept_invalido = False
 
     for e in entradas:
         cid = e["fields"].get("concept", "").strip()
+        ano = e["fields"].get("year", "").strip()
         if cid not in validos:
             problemas.append(f"{e['key']}: concept = {cid!r}")
+            houve_concept_invalido = True
+            continue
+        if not re.fullmatch(r"\d{4}", ano):
+            problemas.append(f"{e['key']}: year = {ano!r} (esperado: 4 dígitos)")
             continue
         grupos[cid].append(e)
 
     if problemas:
-        print("[erro] entradas com `concept` ausente ou desconhecido:", file=sys.stderr)
+        print("[erro] entradas com campo obrigatório ausente ou inválido:",
+              file=sys.stderr)
         for p in problemas:
             print(f"       {p}", file=sys.stderr)
-        print(f"       ids válidos: {', '.join(sorted(validos))}", file=sys.stderr)
+        if houve_concept_invalido:
+            print(f"       ids de concept válidos: {', '.join(sorted(validos))}",
+                  file=sys.stderr)
         raise SystemExit(1)
 
     # Ordena por ano, e só por ano: a ordenação do Python é estável, então
@@ -250,10 +269,15 @@ def agrupa(entradas: list) -> dict:
     return grupos
 
 
+def faixa_anos(entradas: list) -> str:
+    """Faixa no formato 1965–2019: vale para a página e para o eyebrow."""
+    anos = sorted(e["fields"].get("year", "") for e in entradas)
+    return f"{anos[0]}–{anos[-1]}" if anos else ""
+
+
 def monta(entradas: list) -> str:
     grupos = agrupa(entradas)
-    anos = sorted(e["fields"].get("year", "") for e in entradas)
-    faixa = f"{anos[0]}–{anos[-1]}" if anos else ""
+    faixa = faixa_anos(entradas)
 
     out = [
         "<!-- ARQUIVO GERADO por scripts/leituras2md.py a partir de",
@@ -301,6 +325,112 @@ def monta(entradas: list) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Conferência (--check)
+# ---------------------------------------------------------------------------
+
+# Arquivos que citam a contagem de artigos ou a faixa de anos em PROSA: meta
+# description, chamada na tela de Bibliografia, comentários de cabeçalho. O
+# `<ul class="facts">` da página sai dos dados; estes aqui saem da mão de quem
+# escreveu, e ninguém lembra de revisar cinco arquivos ao acrescentar a 52ª
+# entrada no .bib. O gate não reescreve nada — só diz onde está a divergência.
+FONTES_PROSA = [
+    "js/core/references-view.js",
+    "leituras.qmd",
+    "leituras.html",
+    "references/leituras.bib",
+    "scripts/leituras2md.py",
+]
+
+# A contagem é segura de procurar solta. A faixa NÃO é: leituras.html tem
+# catorze trechos no formato de quatro dígitos, travessão, quatro dígitos, e
+# treze deles são intervalos de página ("45(6): 1776–1786"). Por isso a âncora
+# no texto do eyebrow, que é onde a faixa aparece escrita à mão de fato — sem
+# ela o gate reprovaria todo build, que é o mesmo que não ter gate.
+RE_CONTAGEM = re.compile(r"\b(\d+) artigos\b")
+RE_FAIXA = re.compile(r"Bibliografia comentada · (\d{4}–\d{4})")
+
+
+def extrai_bloco(md: str) -> str:
+    """Devolve o miolo entre as cercas de bloco raw do arquivo gerado."""
+    ini = md.index("```{=html}") + len("```{=html}\n")
+    return md[ini:md.rindex("```")].strip("\n")
+
+
+def confere_html(bloco: str, pagina: str) -> bool:
+    """Diz se `leituras.html` já contém o bloco gerado.
+
+    É este gate que substitui rodar o Quarto no CI. O bloco raw atravessa o
+    Pandoc verbatim, então basta procurá-lo dentro da página renderizada — com
+    uma ressalva: o Pandoc reemite entidades numéricas como o caractere que
+    elas representam (`&#x27;` vira `'`). Normalizar os dois lados resolve, e
+    normalizar o gerado também é seguro porque a comparação é simétrica.
+    """
+    return html.unescape(bloco) in html.unescape(pagina)
+
+
+def confere_prosa(root: Path, total: int, faixa: str) -> list:
+    """Lista as linhas em que a prosa contradiz os dados do .bib."""
+    erros = []
+    for rel in FONTES_PROSA:
+        caminho = root / rel
+        if not caminho.exists():
+            continue
+        linhas = caminho.read_text(encoding="utf-8").splitlines()
+        for n, linha in enumerate(linhas, 1):
+            for m in RE_CONTAGEM.finditer(linha):
+                if m.group(1) != str(total):
+                    erros.append(f"{rel}:{n}: diz \"{m.group(0)}\", "
+                                 f"mas o .bib tem {total}")
+            for m in RE_FAIXA.finditer(linha):
+                if m.group(1) != faixa:
+                    erros.append(f"{rel}:{n}: diz a faixa {m.group(1)}, "
+                                 f"mas o .bib vai de {faixa}")
+    return erros
+
+
+def check(root: Path, md_path: Path, conteudo: str, entradas: list) -> int:
+    """Confere os três derivados da lista: o .md, o .html e a prosa.
+
+    Roda as três e só então decide o código de saída. Parar na primeira faria
+    o CI revelar um problema por push, e quem esquece de rodar o gerador
+    costuma ter esquecido de renderizar a página também.
+    """
+    html_path = root / "leituras.html"
+    falhas = []
+
+    if not md_path.exists():
+        print(f"[erro] arquivo não encontrado: {md_path}", file=sys.stderr)
+        return 1
+
+    if md_path.read_text(encoding="utf-8") != conteudo:
+        falhas.append("_leituras-refs.md está desatualizado em relação a "
+                      "leituras.bib.\n"
+                      "       Rode: python3 scripts/leituras2md.py")
+
+    if not html_path.exists():
+        falhas.append(f"arquivo não encontrado: {html_path.name}")
+    elif not confere_html(extrai_bloco(conteudo),
+                          html_path.read_text(encoding="utf-8")):
+        falhas.append("leituras.html não contém a lista que o .bib produz "
+                      "hoje — é a página velha ainda no ar.\n"
+                      "       Rode: quarto render leituras.qmd")
+
+    divergencias = confere_prosa(root, len(entradas), faixa_anos(entradas))
+    if divergencias:
+        falhas.append("a prosa cita números que o .bib não confirma:\n"
+                      + "\n".join(f"       {d}" for d in divergencias))
+
+    if falhas:
+        for f in falhas:
+            print(f"[erro] {f}", file=sys.stderr)
+        return 1
+
+    print(f"[ok] página Leituras em dia ({len(entradas)} entradas, "
+          f"{faixa_anos(entradas)})")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -317,17 +447,7 @@ def main() -> int:
     conteudo = monta(entradas)
 
     if "--check" in sys.argv[1:]:
-        if not md_path.exists():
-            print(f"[erro] arquivo não encontrado: {md_path}", file=sys.stderr)
-            return 1
-        if md_path.read_text(encoding="utf-8") == conteudo:
-            print(f"[ok] _leituras-refs.md em dia ({len(entradas)} entradas)")
-            return 0
-        print("[erro] _leituras-refs.md está desatualizado em relação a "
-              "leituras.bib.", file=sys.stderr)
-        print("       Rode: python3 scripts/leituras2md.py && "
-              "quarto render leituras.qmd", file=sys.stderr)
-        return 1
+        return check(root, md_path, conteudo, entradas)
 
     md_path.write_text(conteudo, encoding="utf-8")
     print(f"[ok] {len(entradas)} referência(s) em {md_path.relative_to(root)}")

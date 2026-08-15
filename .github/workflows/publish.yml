@@ -66,11 +66,15 @@ jobs:
         run: python3 scripts/bib2json.py --check
 
       # Mesma armadilha, outra lista: o corpo da página Leituras é derivado
-      # de references/leituras.bib. Este gate pega o .bib editado sem rodar o
-      # gerador. O que ele NÃO pega é o gerador rodado sem `quarto render`
-      # depois — o Quarto não está no runner, e instalá-lo aqui só para
-      # conferir uma página estática não se paga. Ao mexer no .bib, rode os
-      # dois comandos que estão no cabeçalho de leituras.qmd.
+      # de references/leituras.bib. Este gate confere os três derivados —
+      # _leituras-refs.md, leituras.html e os números citados na prosa (a meta
+      # description, a chamada na tela de Bibliografia).
+      #
+      # O Quarto NÃO roda aqui e não precisa: o bloco raw atravessa o Pandoc
+      # verbatim, então conferir leituras.html é procurar o texto gerado
+      # dentro da página (normalizando entidades HTML, que o Pandoc reemite
+      # como caractere). Instalar o Quarto no runner para renderizar de novo
+      # custaria minutos por build para chegar à mesma resposta.
       - name: Conferir se a página Leituras está em dia
         run: python3 scripts/leituras2md.py --check
 
@@ -95,6 +99,12 @@ jobs:
       # docs-internos/RASCUNHO_*.md ficaria legível na URL do site.
       # Copiar para _site/ preserva a estrutura de caminhos (inclusive o
       # .nojekyll) e só tira o que não deve ir ao ar.
+      #
+      # `_leituras-refs*` é prefixo de propósito: pega o fragmento de include
+      # (.md) e também os subprodutos que um `quarto render` sem argumento
+      # deixa para trás (.html órfão + _files/). Esses dois estão no
+      # .gitignore, então nem chegam ao checkout — o exclude é a segunda
+      # tranca, para o caso de alguém forçar o commit deles.
       - name: Montar o site sem os arquivos internos
         run: |
           mkdir -p _site
@@ -110,7 +120,7 @@ jobs:
             --exclude 'tests' \
             --exclude 'scripts' \
             --exclude '*.qmd' \
-            --exclude '_leituras-refs.md'
+            --exclude '_leituras-refs*'
           echo "Conteúdo publicado:"
           ls -A _site
 

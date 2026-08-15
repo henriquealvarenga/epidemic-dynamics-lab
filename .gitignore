@@ -46,6 +46,12 @@ supabase/.temp/
 
 # Quarto — cache de render da página Leituras
 .quarto/
-
-/.quarto/
 **/*.quarto_ipynb
+
+# Subprodutos de `quarto render` sem argumento: o Quarto varre o diretório e
+# renderiza também _leituras-refs.md, que é fragmento de include e não página.
+# O resultado é uma cópia órfã e sem estilo da lista inteira, mais ~900 KB de
+# Bootstrap que leituras.html (minimal: true) não usa. Renderize sempre com o
+# alvo explícito: `quarto render leituras.qmd`.
+_leituras-refs.html
+_leituras-refs_files/

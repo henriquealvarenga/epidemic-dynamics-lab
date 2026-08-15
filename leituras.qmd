@@ -19,8 +19,16 @@
 #   3. quarto render leituras.qmd         (regenera leituras.html)
 #
 # Commite .bib, _leituras-refs.md e leituras.html juntos: o CI publica o
-# repositório como está e NÃO roda o Quarto. Esquecer o passo 3 significa
-# publicar a página velha sem nenhum aviso.
+# repositório como está e NÃO roda o Quarto. Esquecer o passo 3 reprova o
+# build — `leituras2md.py --check` procura o texto gerado dentro do .html.
+#
+# ATENÇÃO ao editar abaixo: a contagem de artigos (description, og:description)
+# e a faixa de anos do eyebrow também são conferidas contra o .bib. São prosa,
+# mas prosa que precisa bater com os dados.
+#
+# Renderize sempre com o alvo explícito, `quarto render leituras.qmd`. Um
+# `quarto render` sem argumento renderiza também _leituras-refs.md, que é
+# fragmento de include, e deixa lixo no diretório (ignorado pelo git).
 # =============================================================================
 
 pagetitle: "Leituras conceituais — Epidemic Dynamics Lab"

@@ -14,8 +14,13 @@
 %   1. Edite `leituras.bib` (este arquivo).
 %   2. Rode: python3 scripts/leituras2md.py
 %   3. Rode: quarto render leituras.qmd
-%   4. Commite .bib, _leituras-refs.md e leituras.html juntos — o CI publica
+%   4. Se a contagem mudou, atualize onde ela aparece em prosa (a lista está
+%      em FONTES_PROSA, em scripts/leituras2md.py).
+%   5. Commite .bib, _leituras-refs.md e leituras.html juntos — o CI publica
 %      o repositório como está, sem rodar o Quarto.
+%
+% Esquecer qualquer um dos passos 2-4 reprova o build:
+% `python3 scripts/leituras2md.py --check` diz qual deles foi.
 %
 % Por que é separado de `references.bib`:
 %   references.bib é a bibliografia DO APP — o que os módulos citam, agrupada
