@@ -446,6 +446,13 @@
           ou o agrupamento nos botões abaixo.
         </p>
 
+        <p class="muted" style="font-size:.92rem;margin-top:-.4rem">
+          Procurando leitura de fundo em vez das fontes dos módulos?
+          <a href="leituras.html">Leituras conceituais</a> reúne 51 artigos sobre
+          exposição, desfecho, correlação, causalidade, inferência e risco,
+          agrupados pelo conceito em disputa.
+        </p>
+
         <div class="refs-toolbar">
           <div class="refs-toolbar-group">
             <span class="refs-toolbar-label">Estilo</span>
@@ -481,6 +488,10 @@
           <p class="muted" style="margin-top:.6rem;font-size:.88rem">
             O BibTeX importa direto em EndNote, Zotero, Mendeley, Papers ou qualquer outro
             gerenciador padrão. O CSL-JSON é útil para integrações com Pandoc, Quarto ou R Markdown.
+          </p>
+          <p class="muted" style="font-size:.88rem">
+            A lista de <a href="leituras.html">Leituras conceituais</a> tem arquivo próprio:
+            <a href="references/leituras.bib" download>leituras.bib</a>.
           </p>
           <p class="muted" style="font-size:.88rem">
             Para citar <em>o próprio aplicativo</em> em trabalhos acadêmicos, veja os

@@ -43,3 +43,6 @@ _site/
 
 # Supabase CLI — estado local do vínculo com o projeto
 supabase/.temp/
+
+# Quarto — cache de render da página Leituras
+.quarto/

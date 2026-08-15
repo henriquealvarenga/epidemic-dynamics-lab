@@ -65,6 +65,15 @@ jobs:
       - name: Conferir se as referências geradas estão em dia
         run: python3 scripts/bib2json.py --check
 
+      # Mesma armadilha, outra lista: o corpo da página Leituras é derivado
+      # de references/leituras.bib. Este gate pega o .bib editado sem rodar o
+      # gerador. O que ele NÃO pega é o gerador rodado sem `quarto render`
+      # depois — o Quarto não está no runner, e instalá-lo aqui só para
+      # conferir uma página estática não se paga. Ao mexer no .bib, rode os
+      # dois comandos que estão no cabeçalho de leituras.qmd.
+      - name: Conferir se a página Leituras está em dia
+        run: python3 scripts/leituras2md.py --check
+
   publicar:
     name: Publicar
     needs: testes
@@ -99,7 +108,9 @@ jobs:
             --exclude 'docs-internos' \
             --exclude 'supabase' \
             --exclude 'tests' \
-            --exclude 'scripts'
+            --exclude 'scripts' \
+            --exclude '*.qmd' \
+            --exclude '_leituras-refs.md'
           echo "Conteúdo publicado:"
           ls -A _site
 

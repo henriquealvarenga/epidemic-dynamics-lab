@@ -1,0 +1,677 @@
+% =========================================================================
+% EPIDEMIC DYNAMICS LAB — Leituras conceituais
+%
+% Literatura que discute DIRETAMENTE os conceitos que a epidemiologia usa
+% sem definir: exposição, desfecho, correlação, causalidade, inferência e
+% risco. 51 artigos, metadados conferidos na Crossref e no PubMed.
+%
+% Este arquivo é a FONTE da página `leituras.html`, escrita em Quarto
+% (`leituras.qmd`). A lista de referências que aparece na página NÃO é
+% digitada no .qmd: é gerada daqui por scripts/leituras2md.py, que escreve
+% `_leituras-refs.md` — arquivo derivado, não editar à mão.
+%
+% Fluxo para adicionar/alterar uma referência:
+%   1. Edite `leituras.bib` (este arquivo).
+%   2. Rode: python3 scripts/leituras2md.py
+%   3. Rode: quarto render leituras.qmd
+%   4. Commite .bib, _leituras-refs.md e leituras.html juntos — o CI publica
+%      o repositório como está, sem rodar o Quarto.
+%
+% Por que é separado de `references.bib`:
+%   references.bib é a bibliografia DO APP — o que os módulos citam, agrupada
+%   por módulo. Esta lista é leitura complementar, agrupada por conceito, e
+%   não é citada em módulo nenhum. Juntar as duas jogaria 51 itens no balde
+%   "Sem módulo associado" da tela de Bibliografia e apagaria o agrupamento
+%   conceitual, que é justamente o que dá sentido à lista.
+%
+% Campo custom utilizado pela página:
+%   concept = {id}   Conceito sob o qual a referência aparece na página.
+%                    Ids válidos (o título e a prosa de cada um estão na
+%                    tabela CONCEITOS de scripts/leituras2md.py): causalidade,
+%                    debate, exposicao, desfecho, correlacao, inferencia,
+%                    risco. Um id fora dessa lista faz o gerador abortar —
+%                    referência sem seção seria referência invisível.
+%
+% Codificação: UTF-8.
+% =========================================================================
+% ============================================================
+% 1. CAUSALIDADE — textos fundadores e panoramas
+% ============================================================
+
+@article{hill1965environment,
+  concept = {causalidade},
+  author  = {Hill, Austin Bradford},
+  title   = {The Environment and Disease: Association or Causation?},
+  journal = {Proceedings of the Royal Society of Medicine},
+  year    = {1965},
+  volume  = {58},
+  number  = {5},
+  pages   = {295--300},
+  doi     = {10.1177/0141076814562718},
+  note    = {Original sem DOI; o link abre a reimpress{\~a}o no J R Soc Med 2015;108(1):32--37}
+}
+
+@article{rothman1976causes,
+  concept = {causalidade},
+  author  = {Rothman, Kenneth J.},
+  title   = {Causes},
+  journal = {American Journal of Epidemiology},
+  year    = {1976},
+  volume  = {104},
+  number  = {6},
+  pages   = {587--592},
+  doi     = {10.1093/oxfordjournals.aje.a112335}
+}
+
+@article{rothman1980interaction,
+  concept = {causalidade},
+  author  = {Rothman, Kenneth J. and Greenland, Sander and Walker, Alexander M.},
+  title   = {Concepts of Interaction},
+  journal = {American Journal of Epidemiology},
+  year    = {1980},
+  volume  = {112},
+  number  = {4},
+  pages   = {467--470},
+  doi     = {10.1093/oxfordjournals.aje.a113015}
+}
+
+@article{susser1991grammar,
+  concept = {causalidade},
+  author  = {Susser, Mervyn},
+  title   = {What Is a Cause and How Do We Know One? A Grammar for Pragmatic Epidemiology},
+  journal = {American Journal of Epidemiology},
+  year    = {1991},
+  volume  = {133},
+  number  = {7},
+  pages   = {635--648},
+  doi     = {10.1093/oxfordjournals.aje.a115939}
+}
+
+@article{krieger1994web,
+  concept = {causalidade},
+  author  = {Krieger, Nancy},
+  title   = {Epidemiology and the Web of Causation: Has Anyone Seen the Spider?},
+  journal = {Social Science \& Medicine},
+  year    = {1994},
+  volume  = {39},
+  number  = {7},
+  pages   = {887--903},
+  doi     = {10.1016/0277-9536(94)90202-X}
+}
+
+@article{kaufman2000looking,
+  concept = {causalidade},
+  author  = {Kaufman, Jay S. and Poole, Charles},
+  title   = {Looking Back on ``Causal Thinking in the Health Sciences''},
+  journal = {Annual Review of Public Health},
+  year    = {2000},
+  volume  = {21},
+  number  = {1},
+  pages   = {101--119},
+  doi     = {10.1146/annurev.publhealth.21.1.101}
+}
+
+@article{parascandola2001causation,
+  concept = {causalidade},
+  author  = {Parascandola, Mark and Weed, Douglas L.},
+  title   = {Causation in Epidemiology},
+  journal = {Journal of Epidemiology and Community Health},
+  year    = {2001},
+  volume  = {55},
+  number  = {12},
+  pages   = {905--912},
+  doi     = {10.1136/jech.55.12.905}
+}
+
+@article{rothman2005causation,
+  concept = {causalidade},
+  author  = {Rothman, Kenneth J. and Greenland, Sander},
+  title   = {Causation and Causal Inference in Epidemiology},
+  journal = {American Journal of Public Health},
+  year    = {2005},
+  volume  = {95},
+  number  = {S1},
+  pages   = {S144--S150},
+  doi     = {10.2105/AJPH.2004.059204}
+}
+
+@article{broadbent2009models,
+  concept = {causalidade},
+  author  = {Broadbent, Alex},
+  title   = {Causation and Models of Disease in Epidemiology},
+  journal = {Studies in History and Philosophy of Biological and Biomedical Sciences},
+  year    = {2009},
+  volume  = {40},
+  number  = {4},
+  pages   = {302--311},
+  doi     = {10.1016/j.shpsc.2009.09.006}
+}
+
+% ============================================================
+% 2. O DEBATE DO IJE (2016) — pluralismo x formalismo contrafactual
+%    Fasciculo 45(6): artigo-alvo, cinco comentarios e replica.
+% ============================================================
+
+@article{vandenbroucke2016pluralistic,
+  concept = {debate},
+  author  = {Vandenbroucke, Jan P. and Broadbent, Alex and Pearce, Neil},
+  title   = {Causality and Causal Inference in Epidemiology: The Need for a Pluralistic Approach},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1776--1786},
+  doi     = {10.1093/ije/dyv341}
+}
+
+@article{krieger2016dag,
+  concept = {debate},
+  author  = {Krieger, Nancy and Davey Smith, George},
+  title   = {The Tale Wagged by the {DAG}: Broadening the Scope of Causal Inference and Explanation for Epidemiology},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1787--1808},
+  doi     = {10.1093/ije/dyw114}
+}
+
+@article{vanderweele2016causes,
+  concept = {debate},
+  author  = {VanderWeele, Tyler J.},
+  title   = {Commentary: On Causes, Causal Inference, and Potential Outcomes},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1809--1816},
+  doi     = {10.1093/ije/dyw230}
+}
+
+@article{daniel2016formal,
+  concept = {debate},
+  author  = {Daniel, Rhian M. and De Stavola, Bianca L. and Vansteelandt, Stijn},
+  title   = {Commentary: The Formal Approach to Quantitative Causal Inference in Epidemiology: Misguided or Misrepresented?},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1817--1829},
+  doi     = {10.1093/ije/dyw227}
+}
+
+@article{robins2016streetlamps,
+  concept = {debate},
+  author  = {Robins, James M. and Weissman, Michael B.},
+  title   = {Commentary: Counterfactual Causation and Streetlamps: What Is to Be Done?},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1830--1835},
+  doi     = {10.1093/ije/dyw231}
+}
+
+@article{broadbent2016reply,
+  concept = {debate},
+  author  = {Broadbent, Alex and Vandenbroucke, Jan P. and Pearce, Neil},
+  title   = {Response: Formalism or Pluralism? A Reply to Commentaries on `Causality and Causal Inference in Epidemiology'},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1841--1851},
+  doi     = {10.1093/ije/dyw298}
+}
+
+@article{pearce2016somuchmore,
+  concept = {debate},
+  author  = {Pearce, Neil and Lawlor, Debbie A.},
+  title   = {Causal Inference---So Much More Than Statistics},
+  journal = {International Journal of Epidemiology},
+  year    = {2016},
+  volume  = {45},
+  number  = {6},
+  pages   = {1895--1903},
+  doi     = {10.1093/ije/dyw328}
+}
+
+% ============================================================
+% 3. EXPOSICAO — o que conta como exposicao bem definida
+% ============================================================
+
+@article{hernan2004definition,
+  concept = {exposicao},
+  author  = {Hern{\'a}n, Miguel A.},
+  title   = {A Definition of Causal Effect for Epidemiological Research},
+  journal = {Journal of Epidemiology and Community Health},
+  year    = {2004},
+  volume  = {58},
+  number  = {4},
+  pages   = {265--271},
+  doi     = {10.1136/jech.2002.006361}
+}
+
+@article{hernan2005hypothetical,
+  concept = {exposicao},
+  author  = {Hern{\'a}n, Miguel A.},
+  title   = {Invited Commentary: Hypothetical Interventions to Define Causal Effects---Afterthought or Prerequisite?},
+  journal = {American Journal of Epidemiology},
+  year    = {2005},
+  volume  = {162},
+  number  = {7},
+  pages   = {618--620},
+  doi     = {10.1093/aje/kwi255}
+}
+
+@article{hernan2008obesity,
+  concept = {exposicao},
+  author  = {Hern{\'a}n, Miguel A. and Taubman, Sarah L.},
+  title   = {Does Obesity Shorten Life? The Importance of Well-Defined Interventions to Answer Causal Questions},
+  journal = {International Journal of Obesity},
+  year    = {2008},
+  volume  = {32},
+  number  = {S3},
+  pages   = {S8--S14},
+  doi     = {10.1038/ijo.2008.82}
+}
+
+@article{cole2009consistency,
+  concept = {exposicao},
+  author  = {Cole, Stephen R. and Frangakis, Constantine E.},
+  title   = {The Consistency Statement in Causal Inference: A Definition or an Assumption?},
+  journal = {Epidemiology},
+  year    = {2009},
+  volume  = {20},
+  number  = {1},
+  pages   = {3--5},
+  doi     = {10.1097/EDE.0b013e31818ef366}
+}
+
+@article{hernan2011compound,
+  concept = {exposicao},
+  author  = {Hern{\'a}n, Miguel A. and VanderWeele, Tyler J.},
+  title   = {Compound Treatments and Transportability of Causal Inference},
+  journal = {Epidemiology},
+  year    = {2011},
+  volume  = {22},
+  number  = {3},
+  pages   = {368--377},
+  doi     = {10.1097/EDE.0b013e3182109296}
+}
+
+@article{rehkopf2016consistency,
+  concept = {exposicao},
+  author  = {Rehkopf, David H. and Glymour, M. Maria and Osypuk, Theresa L.},
+  title   = {The Consistency Assumption for Causal Inference in Social Epidemiology: When a Rose Is Not a Rose},
+  journal = {Current Epidemiology Reports},
+  year    = {2016},
+  volume  = {3},
+  number  = {1},
+  pages   = {63--71},
+  doi     = {10.1007/s40471-016-0069-5}
+}
+
+@article{hernan2016water,
+  concept = {exposicao},
+  author  = {Hern{\'a}n, Miguel A.},
+  title   = {Does Water Kill? A Call for Less Casual Causal Inferences},
+  journal = {Annals of Epidemiology},
+  year    = {2016},
+  volume  = {26},
+  number  = {10},
+  pages   = {674--680},
+  doi     = {10.1016/j.annepidem.2016.08.016}
+}
+
+% ============================================================
+% 4. DESFECHO — substitutos, compostos e selecao
+% ============================================================
+
+@article{fleming1996surrogate,
+  concept = {desfecho},
+  author  = {Fleming, Thomas R. and DeMets, David L.},
+  title   = {Surrogate End Points in Clinical Trials: Are We Being Misled?},
+  journal = {Annals of Internal Medicine},
+  year    = {1996},
+  volume  = {125},
+  number  = {7},
+  pages   = {605--613},
+  doi     = {10.7326/0003-4819-125-7-199610010-00011}
+}
+
+@article{freemantle2003composite,
+  concept = {desfecho},
+  author  = {Freemantle, Nick and Calvert, Melanie and Wood, John and Eastaugh, Joanne and Griffin, Carl},
+  title   = {Composite Outcomes in Randomized Trials: Greater Precision but with Greater Uncertainty?},
+  journal = {JAMA},
+  year    = {2003},
+  volume  = {289},
+  number  = {19},
+  pages   = {2554--2559},
+  doi     = {10.1001/jama.289.19.2554}
+}
+
+@article{hernan2004selection,
+  concept = {desfecho},
+  author  = {Hern{\'a}n, Miguel A. and Hern{\'a}ndez-D{\'i}az, Sonia and Robins, James M.},
+  title   = {A Structural Approach to Selection Bias},
+  journal = {Epidemiology},
+  year    = {2004},
+  volume  = {15},
+  number  = {5},
+  pages   = {615--625},
+  doi     = {10.1097/01.ede.0000135174.63482.43}
+}
+
+@article{hernan2014composite,
+  concept = {desfecho},
+  author  = {Hern{\'a}n, Miguel A. and Schisterman, Enrique F. and Hern{\'a}ndez-D{\'i}az, Sonia},
+  title   = {Invited Commentary: Composite Outcomes as an Attempt to Escape from Selection Bias and Related Paradoxes},
+  journal = {American Journal of Epidemiology},
+  year    = {2014},
+  volume  = {179},
+  number  = {3},
+  pages   = {368--370},
+  doi     = {10.1093/aje/kwt283}
+}
+
+% ============================================================
+% 5. CORRELACAO x CAUSALIDADE — confundimento e leitura de coeficientes
+% ============================================================
+
+@article{greenland1986identifiability,
+  concept = {correlacao},
+  author  = {Greenland, Sander and Robins, James M.},
+  title   = {Identifiability, Exchangeability, and Epidemiological Confounding},
+  journal = {International Journal of Epidemiology},
+  year    = {1986},
+  volume  = {15},
+  number  = {3},
+  pages   = {413--419},
+  doi     = {10.1093/ije/15.3.413}
+}
+
+@article{weinberg1993confounding,
+  concept = {correlacao},
+  author  = {Weinberg, Clarice R.},
+  title   = {Toward a Clearer Definition of Confounding},
+  journal = {American Journal of Epidemiology},
+  year    = {1993},
+  volume  = {137},
+  number  = {1},
+  pages   = {1--8},
+  doi     = {10.1093/oxfordjournals.aje.a116591}
+}
+
+@article{greenland1999collapsibility,
+  concept = {correlacao},
+  author  = {Greenland, Sander and Pearl, Judea and Robins, James M.},
+  title   = {Confounding and Collapsibility in Causal Inference},
+  journal = {Statistical Science},
+  year    = {1999},
+  volume  = {14},
+  number  = {1},
+  pages   = {29--46},
+  doi     = {10.1214/ss/1009211805}
+}
+
+@article{howards2012revisited,
+  concept = {correlacao},
+  author  = {Howards, Penelope P. and Schisterman, Enrique F. and Poole, Charles and Kaufman, Jay S. and Weinberg, Clarice R.},
+  title   = {``Toward a Clearer Definition of Confounding'' Revisited with Directed Acyclic Graphs},
+  journal = {American Journal of Epidemiology},
+  year    = {2012},
+  volume  = {176},
+  number  = {6},
+  pages   = {506--511},
+  doi     = {10.1093/aje/kws127}
+}
+
+@article{vanderweele2013confounder,
+  concept = {correlacao},
+  author  = {VanderWeele, Tyler J. and Shpitser, Ilya},
+  title   = {On the Definition of a Confounder},
+  journal = {The Annals of Statistics},
+  year    = {2013},
+  volume  = {41},
+  number  = {1},
+  pages   = {196--220},
+  doi     = {10.1214/12-AOS1058}
+}
+
+@article{westreich2013table2,
+  concept = {correlacao},
+  author  = {Westreich, Daniel and Greenland, Sander},
+  title   = {The Table 2 Fallacy: Presenting and Interpreting Confounder and Modifier Coefficients},
+  journal = {American Journal of Epidemiology},
+  year    = {2013},
+  volume  = {177},
+  number  = {4},
+  pages   = {292--298},
+  doi     = {10.1093/aje/kws412}
+}
+
+@article{hernan2018cword,
+  concept = {correlacao},
+  author  = {Hern{\'a}n, Miguel A.},
+  title   = {The C-Word: Scientific Euphemisms Do Not Improve Causal Inference from Observational Data},
+  journal = {American Journal of Public Health},
+  year    = {2018},
+  volume  = {108},
+  number  = {5},
+  pages   = {616--619},
+  doi     = {10.2105/AJPH.2018.304337}
+}
+
+% ============================================================
+% 6. INFERENCIA — o que os testes e intervalos dizem e nao dizem
+% ============================================================
+
+@article{greenland1990randomization,
+  concept = {inferencia},
+  author  = {Greenland, Sander},
+  title   = {Randomization, Statistics, and Causal Inference},
+  journal = {Epidemiology},
+  year    = {1990},
+  volume  = {1},
+  number  = {6},
+  pages   = {421--429},
+  doi     = {10.1097/00001648-199011000-00003}
+}
+
+@article{schwartz1999typeiii,
+  concept = {inferencia},
+  author  = {Schwartz, Sharon and Carpenter, Kenneth M.},
+  title   = {The Right Answer for the Wrong Question: Consequences of Type {III} Error for Public Health Research},
+  journal = {American Journal of Public Health},
+  year    = {1999},
+  volume  = {89},
+  number  = {8},
+  pages   = {1175--1180},
+  doi     = {10.2105/AJPH.89.8.1175}
+}
+
+@article{rothman2013representativeness,
+  concept = {inferencia},
+  author  = {Rothman, Kenneth J. and Gallacher, John E. J. and Hatch, Elizabeth E.},
+  title   = {Why Representativeness Should Be Avoided},
+  journal = {International Journal of Epidemiology},
+  year    = {2013},
+  volume  = {42},
+  number  = {4},
+  pages   = {1012--1014},
+  doi     = {10.1093/ije/dys223}
+}
+
+@article{greenland2016misinterpretations,
+  concept = {inferencia},
+  author  = {Greenland, Sander and Senn, Stephen J. and Rothman, Kenneth J. and Carlin, John B. and Poole, Charles and Goodman, Steven N. and Altman, Douglas G.},
+  title   = {Statistical Tests, P Values, Confidence Intervals, and Power: A Guide to Misinterpretations},
+  journal = {European Journal of Epidemiology},
+  year    = {2016},
+  volume  = {31},
+  number  = {4},
+  pages   = {337--350},
+  doi     = {10.1007/s10654-016-0149-3}
+}
+
+@article{wasserstein2016asa,
+  concept = {inferencia},
+  author  = {Wasserstein, Ronald L. and Lazar, Nicole A.},
+  title   = {The {ASA} Statement on p-Values: Context, Process, and Purpose},
+  journal = {The American Statistician},
+  year    = {2016},
+  volume  = {70},
+  number  = {2},
+  pages   = {129--133},
+  doi     = {10.1080/00031305.2016.1154108}
+}
+
+@article{greenland2017methodologies,
+  concept = {inferencia},
+  author  = {Greenland, Sander},
+  title   = {For and Against Methodologies: Some Perspectives on Recent Causal and Statistical Inference Debates},
+  journal = {European Journal of Epidemiology},
+  year    = {2017},
+  volume  = {32},
+  number  = {1},
+  pages   = {3--20},
+  doi     = {10.1007/s10654-017-0230-6}
+}
+
+@article{amrhein2019significance,
+  concept = {inferencia},
+  author  = {Amrhein, Valentin and Greenland, Sander and McShane, Blake},
+  title   = {Scientists Rise Up against Statistical Significance},
+  journal = {Nature},
+  year    = {2019},
+  volume  = {567},
+  number  = {7748},
+  pages   = {305--307},
+  doi     = {10.1038/d41586-019-00857-9}
+}
+
+% ============================================================
+% 7. RISCO — medidas de efeito, risco individual e populacional
+% ============================================================
+
+@article{greenland1987effectmeasures,
+  concept = {risco},
+  author  = {Greenland, Sander},
+  title   = {Interpretation and Choice of Effect Measures in Epidemiologic Analyses},
+  journal = {American Journal of Epidemiology},
+  year    = {1987},
+  volume  = {125},
+  number  = {5},
+  pages   = {761--768},
+  doi     = {10.1093/oxfordjournals.aje.a114593}
+}
+
+@article{rockhill2000individual,
+  concept = {risco},
+  author  = {Rockhill, Beverly and Kawachi, Ichiro and Colditz, Graham A.},
+  title   = {Individual Risk Prediction and Population-Wide Disease Prevention},
+  journal = {Epidemiologic Reviews},
+  year    = {2000},
+  volume  = {22},
+  number  = {1},
+  pages   = {176--180},
+  doi     = {10.1093/oxfordjournals.epirev.a018017}
+}
+
+@article{rose2001sick,
+  concept = {risco},
+  author  = {Rose, Geoffrey},
+  title   = {Sick Individuals and Sick Populations},
+  journal = {International Journal of Epidemiology},
+  year    = {2001},
+  volume  = {30},
+  number  = {3},
+  pages   = {427--432},
+  doi     = {10.1093/ije/30.3.427},
+  note    = {Reimpress{\~a}o do artigo de 1985, com coment{\'a}rios no mesmo fasc{\'i}culo}
+}
+
+@article{greenland2005policy,
+  concept = {risco},
+  author  = {Greenland, Sander},
+  title   = {Epidemiologic Measures and Policy Formulation: Lessons from Potential Outcomes},
+  journal = {Emerging Themes in Epidemiology},
+  year    = {2005},
+  volume  = {2},
+  number  = {1},
+  pages   = {5},
+  doi     = {10.1186/1742-7622-2-5}
+}
+
+@article{rockhill2005theorizing,
+  concept = {risco},
+  author  = {Rockhill, Beverly},
+  title   = {Theorizing about Causes at the Individual Level While Estimating Effects at the Population Level: Implications for Prevention},
+  journal = {Epidemiology},
+  year    = {2005},
+  volume  = {16},
+  number  = {1},
+  pages   = {124--129},
+  doi     = {10.1097/01.ede.0000147111.46244.41}
+}
+
+@article{poole2010relativism,
+  concept = {risco},
+  author  = {Poole, Charles},
+  title   = {On the Origin of Risk Relativism},
+  journal = {Epidemiology},
+  year    = {2010},
+  volume  = {21},
+  number  = {1},
+  pages   = {3--9},
+  doi     = {10.1097/EDE.0b013e3181c30eba}
+}
+
+@article{ayres2011risco,
+  concept = {risco},
+  author  = {Ayres, Jos{\'e} Ricardo de Carvalho Mesquita},
+  title   = {Desenvolvimento hist{\'o}rico-epistemol{\'o}gico da Epidemiologia e do conceito de risco},
+  journal = {Cadernos de Sa{\'u}de P{\'u}blica},
+  year    = {2011},
+  volume  = {27},
+  number  = {7},
+  pages   = {1301--1311},
+  doi     = {10.1590/S0102-311X2011000700006}
+}
+
+@article{aven2012riskconcept,
+  concept = {risco},
+  author  = {Aven, Terje},
+  title   = {The Risk Concept---Historical and Recent Development Trends},
+  journal = {Reliability Engineering \& System Safety},
+  year    = {2012},
+  volume  = {99},
+  pages   = {33--44},
+  doi     = {10.1016/j.ress.2011.11.006}
+}
+
+@article{galea2013consequentialist,
+  concept = {risco},
+  author  = {Galea, Sandro},
+  title   = {An Argument for a Consequentialist Epidemiology},
+  journal = {American Journal of Epidemiology},
+  year    = {2013},
+  volume  = {178},
+  number  = {8},
+  pages   = {1185--1191},
+  doi     = {10.1093/aje/kwt172}
+}
+
+@article{greenland2015attributable,
+  concept = {risco},
+  author  = {Greenland, Sander},
+  title   = {Concepts and Pitfalls in Measuring and Interpreting Attributable Fractions, Prevented Fractions, and Causation Probabilities},
+  journal = {Annals of Epidemiology},
+  year    = {2015},
+  volume  = {25},
+  number  = {3},
+  pages   = {155--161},
+  doi     = {10.1016/j.annepidem.2014.11.005}
+}

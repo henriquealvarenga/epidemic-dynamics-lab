@@ -1,0 +1,496 @@
+<!-- ARQUIVO GERADO por scripts/leituras2md.py a partir de
+     references/leituras.bib. NÃO EDITE À MÃO: a próxima execução
+     do gerador sobrescreve tudo. Para mudar uma referência, edite
+     o .bib; para mudar a prosa de uma seção, edite o gerador. -->
+
+```{=html}
+<ul class="facts">
+  <li><b>51</b> artigos</li>
+  <li><b>7</b> conceitos</li>
+  <li><b>1965–2019</b></li>
+</ul>
+
+<nav class="chips" aria-label="Conceitos">
+  <a class="chip" href="#causalidade">Causalidade <span>9</span></a>
+  <a class="chip" href="#debate">Debate do IJE <span>7</span></a>
+  <a class="chip" href="#exposicao">Exposição <span>7</span></a>
+  <a class="chip" href="#desfecho">Desfecho <span>4</span></a>
+  <a class="chip" href="#correlacao">Correlação <span>7</span></a>
+  <a class="chip" href="#inferencia">Inferência <span>7</span></a>
+  <a class="chip" href="#risco">Risco <span>10</span></a>
+</nav>
+
+<section id="causalidade" class="sec">
+  <header class="sec-head">
+    <h2>Causalidade</h2>
+    <p>O que a epidemiologia quer dizer quando diz que algo causa algo. Definições concorrentes, do modelo de causas componentes à crítica da teia causal.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">1965</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1177/0141076814562718" target="_blank" rel="noopener">The Environment and Disease: Association or Causation?</a>
+        <p class="ref-source">Hill A. B. · <i>Proceedings of the Royal Society of Medicine 58(5): 295–300</i></p>
+        <p class="ref-note">Original sem DOI; o link abre a reimpressão no J R Soc Med 2015;108(1):32–37</p>
+        <span class="ref-doi">10.1177/0141076814562718</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1976</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/oxfordjournals.aje.a112335" target="_blank" rel="noopener">Causes</a>
+        <p class="ref-source">Rothman K. J. · <i>American Journal of Epidemiology 104(6): 587–592</i></p>
+        <span class="ref-doi">10.1093/oxfordjournals.aje.a112335</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1980</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/oxfordjournals.aje.a113015" target="_blank" rel="noopener">Concepts of Interaction</a>
+        <p class="ref-source">Rothman K. J., Greenland S., Walker A. M. · <i>American Journal of Epidemiology 112(4): 467–470</i></p>
+        <span class="ref-doi">10.1093/oxfordjournals.aje.a113015</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1991</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/oxfordjournals.aje.a115939" target="_blank" rel="noopener">What Is a Cause and How Do We Know One? A Grammar for Pragmatic Epidemiology</a>
+        <p class="ref-source">Susser M. · <i>American Journal of Epidemiology 133(7): 635–648</i></p>
+        <span class="ref-doi">10.1093/oxfordjournals.aje.a115939</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1994</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1016/0277-9536(94)90202-X" target="_blank" rel="noopener">Epidemiology and the Web of Causation: Has Anyone Seen the Spider?</a>
+        <p class="ref-source">Krieger N. · <i>Social Science &amp; Medicine 39(7): 887–903</i></p>
+        <span class="ref-doi">10.1016/0277-9536(94)90202-X</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2000</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1146/annurev.publhealth.21.1.101" target="_blank" rel="noopener">Looking Back on “Causal Thinking in the Health Sciences”</a>
+        <p class="ref-source">Kaufman J. S., Poole C. · <i>Annual Review of Public Health 21(1): 101–119</i></p>
+        <span class="ref-doi">10.1146/annurev.publhealth.21.1.101</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2001</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1136/jech.55.12.905" target="_blank" rel="noopener">Causation in Epidemiology</a>
+        <p class="ref-source">Parascandola M., Weed D. L. · <i>Journal of Epidemiology and Community Health 55(12): 905–912</i></p>
+        <span class="ref-doi">10.1136/jech.55.12.905</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2005</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.2105/AJPH.2004.059204" target="_blank" rel="noopener">Causation and Causal Inference in Epidemiology</a>
+        <p class="ref-source">Rothman K. J., Greenland S. · <i>American Journal of Public Health 95(S1): S144–S150</i></p>
+        <span class="ref-doi">10.2105/AJPH.2004.059204</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2009</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1016/j.shpsc.2009.09.006" target="_blank" rel="noopener">Causation and Models of Disease in Epidemiology</a>
+        <p class="ref-source">Broadbent A. · <i>Studies in History and Philosophy of Biological and Biomedical Sciences 40(4): 302–311</i></p>
+        <span class="ref-doi">10.1016/j.shpsc.2009.09.006</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section id="debate" class="sec">
+  <header class="sec-head">
+    <h2>O debate do IJE, 2016</h2>
+    <p>Um fascículo inteiro do <i>International Journal of Epidemiology</i> dedicado à mesma pergunta: o artigo-alvo, cinco comentários que não se conciliam e a réplica. Leia na ordem das páginas.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyv341" target="_blank" rel="noopener">Causality and Causal Inference in Epidemiology: The Need for a Pluralistic Approach</a>
+        <p class="ref-source">Vandenbroucke J. P., Broadbent A., Pearce N. · <i>International Journal of Epidemiology 45(6): 1776–1786</i></p>
+        <span class="ref-doi">10.1093/ije/dyv341</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyw114" target="_blank" rel="noopener">The Tale Wagged by the DAG: Broadening the Scope of Causal Inference and Explanation for Epidemiology</a>
+        <p class="ref-source">Krieger N., Davey Smith G. · <i>International Journal of Epidemiology 45(6): 1787–1808</i></p>
+        <span class="ref-doi">10.1093/ije/dyw114</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyw230" target="_blank" rel="noopener">Commentary: On Causes, Causal Inference, and Potential Outcomes</a>
+        <p class="ref-source">VanderWeele T. J. · <i>International Journal of Epidemiology 45(6): 1809–1816</i></p>
+        <span class="ref-doi">10.1093/ije/dyw230</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyw227" target="_blank" rel="noopener">Commentary: The Formal Approach to Quantitative Causal Inference in Epidemiology: Misguided or Misrepresented?</a>
+        <p class="ref-source">Daniel R. M., De Stavola B. L., Vansteelandt S. · <i>International Journal of Epidemiology 45(6): 1817–1829</i></p>
+        <span class="ref-doi">10.1093/ije/dyw227</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyw231" target="_blank" rel="noopener">Commentary: Counterfactual Causation and Streetlamps: What Is to Be Done?</a>
+        <p class="ref-source">Robins J. M., Weissman M. B. · <i>International Journal of Epidemiology 45(6): 1830–1835</i></p>
+        <span class="ref-doi">10.1093/ije/dyw231</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyw298" target="_blank" rel="noopener">Response: Formalism or Pluralism? A Reply to Commentaries on `Causality and Causal Inference in Epidemiology&#x27;</a>
+        <p class="ref-source">Broadbent A., Vandenbroucke J. P., Pearce N. · <i>International Journal of Epidemiology 45(6): 1841–1851</i></p>
+        <span class="ref-doi">10.1093/ije/dyw298</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dyw328" target="_blank" rel="noopener">Causal Inference—So Much More Than Statistics</a>
+        <p class="ref-source">Pearce N., Lawlor D. A. · <i>International Journal of Epidemiology 45(6): 1895–1903</i></p>
+        <span class="ref-doi">10.1093/ije/dyw328</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section id="exposicao" class="sec">
+  <header class="sec-head">
+    <h2>Exposição</h2>
+    <p>A exigência de que a exposição seja bem definida. Se não há intervenção imaginável que a produza, o efeito estimado não tem referente.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">2004</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1136/jech.2002.006361" target="_blank" rel="noopener">A Definition of Causal Effect for Epidemiological Research</a>
+        <p class="ref-source">Hernán M. A. · <i>Journal of Epidemiology and Community Health 58(4): 265–271</i></p>
+        <span class="ref-doi">10.1136/jech.2002.006361</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2005</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/aje/kwi255" target="_blank" rel="noopener">Invited Commentary: Hypothetical Interventions to Define Causal Effects—Afterthought or Prerequisite?</a>
+        <p class="ref-source">Hernán M. A. · <i>American Journal of Epidemiology 162(7): 618–620</i></p>
+        <span class="ref-doi">10.1093/aje/kwi255</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2008</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1038/ijo.2008.82" target="_blank" rel="noopener">Does Obesity Shorten Life? The Importance of Well-Defined Interventions to Answer Causal Questions</a>
+        <p class="ref-source">Hernán M. A., Taubman S. L. · <i>International Journal of Obesity 32(S3): S8–S14</i></p>
+        <span class="ref-doi">10.1038/ijo.2008.82</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2009</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1097/EDE.0b013e31818ef366" target="_blank" rel="noopener">The Consistency Statement in Causal Inference: A Definition or an Assumption?</a>
+        <p class="ref-source">Cole S. R., Frangakis C. E. · <i>Epidemiology 20(1): 3–5</i></p>
+        <span class="ref-doi">10.1097/EDE.0b013e31818ef366</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2011</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1097/EDE.0b013e3182109296" target="_blank" rel="noopener">Compound Treatments and Transportability of Causal Inference</a>
+        <p class="ref-source">Hernán M. A., VanderWeele T. J. · <i>Epidemiology 22(3): 368–377</i></p>
+        <span class="ref-doi">10.1097/EDE.0b013e3182109296</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1007/s40471-016-0069-5" target="_blank" rel="noopener">The Consistency Assumption for Causal Inference in Social Epidemiology: When a Rose Is Not a Rose</a>
+        <p class="ref-source">Rehkopf D. H., Glymour M. M., Osypuk T. L. · <i>Current Epidemiology Reports 3(1): 63–71</i></p>
+        <span class="ref-doi">10.1007/s40471-016-0069-5</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1016/j.annepidem.2016.08.016" target="_blank" rel="noopener">Does Water Kill? A Call for Less Casual Causal Inferences</a>
+        <p class="ref-source">Hernán M. A. · <i>Annals of Epidemiology 26(10): 674–680</i></p>
+        <span class="ref-doi">10.1016/j.annepidem.2016.08.016</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section id="desfecho" class="sec">
+  <header class="sec-head">
+    <h2>Desfecho</h2>
+    <p>Substitutos, compostos e o que se perde ao trocar o desfecho que importa por outro mais fácil de medir.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">1996</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.7326/0003-4819-125-7-199610010-00011" target="_blank" rel="noopener">Surrogate End Points in Clinical Trials: Are We Being Misled?</a>
+        <p class="ref-source">Fleming T. R., DeMets D. L. · <i>Annals of Internal Medicine 125(7): 605–613</i></p>
+        <span class="ref-doi">10.7326/0003-4819-125-7-199610010-00011</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2003</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1001/jama.289.19.2554" target="_blank" rel="noopener">Composite Outcomes in Randomized Trials: Greater Precision but with Greater Uncertainty?</a>
+        <p class="ref-source">Freemantle N. et al. · <i>JAMA 289(19): 2554–2559</i></p>
+        <span class="ref-doi">10.1001/jama.289.19.2554</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2004</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1097/01.ede.0000135174.63482.43" target="_blank" rel="noopener">A Structural Approach to Selection Bias</a>
+        <p class="ref-source">Hernán M. A., Hernández-Díaz S., Robins J. M. · <i>Epidemiology 15(5): 615–625</i></p>
+        <span class="ref-doi">10.1097/01.ede.0000135174.63482.43</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2014</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/aje/kwt283" target="_blank" rel="noopener">Invited Commentary: Composite Outcomes as an Attempt to Escape from Selection Bias and Related Paradoxes</a>
+        <p class="ref-source">Hernán M. A., Schisterman E. F., Hernández-Díaz S. · <i>American Journal of Epidemiology 179(3): 368–370</i></p>
+        <span class="ref-doi">10.1093/aje/kwt283</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section id="correlacao" class="sec">
+  <header class="sec-head">
+    <h2>Correlação e causalidade</h2>
+    <p>Confundimento em versão formal e em versão didática, e os dois erros de leitura mais frequentes na literatura aplicada.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">1986</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/15.3.413" target="_blank" rel="noopener">Identifiability, Exchangeability, and Epidemiological Confounding</a>
+        <p class="ref-source">Greenland S., Robins J. M. · <i>International Journal of Epidemiology 15(3): 413–419</i></p>
+        <span class="ref-doi">10.1093/ije/15.3.413</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1993</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/oxfordjournals.aje.a116591" target="_blank" rel="noopener">Toward a Clearer Definition of Confounding</a>
+        <p class="ref-source">Weinberg C. R. · <i>American Journal of Epidemiology 137(1): 1–8</i></p>
+        <span class="ref-doi">10.1093/oxfordjournals.aje.a116591</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1999</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1214/ss/1009211805" target="_blank" rel="noopener">Confounding and Collapsibility in Causal Inference</a>
+        <p class="ref-source">Greenland S., Pearl J., Robins J. M. · <i>Statistical Science 14(1): 29–46</i></p>
+        <span class="ref-doi">10.1214/ss/1009211805</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2012</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/aje/kws127" target="_blank" rel="noopener">“Toward a Clearer Definition of Confounding” Revisited with Directed Acyclic Graphs</a>
+        <p class="ref-source">Howards P. P. et al. · <i>American Journal of Epidemiology 176(6): 506–511</i></p>
+        <span class="ref-doi">10.1093/aje/kws127</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2013</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1214/12-AOS1058" target="_blank" rel="noopener">On the Definition of a Confounder</a>
+        <p class="ref-source">VanderWeele T. J., Shpitser I. · <i>The Annals of Statistics 41(1): 196–220</i></p>
+        <span class="ref-doi">10.1214/12-AOS1058</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2013</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/aje/kws412" target="_blank" rel="noopener">The Table 2 Fallacy: Presenting and Interpreting Confounder and Modifier Coefficients</a>
+        <p class="ref-source">Westreich D., Greenland S. · <i>American Journal of Epidemiology 177(4): 292–298</i></p>
+        <span class="ref-doi">10.1093/aje/kws412</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2018</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.2105/AJPH.2018.304337" target="_blank" rel="noopener">The C-Word: Scientific Euphemisms Do Not Improve Causal Inference from Observational Data</a>
+        <p class="ref-source">Hernán M. A. · <i>American Journal of Public Health 108(5): 616–619</i></p>
+        <span class="ref-doi">10.2105/AJPH.2018.304337</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section id="inferencia" class="sec">
+  <header class="sec-head">
+    <h2>Inferência</h2>
+    <p>O que testes, valores p e intervalos de confiança dizem — e a longa lista do que não dizem.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">1990</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1097/00001648-199011000-00003" target="_blank" rel="noopener">Randomization, Statistics, and Causal Inference</a>
+        <p class="ref-source">Greenland S. · <i>Epidemiology 1(6): 421–429</i></p>
+        <span class="ref-doi">10.1097/00001648-199011000-00003</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">1999</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.2105/AJPH.89.8.1175" target="_blank" rel="noopener">The Right Answer for the Wrong Question: Consequences of Type III Error for Public Health Research</a>
+        <p class="ref-source">Schwartz S., Carpenter K. M. · <i>American Journal of Public Health 89(8): 1175–1180</i></p>
+        <span class="ref-doi">10.2105/AJPH.89.8.1175</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2013</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/dys223" target="_blank" rel="noopener">Why Representativeness Should Be Avoided</a>
+        <p class="ref-source">Rothman K. J., Gallacher J. E. J., Hatch E. E. · <i>International Journal of Epidemiology 42(4): 1012–1014</i></p>
+        <span class="ref-doi">10.1093/ije/dys223</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1007/s10654-016-0149-3" target="_blank" rel="noopener">Statistical Tests, P Values, Confidence Intervals, and Power: A Guide to Misinterpretations</a>
+        <p class="ref-source">Greenland S. et al. · <i>European Journal of Epidemiology 31(4): 337–350</i></p>
+        <span class="ref-doi">10.1007/s10654-016-0149-3</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2016</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1080/00031305.2016.1154108" target="_blank" rel="noopener">The ASA Statement on p-Values: Context, Process, and Purpose</a>
+        <p class="ref-source">Wasserstein R. L., Lazar N. A. · <i>The American Statistician 70(2): 129–133</i></p>
+        <span class="ref-doi">10.1080/00031305.2016.1154108</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2017</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1007/s10654-017-0230-6" target="_blank" rel="noopener">For and Against Methodologies: Some Perspectives on Recent Causal and Statistical Inference Debates</a>
+        <p class="ref-source">Greenland S. · <i>European Journal of Epidemiology 32(1): 3–20</i></p>
+        <span class="ref-doi">10.1007/s10654-017-0230-6</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2019</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1038/d41586-019-00857-9" target="_blank" rel="noopener">Scientists Rise Up against Statistical Significance</a>
+        <p class="ref-source">Amrhein V., Greenland S., McShane B. · <i>Nature 567(7748): 305–307</i></p>
+        <span class="ref-doi">10.1038/d41586-019-00857-9</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section id="risco" class="sec">
+  <header class="sec-head">
+    <h2>Risco</h2>
+    <p>Escolha de medidas de efeito, a distância entre risco individual e risco populacional, e a genealogia do próprio conceito.</p>
+  </header>
+  <ol class="refs">
+    <li class="ref">
+      <span class="ref-year">1987</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/oxfordjournals.aje.a114593" target="_blank" rel="noopener">Interpretation and Choice of Effect Measures in Epidemiologic Analyses</a>
+        <p class="ref-source">Greenland S. · <i>American Journal of Epidemiology 125(5): 761–768</i></p>
+        <span class="ref-doi">10.1093/oxfordjournals.aje.a114593</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2000</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/oxfordjournals.epirev.a018017" target="_blank" rel="noopener">Individual Risk Prediction and Population-Wide Disease Prevention</a>
+        <p class="ref-source">Rockhill B., Kawachi I., Colditz G. A. · <i>Epidemiologic Reviews 22(1): 176–180</i></p>
+        <span class="ref-doi">10.1093/oxfordjournals.epirev.a018017</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2001</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/ije/30.3.427" target="_blank" rel="noopener">Sick Individuals and Sick Populations</a>
+        <p class="ref-source">Rose G. · <i>International Journal of Epidemiology 30(3): 427–432</i></p>
+        <p class="ref-note">Reimpressão do artigo de 1985, com comentários no mesmo fascículo</p>
+        <span class="ref-doi">10.1093/ije/30.3.427</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2005</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1186/1742-7622-2-5" target="_blank" rel="noopener">Epidemiologic Measures and Policy Formulation: Lessons from Potential Outcomes</a>
+        <p class="ref-source">Greenland S. · <i>Emerging Themes in Epidemiology 2(1): 5</i></p>
+        <span class="ref-doi">10.1186/1742-7622-2-5</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2005</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1097/01.ede.0000147111.46244.41" target="_blank" rel="noopener">Theorizing about Causes at the Individual Level While Estimating Effects at the Population Level: Implications for Prevention</a>
+        <p class="ref-source">Rockhill B. · <i>Epidemiology 16(1): 124–129</i></p>
+        <span class="ref-doi">10.1097/01.ede.0000147111.46244.41</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2010</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1097/EDE.0b013e3181c30eba" target="_blank" rel="noopener">On the Origin of Risk Relativism</a>
+        <p class="ref-source">Poole C. · <i>Epidemiology 21(1): 3–9</i></p>
+        <span class="ref-doi">10.1097/EDE.0b013e3181c30eba</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2011</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1590/S0102-311X2011000700006" target="_blank" rel="noopener">Desenvolvimento histórico-epistemológico da Epidemiologia e do conceito de risco</a>
+        <p class="ref-source">Ayres J. R. C. M. · <i>Cadernos de Saúde Pública 27(7): 1301–1311</i></p>
+        <span class="ref-doi">10.1590/S0102-311X2011000700006</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2012</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1016/j.ress.2011.11.006" target="_blank" rel="noopener">The Risk Concept—Historical and Recent Development Trends</a>
+        <p class="ref-source">Aven T. · <i>Reliability Engineering &amp; System Safety 99: 33–44</i></p>
+        <span class="ref-doi">10.1016/j.ress.2011.11.006</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2013</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1093/aje/kwt172" target="_blank" rel="noopener">An Argument for a Consequentialist Epidemiology</a>
+        <p class="ref-source">Galea S. · <i>American Journal of Epidemiology 178(8): 1185–1191</i></p>
+        <span class="ref-doi">10.1093/aje/kwt172</span>
+      </div>
+    </li>
+    <li class="ref">
+      <span class="ref-year">2015</span>
+      <div class="ref-body">
+        <a class="ref-title" href="https://doi.org/10.1016/j.annepidem.2014.11.005" target="_blank" rel="noopener">Concepts and Pitfalls in Measuring and Interpreting Attributable Fractions, Prevented Fractions, and Causation Probabilities</a>
+        <p class="ref-source">Greenland S. · <i>Annals of Epidemiology 25(3): 155–161</i></p>
+        <span class="ref-doi">10.1016/j.annepidem.2014.11.005</span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+```

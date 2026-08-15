@@ -1,0 +1,94 @@
+---
+# =============================================================================
+# EDL — leituras.qmd
+#
+# Página "Leituras conceituais" do Epidemic Dynamics Lab. Renderiza para
+# `leituras.html` na raiz, ao lado do index.html, e é linkada no rodapé do app
+# e na tela de Bibliografia.
+#
+# Esta é a ÚNICA página do site escrita em Quarto — o resto é HTML/JS puro.
+# Ela é estática, longa e puramente textual, que é exatamente o caso em que o
+# Quarto rende: a lista sai do .bib, o layout sai do CSS, e não há estado nem
+# interatividade que justificasse mais uma tela dentro do SPA.
+#
+# Fluxo de edição (os três passos, sempre nesta ordem):
+#   1. Referências        → edite references/leituras.bib
+#      Prosa das seções   → edite a tabela CONCEITOS de scripts/leituras2md.py
+#      Título/lede/rodapé → edite ESTE arquivo, abaixo
+#   2. python3 scripts/leituras2md.py     (regenera _leituras-refs.md)
+#   3. quarto render leituras.qmd         (regenera leituras.html)
+#
+# Commite .bib, _leituras-refs.md e leituras.html juntos: o CI publica o
+# repositório como está e NÃO roda o Quarto. Esquecer o passo 3 significa
+# publicar a página velha sem nenhum aviso.
+# =============================================================================
+
+pagetitle: "Leituras conceituais — Epidemic Dynamics Lab"
+description: >
+  Bibliografia comentada sobre exposição, desfecho, correlação, causalidade,
+  inferência e risco: 51 artigos com DOI, agrupados pelo conceito em disputa.
+lang: pt-BR
+format:
+  html:
+    minimal: true
+    css: assets/leituras.css
+    output-file: leituras.html
+    toc: false
+    section-divs: false
+    email-obfuscation: none
+    include-in-header:
+      text: |
+        <meta name="author" content="Henrique Alvarenga da Silva">
+        <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+        <link rel="canonical" href="https://henriquealvarenga.com/epidemic-dynamics-lab/leituras.html">
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="Leituras conceituais — Epidemic Dynamics Lab">
+        <meta property="og:description" content="51 artigos sobre exposição, desfecho, correlação, causalidade, inferência e risco, agrupados pelo conceito em disputa.">
+        <meta property="og:url" content="https://henriquealvarenga.com/epidemic-dynamics-lab/leituras.html">
+        <meta property="og:image" content="https://henriquealvarenga.com/epidemic-dynamics-lab/assets/og-image.png">
+        <meta property="og:locale" content="pt_BR">
+        <meta name="twitter:card" content="summary_large_image">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap">
+---
+
+::: {.topbar}
+[← Epidemic Dynamics Lab](index.html){.topbar-back}
+
+[Leituras conceituais]{.topbar-title}
+:::
+
+::: {.hero}
+::: {.wrap}
+[Bibliografia comentada · 1965–2019]{.eyebrow}
+
+# Os conceitos que a epidemiologia [usa sem definir]{.em}
+
+::: {.lede}
+Exposição, desfecho, correlação, causalidade, inferência e risco aparecem em
+todo artigo empírico como se fossem evidentes. Não são. Esta é a literatura
+que os discute diretamente — todos os itens com DOI verificado na Crossref e
+no PubMed, organizados pelo conceito em disputa.
+:::
+:::
+:::
+
+::: {.wrap}
+
+{{< include _leituras-refs.md >}}
+
+:::
+
+::: {.pagefoot}
+::: {.wrap}
+Cada título abre o registro do artigo em [doi.org](https://doi.org){target="_blank"}.
+O acesso ao texto completo depende da assinatura de cada periódico — pela rede
+da universidade, boa parte deles abre direto.
+
+A lista é gerada a partir de [`references/leituras.bib`](https://github.com/henriquealvarenga/epidemic-dynamics-lab/blob/main/references/leituras.bib),
+que você pode baixar e importar no Zotero, no Mendeley ou no gerenciador que
+usar. Ela é complementar à [bibliografia do curso](index.html#/references), que
+reúne o que os módulos citam.
+:::
+:::
